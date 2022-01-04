@@ -6,7 +6,7 @@ const Sequelize = require("sequelize");
 const { badges } = require("../controllers");
 const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || "development";
-const config = require(__dirname + "/../config/config.json")[env];
+const config = require(__dirname + "/../config/config.js")[env];
 const db = {};
 
 let sequelize;
@@ -53,22 +53,22 @@ const {
   comment,
   users_badge,
 } = sequelize.models;
-challenge.belongsTo(users_challenge);
-challenge.belongsTo(checkin);
-challenge.belongsTo(comment);
-user.belongsTo(users_challenge);
-user.belongsTo(checkin);
-user.belongsTo(comment);
-user.belongsTo(users_badge);
-badge.belongsTo(users_badge);
+challenge.hasMany(users_challenge);
+challenge.hasMany(checkin);
+challenge.hasMany(comment);
+user.hasMany(users_challenge);
+user.hasMany(checkin);
+user.hasMany(comment);
+user.hasMany(users_badge);
+badge.hasMany(users_badge);
 
-users_challenge.hasMany(challenge);
-checkin.hasMany(challenge);
-comment.hasMany(challenge);
-users_challenge.hasMany(user);
-checkin.hasMany(user);
-comment.hasMany(user);
-users_badge.hasMany(user);
-users_badge.hasMany(badge);
+users_challenge.belongsTo(challenge);
+checkin.belongsTo(challenge);
+comment.belongsTo(challenge);
+users_challenge.belongsTo(user);
+checkin.belongsTo(user);
+comment.belongsTo(user);
+users_badge.belongsTo(user);
+users_badge.belongsTo(badge);
 
 module.exports = db;
