@@ -1,8 +1,14 @@
 import styled from "styled-components";
-import { color } from '../styles'
+import { color, device, contentWidth } from '../styles';
 
 const IllustContainer = styled.div`
-    border: 1px solid ${color.primaryBorder};
+  width: 70%; /* 임시 */
+  height: 50vh; /* 임시 */
+  max-width: ${contentWidth};
+  margin: 0 auto;
+  padding: 1rem;
+  border: 1px solid ${color.primaryBorder};
+  background-color: ${color.white};
 `
 
 const Illust = () => {

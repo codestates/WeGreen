@@ -13,17 +13,34 @@ const Highlighted = styled.p`
   font-weight: bold;
 `;
 
+const ChallengeCardStatusContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+`
+
 const ChallengeCard = ({ challenge }) => {
+  const href = "/challenge/" + challenge.challenge_id
+
+  const startedAt = new Date(challenge.started_at)
+  const finishedAt = new Date(challenge.started_at)
+  finishedAt.setDate(startedAt.getDate() + 6)
+  
+  const regex = /[^0-9]/g;	
+  const requirement = parseInt(challenge.requirement.replace(regex, ""))
+  const progress = (challenge.checkin_count / requirement) >= 1 ? 1 : (challenge.checkin_count / requirement).toFixed(2)
+
   return (
     <ChallengeCardList>
-      <Link to="/challenge/1">
+      <Link to={href}>
         <h3>{challenge.name}</h3>
         <p>
-          {challenge.started_at} ~ {challenge.started_at}
+          {startedAt.toLocaleDateString('ko-KR', { timezone: 'UTC' })} ~ {finishedAt.toLocaleDateString('ko-KR', { timezone: 'UTC' })}
         </p>
         <p>{challenge.requirement}</p>
-        <Highlighted>진행예정</Highlighted>
-        <p>참여인원: {challenge.join_count}명</p>
+        <ChallengeCardStatusContainer>
+          <Highlighted>{progress * 100}% 완료</Highlighted>
+          <p>참여인원: {challenge.join_count}명</p>
+        </ChallengeCardStatusContainer>
       </Link>
     </ChallengeCardList>
   );
