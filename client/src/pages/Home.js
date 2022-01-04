@@ -79,7 +79,7 @@ const Home = () => {
         <h2>인기 챌린지를 확인해 보세요</h2>
         <ChallengeList>
           {dummyChallenges.map((el) => (
-            <ChallengeCard challenge={el} />
+            <ChallengeCard challenge={el} key={el.challenge_id} />
           ))}
         </ChallengeList>
       </ChallengeListContainer>
