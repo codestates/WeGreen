@@ -1,6 +1,7 @@
 @font-face {
   font-family: 'NanumSquareRound';
-  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_two@1.0/NanumSquareRound.woff') format('woff');
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_two@1.0/NanumSquareRound.woff')
+    format('woff');
   font-weight: normal;
   font-style: normal;
 }
@@ -16,7 +17,9 @@ body {
   margin: 0;
 }
 
-ul, li, ol {
+ul,
+li,
+ol {
   list-style: none;
 }
 
@@ -31,4 +34,22 @@ a {
 
 button {
   border: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+}
+
+h1 {
+  font-size: 32px;
+  word-break: keep-all;
+}
+
+p {
+  line-height: 1.5;
 }
