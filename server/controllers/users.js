@@ -2,31 +2,42 @@ var express = require("express");
 var router = express.Router();
 const { Op } = require("sequelize"); //sequelize or 쓸때 필요합니다.
 const { user: UserModel } = require("../models");
-//근데 이거 github이라 네이버,카카오 하는거 보고 다시 해야합니다.
+const {
+  hashedpassword,
+  comparepassword,
+  generateAccessToken,
+  sendAccessToken,
+  isAuthorized,
+} = require("./tokenFunctions");
 require("dotenv").config();
 
 module.exports = {
   //로그인
-  //! 토큰 data에 담기
   login: async (req, res, next) => {
     try {
-      //SELECT USER WHERE email=== req.body.email AND password===req.body.password
+      const DBpassword = await UserModel.findOne({
+        attributes: ["password"],
+        where: {
+          email: req.body.email,
+        },
+      });
+      const compareResult = comparepassword(
+        req.body.password.toString(),
+        DBpassword.password
+      );
       const user = await UserModel.findOne({
         where: {
           email: req.body.email,
-          password: req.body.password,
         },
       });
-      //user가 존재하면
-      if (user) {
-        return res.status(200).json({
-          message: "OK",
-          data: {
-            user_id: user.id,
-            username: user.username,
-            is_admin: user.is_admin,
-          },
-        });
+      if (user && compareResult) {
+        const data = {
+          user_id: user.id,
+          username: user.username,
+          is_admin: user.is_admin,
+        };
+        const accessToken = generateAccessToken(JSON.stringify(user));
+        sendAccessToken(res, data, accessToken);
       }
       //user의 정보랑 일치하는게 없으면 "message":"Invalid password or email"랑 401을 보낸다.
       else {
@@ -42,9 +53,10 @@ module.exports = {
     }
   },
 
-  //!토큰 구현 후 로그아웃
+  //토큰 구현 후 로그아웃
   logout: async (req, res, next) => {
     try {
+      res.clearCookie("accessToken"); //쿠키 클리어
       res.status(200).send({ message: "OK" });
     } catch (err) {
       res.status(500).send({
@@ -55,32 +67,38 @@ module.exports = {
   },
   //회원가입
   signup: async (req, res) => {
+    let password = req.body.password.toString();
+    const encrypted = hashedpassword(password);
     const [result, created] = await UserModel.findOrCreate({
       where: { email: req.body.email },
       defaults: {
         username: req.body.username,
-        password: req.body.password, //!password는 해시값으로 바꿔야함.
+        password: encrypted, //해시된 password로 저장.
       },
     });
     if (created) {
-      res.status(201).json(result);
+      const { badge_id, id, username, email, updatedAt, createdAt } = result;
+      res
+        .status(201)
+        .json({ badge_id, id, username, email, updatedAt, createdAt }); //password 뺀 result 보내줘야함
     } else if (!created) {
       res.status(409).json({ message: "Email already exists" });
     } else {
       res.status(500).json({ message: "Internal server error" });
     }
   },
-  //! 토큰 구현 후 회원탈퇴
+  // 토큰 확인 후 회원탈퇴
   signout: async (req, res, next) => {
     try {
-      const result = await UserModel.destory({
-        where: {
-          email: req.body.email,
-          username: req.body.username,
-          password: req.body.password,
-        },
-      });
-      return res.status(204).json(result);
+      if (isAuthorized) {
+        const result = await UserModel.destroy({
+          where: {
+            email: req.body.email,
+          },
+        });
+        res.clearCookie("accessToken");
+        res.status(204).json(result);
+      }
     } catch (err) {
       res.status(500).send({
         message: "Internal server error",
