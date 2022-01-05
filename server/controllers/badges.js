@@ -1,11 +1,11 @@
-const { badge: BadgeModel } = require("../models");
-const { isAuthorized } = require("./tokenFunctions");
-const cookieParser = require("cookie-parser");
+const { getUserInfo } = require("./tokenFunctions");
+const { users_badge: UserBadgeModel } = require("../models");
 
 module.exports = {
   patch: async (req, res) => {
-    console.log("COOKIES DATA", req.cookies);
-
+    const userInfo = getUserInfo(req);
+    const userId = userInfo.id;
+    const badgeArray = req.body.badge_ids;
     res.send();
   },
 };

@@ -33,8 +33,20 @@ module.exports = {
           username: user.username,
           is_admin: user.is_admin,
         };
-        const accessToken = generateAccessToken(JSON.stringify(user));
-        return sendAccessToken(res, data, accessToken);
+        const { id, email, username, is_social, is_admin, bio, badge_id } =
+          user;
+        const accessToken = generateAccessToken(
+          JSON.stringify({
+            id,
+            email,
+            username,
+            is_social,
+            is_admin,
+            bio,
+            badge_id,
+          })
+        );
+        sendAccessToken(res, data, accessToken);
       }
       //user의 정보랑 일치하는게 없으면 "message":"Invalid password or email"랑 401을 보낸다.
       else {

@@ -16,6 +16,7 @@ module.exports = {
     });
   },
   sendAccessToken: (res, data, accessToken) => {
+    console.log("ACCESS TOKEN", accessToken);
     res.cookie("accessToken", accessToken, {
       // domain: process.env.SERVER_DOMAIN,
       path: "/",
@@ -37,5 +38,11 @@ module.exports = {
       //return null if invalid token
       return null;
     }
+  },
+  getUserInfo: (req) => {
+    const authorization = req.headers["authorization"];
+    const token = authorization.split(" ")[1];
+    const data = JSON.parse(verify(token, process.env.ACCESS_SECRET).data); //객체 형식
+    return data;
   },
 };
