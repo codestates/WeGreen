@@ -3,6 +3,8 @@ export const initialState = {
   userInfo: {
     userId: -1,
     userName: 'guest',
+    userBio: 'guest user',
+    mainBadge: -1,
     isAdmin: false,
   },
 };
