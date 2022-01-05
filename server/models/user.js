@@ -16,9 +16,18 @@ module.exports = (sequelize, DataTypes) => {
       email: DataTypes.STRING,
       username: DataTypes.STRING,
       password: DataTypes.STRING,
-      is_social: DataTypes.BOOLEAN,
-      is_admin: DataTypes.BOOLEAN,
-      bio: DataTypes.STRING,
+      is_social: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+      },
+      is_admin: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+      },
+      bio: {
+        type: DataTypes.STRING,
+        defaultValue: "자기소개를 입력해주세요.",
+      },
       badge_id: {
         type: DataTypes.INTEGER,
         defaultValue: 0,

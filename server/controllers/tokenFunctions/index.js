@@ -11,9 +11,6 @@ module.exports = {
     return bcrypt.compareSync(inputPWD, hash); //true 또는 false를 리턴
   },
   generateAccessToken: (data) => {
-    return sign(data, process.env.ACCESS_SECRET, { expiresIn: "1d" });
-  },
-  generateAccessToken: (data) => {
     return sign({ data: data }, process.env.ACCESS_SECRET, {
       expiresIn: 60 * 60,
     });
