@@ -1,18 +1,22 @@
 require("dotenv").config();
 const { sign, verify } = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const saltRounds = process.env.SALT || 10;
 
 module.exports = {
   hashedpassword: (password) => {
-    // salt 자동생성
-    return bcrypt.hashSync(password, saltRounds); //해쉬된 password를 리턴
+    const salt = bcrypt.genSaltSync();
+    return bcrypt.hashSync(password, salt);
   },
-  comparepassword: (inputPWD, encryptedPWD) => {
-    return bcrypt.compareSync(inputPWD, encryptedPWD); //true 또는 false를 리턴
+  comparepassword: (inputPWD, hash) => {
+    return bcrypt.compareSync(inputPWD, hash); //true 또는 false를 리턴
   },
   generateAccessToken: (data) => {
     return sign(data, process.env.ACCESS_SECRET, { expiresIn: "1d" });
+  },
+  generateAccessToken: (data) => {
+    return sign({ data: data }, process.env.ACCESS_SECRET, {
+      expiresIn: 60 * 60,
+    });
   },
   sendAccessToken: (res, data, accessToken) => {
     res.cookie("accessToken", accessToken, {
@@ -23,7 +27,7 @@ module.exports = {
       // secure: true,
       httpOnly: true,
     });
-    res.json({ data, message: "ok" });
+    res.json({ data, message: "OK" });
   },
   isAuthorized: (req) => {
     const accessToken = req.cookies.accessToken;
