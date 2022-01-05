@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { color, contentWidth } from "../styles";
 
 const TabContainer = styled.div`
-  padding: 1rem;
+  width: 100%;
   max-width: ${contentWidth};
   margin: 0 auto;
   display: flex;
@@ -23,6 +23,7 @@ const Tab = ({ tabInfo, handleView }) => {
           onClick={() => {
             handleView(tab[0]);
           }}
+          key={tab[1]}
         >
           {tab[1]}
         </button>
