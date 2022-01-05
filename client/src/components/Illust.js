@@ -1,15 +1,18 @@
 import styled from "styled-components";
-import { color, contentWidth } from '../styles';
+import { color, contentWidth, device } from '../styles';
 
 const IllustContainer = styled.div`
-  width: 70vw; /* 임시 */
-  height : calc(70vw * 1);
-  max-width: ${contentWidth};
-  max-height: ${contentWidth};
+  width: 100%; /* 임시 */
+  height : 50vh;
   margin: 0 auto;
   padding: 1rem;
   border: 1px solid ${color.primaryBorder};
   background-color: ${color.white};
+  
+  @media ${device.laptop} {
+    width: calc(${contentWidth} * 2 / 3);
+    height: 100vh;
+  }
 `
 
 const Illust = () => {

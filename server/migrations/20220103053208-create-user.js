@@ -19,12 +19,15 @@ module.exports = {
       },
       is_social: {
         type: Sequelize.BOOLEAN,
+        defaultValue: false,
       },
       is_admin: {
         type: Sequelize.BOOLEAN,
+        defaultValue: false,
       },
       bio: {
         type: Sequelize.STRING,
+        defaultValue: "자기소개를 입력해주세요.",
       },
       badge_id: {
         type: Sequelize.INTEGER,

@@ -9,26 +9,31 @@ import { dummyUserInfo } from "../data/dummyUserInfo";
 
 const MypageContainer = styled.div`
   background-color: ${color.primaryLight};
+  padding: 0 1rem;
+
+  @media ${device.laptop} {
+    height: 100vh;
+    max-width: ${contentWidth};
+    margin: 0 auto;
+    display: flex;
+    gap: 1rem;
+  }
 `;
 
-const MyinfoSection = styled.section`
+const MyChallengesContainer = styled.section`
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
-  /* justify-content: center; */
   align-items: center;
-  gap: 1rem;
-  padding: 1rem;
-  text-align: center;
 `
-const MyChallengesContainer = styled.section``
 
 const ChallengeListContainer = styled.div`
   padding: 1rem;
-  max-width: ${contentWidth};
   margin: 0 auto;
 
   @media ${device.laptop} {
     padding: 1rem 0;
+    width: calc(${contentWidth} * 1 / 3);
   }
 `;
 
@@ -42,8 +47,9 @@ const ChallengeList = styled.ul`
   }
 
   @media ${device.laptop} {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: 1fr;
   }
+
 `;
 
 const Mypage = () => {
@@ -59,7 +65,10 @@ const Mypage = () => {
         <ChallengeListContainer>
             <ChallengeList>
                 {ongoingChallenges.map((el) => (
-                    <ChallengeCard challenge={el} />
+                    <ChallengeCard 
+                      challenge={el}
+                      key={el.challenge_id}  
+                    />
                 ))}
             </ChallengeList>
         </ChallengeListContainer>
@@ -68,7 +77,10 @@ const Mypage = () => {
       <ChallengeListContainer>
             <ChallengeList>
                 {finishedChallenges.map((el) => (
-                    <ChallengeCard challenge={el} />
+                    <ChallengeCard 
+                      challenge={el}
+                      key={el.challenge_id}  
+                    />
                 ))}
             </ChallengeList>
       </ChallengeListContainer>
@@ -77,11 +89,9 @@ const Mypage = () => {
 
   return (
     <MypageContainer>
-      <MyinfoSection>
-        <Illust />
-        <UserProfile userInfo={dummyUserInfo.user_info} successCounts={successCounts}/>
-      </MyinfoSection>
+      <Illust />
       <MyChallengesContainer>
+        <UserProfile userInfo={dummyUserInfo.user_info} successCounts={successCounts}/>
         <Tab
           tabInfo={[
             ["ongoing", "참여중인 챌린지"],

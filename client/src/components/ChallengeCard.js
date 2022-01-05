@@ -25,9 +25,20 @@ const ChallengeCard = ({ challenge }) => {
   const finishedAt = new Date(challenge.started_at)
   finishedAt.setDate(startedAt.getDate() + 6)
   
+  let message = ""
+  
   const regex = /[^0-9]/g;	
   const requirement = parseInt(challenge.requirement.replace(regex, ""))
   const progress = (challenge.checkin_count / requirement) >= 1 ? 1 : (challenge.checkin_count / requirement).toFixed(2)
+
+  if (challenge.is_finished === true) {
+    if (challenge.is_accomplished) message = "챌린지 성공";
+    else message = "챌린지 실패";
+  } else if (challenge.is_finished === false) {
+    message = `${progress * 100}% 완료`;
+  } else {
+    message = "진행예정";
+  }
 
   return (
     <ChallengeCardList>
@@ -38,7 +49,7 @@ const ChallengeCard = ({ challenge }) => {
         </p>
         <p>{challenge.requirement}</p>
         <ChallengeCardStatusContainer>
-          <Highlighted>{progress * 100}% 완료</Highlighted>
+          <Highlighted>{message}</Highlighted>
           <p>참여인원: {challenge.join_count}명</p>
         </ChallengeCardStatusContainer>
       </Link>

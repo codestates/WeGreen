@@ -1,12 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { color, contentWidth, radius } from "../styles";
+import { color, radius } from "../styles";
 import Button from "./Button";
 
 const UserProfileContainer = styled.div`
-  width: 70vw; /* 임시 */
-  /* height: 10vh; 임시 */
-  max-width: ${contentWidth};
+  width: 100%; /* 임시 */
+  min-width: 240px; /* 임시 */
+  max-width: 400px; /* 임시 */
   padding: 1rem;
   margin: 0 auto;
   border: 1px solid ${color.primaryBorder};
@@ -48,7 +48,7 @@ const UserProfile = ({ userInfo, successCounts }) => {
           width="20px"
           height="20px"
           content="*"
-          handler={() => navigate("/editmyinfo")}
+          handler={() => navigate("/editmyinfo", { state: userInfo })}
         />
       </UserNameContainer>
       <p>{userInfo.bio}</p>

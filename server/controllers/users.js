@@ -1,6 +1,3 @@
-var express = require("express");
-var router = express.Router();
-const { Op } = require("sequelize"); //sequelize or 쓸때 필요합니다.
 const { user: UserModel } = require("../models");
 const {
   hashedpassword,
@@ -78,25 +75,32 @@ module.exports = {
     }
   },
   //회원가입
-  signup: async (req, res) => {
-    let password = req.body.password.toString();
-    const encrypted = hashedpassword(password);
-    const [result, created] = await UserModel.findOrCreate({
-      where: { email: req.body.email },
-      defaults: {
-        username: req.body.username,
-        password: encrypted, //해시된 password로 저장.
-      },
-    });
-    if (created) {
-      const { badge_id, id, username, email, updatedAt, createdAt } = result;
-      res
-        .status(201)
-        .json({ badge_id, id, username, email, updatedAt, createdAt }); //password 뺀 result 보내줘야함
-    } else if (!created) {
-      res.status(409).json({ message: "Email already exists" });
-    } else {
-      res.status(500).json({ message: "Internal server error" });
+  signup: async (req, res, next) => {
+    try {
+      let password = req.body.password.toString();
+      const encrypted = hashedpassword(password);
+      const [result, created] = await UserModel.findOrCreate({
+        where: { email: req.body.email },
+        defaults: {
+          username: req.body.username,
+          password: encrypted, //해시된 password로 저장.
+        },
+      });
+      if (created) {
+        const { badge_id, id, username, email, updatedAt, createdAt } = result;
+        res
+          .status(201)
+          .json({ badge_id, id, username, email, updatedAt, createdAt }); //password 뺀 result 보내줘야함
+      } else if (!created) {
+        res.status(409).json({ message: "Email already exists" });
+      } else {
+        res.status(500).json({ message: "Internal server error" });
+      }
+    } catch (err) {
+      res.status(500).send({
+        message: "Internal server error",
+      });
+      next(err);
     }
   },
   // 토큰 확인 후 회원탈퇴
@@ -119,33 +123,42 @@ module.exports = {
     }
   },
 
-  //! 다시 코드 짜야함 비밀번호 변경
+  //비밀번호 변경
   password: async (req, res, next) => {
     try {
-      //이미 존재하는 password 가 있으면 401보내고 "Invalid password or token expired" 이라 합니다.
-      //SELECT users WHERE password:req.body.password
-      const alreadyPassword = await UserModel.findAll({
-        where: {
-          password: req.body.password,
-        },
-      });
-      //이미 존재하는 password 가 있으면 401보내고 "Invalid password or token expired" 이라 합니다.
-      if (alreadyPassword) {
-        return res.status(401).json({
-          message: "Invalid password or token expired",
+      if (isAuthorized) {
+        const { currentPWD, newPWD } = req.body;
+        const DBpassword = await UserModel.findOne({
+          attributes: ["password"],
+          where: {
+            id: req.params.user_id,
+          },
         });
-      }
-      const users = await UserModel.update(
-        {
-          password: req.body.password,
-        },
-        {
-          where: { id: req.params.user_id },
+        if (currentPWD === DBpassword) {
+          res.status(409).json({ message: "Same password" });
+        } else {
+          const encrypted = hashedpassword(newPWD);
+          const changed = await UserModel.update(
+            {
+              password: encrypted, //암호화된 새로운 비밀번호로 DB 저장
+            },
+            {
+              where: {
+                id: req.params.user_id,
+              },
+            }
+          );
+          if (changed) {
+            res.status(200).json({
+              message: "OK",
+            });
+          } else {
+            res.status(500).json({ message: "Internal server error" });
+          }
         }
-      );
-      return res.status(200).json({
-        message: "OK",
-      });
+      } else {
+        res.status(401).json({ message: "Invalid password or token expired" });
+      }
     } catch (err) {
       res.status(500).send({
         message: "Internal server error",
@@ -157,36 +170,52 @@ module.exports = {
     //유저정보 변경
     patch: async (req, res, next) => {
       try {
-        //이미 존재하는 username 가 있으면 401보내고 "message": "Token expired" 이라 합니다.
-        //SELECT alreadyUserInfo WHERE username:req.body.username
-        const alreadyUserInfo = await UserModel.findAll({
-          where: {
-            username: req.body.username,
-          },
-        });
-        //이미 존재하는 password 가 있으면 401보내고 "Invalid password or token expired" 이라 합니다.
-        if (alreadyUserInfo) {
-          return res.status(401).json({
-            message: "Token expired",
-          });
+        if (req.body.username) {
+          await UserModel.update(
+            {
+              username: req.body.username, //새로운 username
+            },
+            {
+              where: {
+                id: req.params.user_id,
+              },
+            }
+          );
         }
-        const users = await UserModel.update(
-          {
-            password: req.body.password,
-            bio: req.body.bio,
-            badge_id: req.body.badge_id,
-          },
-          {
-            where: { id: req.params.user_id },
-          }
-        );
-        return res.status(200).json({
+        if (req.body.bio) {
+          await UserModel.update(
+            {
+              bio: req.body.bio, //새로운 자기소개
+            },
+            {
+              where: {
+                id: req.params.user_id,
+              },
+            }
+          );
+        }
+        if (req.body.badge_id) {
+          await UserModel.update(
+            {
+              badge_id: req.body.badge_id, //새로운 메인 뱃지
+            },
+            {
+              where: {
+                id: req.params.user_id,
+              },
+            }
+          );
+        }
+        const user = await UserModel.findOne({
+          where: { id: req.params.user_id },
+        });
+        res.status(200).json({
           message: "OK",
           data: {
-            user_id: req.body.user_id,
-            username: req.body.username,
-            bio: req.body.bio,
-            badge_id: req.body.badge_id,
+            user_id: req.params.user_id,
+            username: user.username,
+            bio: user.bio,
+            badge_id: user.badge_id,
           },
         });
       } catch (err) {
@@ -199,15 +228,22 @@ module.exports = {
     //유저정보 불러오기
     get: async (req, res, next) => {
       try {
-        const users = await UserModel.findAll({
+        const user = await UserModel.findOne({
           where: { id: req.params.user_id },
         });
-        return res.status(200).json({
+        res.status(200).json({
           message: "OK",
           data: {
-            username: users.username,
-            bio: users.bio,
-            badge_id: users.badge_id,
+            user_info: {
+              username: user.username,
+              bio: user.bio,
+              badge_id: user.badge_id,
+              badges: [],
+              selected_badges: [],
+            },
+            challenge_info: {
+              challenges: [{}],
+            },
           },
         });
       } catch (err) {
