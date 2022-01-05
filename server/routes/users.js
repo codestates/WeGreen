@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const { users } = require("../controllers");
 
-//로그인
+//로그인;
 router.post("/login", users.login);
 
 //로그아웃
@@ -21,3 +21,5 @@ router.patch("/:user_id", users.userinfo.patch);
 
 //유저정보 불러오기
 router.get("/:user_id", users.userinfo.get);
+
+module.exports = router;

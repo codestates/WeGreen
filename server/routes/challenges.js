@@ -23,13 +23,18 @@ router.delete("/:challenge_id", challenges.delete);
 router.get("/:challenge_id/checkins", challenges.checkins);
 
 //댓글 목록 불러오기
-router.get("/:challenge_id/comments", challenges.comments);
+router.get("/:challenge_id/comments", challenges.comments.get);
 
 //댓글 수정하기
-router.patch("/:challenge_id/comments/:comment_id", challenges.comments);
+router.patch("/:challenge_id/comments/:comment_id", challenges.comments.patch);
 
 //댓글 삭제하기
-router.delete("/:challenge_id/comments/:comment_id", challenges.comments);
+router.delete(
+  "/:challenge_id/comments/:comment_id",
+  challenges.comments.delete
+);
 
 //댓글 작성하기
-router.post("/:challenge_id/comments", challenges.comments);
+router.post("/:challenge_id/comments", challenges.comments.post);
+
+module.exports = router;
