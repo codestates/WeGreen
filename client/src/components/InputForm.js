@@ -10,12 +10,20 @@ const Input = styled.input`
   font-size: 1rem;
 `;
 
-const InputForm = ({ placeholder, handleValue }) => {
+const InputForm = ({
+  placeholder,
+  handleValue,
+  handleValid,
+  type = 'text',
+}) => {
   const handleOnChange = (event) => {
     handleValue(event.target.value);
+    handleValid(event.target.value);
   };
 
-  return <Input placeholder={placeholder} onChange={handleOnChange} />;
+  return (
+    <Input placeholder={placeholder} onChange={handleOnChange} type={type} />
+  );
 };
 
 export default InputForm;
