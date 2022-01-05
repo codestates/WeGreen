@@ -18,7 +18,6 @@ const MyinfoSection = styled.section`
   align-items: center;
   gap: 1rem;
   padding: 1rem;
-  height: 80vh;
   text-align: center;
 `
 const MyChallengesContainer = styled.section``

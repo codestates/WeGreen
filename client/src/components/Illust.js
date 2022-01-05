@@ -1,10 +1,11 @@
 import styled from "styled-components";
-import { color, device, contentWidth } from '../styles';
+import { color, contentWidth } from '../styles';
 
 const IllustContainer = styled.div`
-  width: 70%; /* 임시 */
-  height: 50vh; /* 임시 */
+  width: 70vw; /* 임시 */
+  height : calc(70vw * 1);
   max-width: ${contentWidth};
+  max-height: ${contentWidth};
   margin: 0 auto;
   padding: 1rem;
   border: 1px solid ${color.primaryBorder};
