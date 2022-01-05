@@ -4,7 +4,7 @@ import { color, radius } from "../styles";
 import Button from "./Button";
 
 const UserProfileContainer = styled.div`
-  width: 40vw; /* 임시 */
+  width: 100%; /* 임시 */
   min-width: 240px; /* 임시 */
   max-width: 400px; /* 임시 */
   padding: 1rem;

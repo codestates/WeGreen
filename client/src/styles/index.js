@@ -1,7 +1,7 @@
 // 화면 크기
 export const device = {
   // mobile: "360",
-  mobileLandscape: '(min-width: 528px)',
+  mobileLandscape: '(min-width: 528px)', // 600px?
   tablet: '(min-width: 768px)',
   laptop: '(min-width: 1024px)',
 };

@@ -1,7 +1,7 @@
 // action types
 export const LOGIN = 'LOGIN';
 export const LOGOUT = 'LOGOUT';
-export const UPDATE_USERNAME = 'UPDATE_USERNAME';
+export const UPDATE_USERINFO = 'UPDATE_USERINFO';
 
 // actions creator functions
 export const login = (userInfoObj) => {
@@ -24,11 +24,13 @@ export const logout = () => {
   };
 };
 
-export const updateUsername = (userName) => {
+export const updateUserinfo = (userName, userBio) => {
   return {
-    type: UPDATE_USERNAME,
+    type: UPDATE_USERINFO,
     payload: {
       userName,
+      userBio
     },
   };
 };
+

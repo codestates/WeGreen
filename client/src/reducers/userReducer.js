@@ -1,4 +1,4 @@
-import { LOGIN, LOGOUT, UPDATE_USERNAME } from '../actions/index';
+import { LOGIN, LOGOUT, UPDATE_USERINFO } from '../actions/index';
 import { initialState } from './initialState';
 
 const userReducer = (state = initialState, action) => {
@@ -15,7 +15,7 @@ const userReducer = (state = initialState, action) => {
         userInfo: { ...state.userInfo, ...action.payload },
       });
       break;
-    case UPDATE_USERNAME:
+    case UPDATE_USERINFO:
       return Object.assign({}, state, {
         userInfo: { ...state.userInfo, ...action.payload },
       });
