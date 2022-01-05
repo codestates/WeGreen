@@ -1,5 +1,5 @@
 import './App.css';
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route } from 'react-router-dom';
 import Navigation from './components/Navigation';
 import Home from './pages/Home';
 import Login from './pages/Login';
@@ -16,18 +16,20 @@ function App() {
   return (
     <div className="App">
       <Navigation />
-      <Routes>
-        <Route path="/" element={<Home />}/>
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/challenges" element={<Challenges />} />
-        <Route path="/challenge/:id" element={<Challenge />} />
-        <Route path="/createchallenge" element={<CreateChallenge />} />
-        <Route path="/editchallenge" element={<EditChallenge />} />
-        <Route path="/confirmchallenge" element={<ConfirmChallenge />} />
-        <Route path="/mypage" element={<Mypage />} />
-        <Route path="/editmyinfo" element={<EditMyinfo />} />
-      </Routes>
+      <main>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/challenges" element={<Challenges />} />
+          <Route path="/challenge/:id" element={<Challenge />} />
+          <Route path="/createchallenge" element={<CreateChallenge />} />
+          <Route path="/editchallenge" element={<EditChallenge />} />
+          <Route path="/confirmchallenge" element={<ConfirmChallenge />} />
+          <Route path="/mypage" element={<Mypage />} />
+          <Route path="/editmyinfo" element={<EditMyinfo />} />
+        </Routes>
+      </main>
     </div>
   );
 }
