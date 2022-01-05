@@ -1,6 +1,6 @@
-import { useState } from "react";
-import styled from "styled-components";
-import { color, radius } from "../styles";
+import { useState } from 'react';
+import styled from 'styled-components';
+import { color, radius } from '../styles';
 
 const Input = styled.input`
   width: 100%;
@@ -11,14 +11,18 @@ const Input = styled.input`
   font-size: 1rem;
 `;
 
-const InputForm = ({ defaultValue="", type='text', placeholder, handleValue }) => {
-  const [input, setInput] = useState(defaultValue)
+const InputForm = ({
+  defaultValue = '',
+  type = 'text',
+  placeholder,
+  handleValue,
+}) => {
+  const [input, setInput] = useState(defaultValue);
 
   const handleOnChange = (event) => {
     handleValue(event.target.value);
-    setInput(event.target.value)
+    setInput(event.target.value);
   };
-  
 
   return (
     <Input

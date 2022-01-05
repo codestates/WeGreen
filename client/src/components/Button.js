@@ -8,6 +8,7 @@ const ButtonTemplate = styled.button`
   padding: 0 1rem;
   border-radius: ${radius};
   background-color: ${(props) => color[props.color]};
+  font-size: 1rem;
   cursor: pointer;
   overflow: hidden;
 
