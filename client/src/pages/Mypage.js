@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { updateUserinfo } from "../actions";
 import { requestMyinfo } from "../apis";
 import styled from "styled-components";
@@ -11,8 +12,6 @@ import ChallengeCard from "../components/ChallengeCard";
 // import { dummyUserInfo } from "../data/dummyUserInfo";
 
 const MypageContainer = styled.div`
-  background-color: ${color.primaryLight};
-
   @media ${device.laptop} {
     height: 100vh;
     max-width: ${contentWidth};
@@ -28,7 +27,7 @@ const MyChallengesContainer = styled.section`
   flex-direction: column;
   align-items: center;
   gap: 1rem;
-`
+`;
 
 const ChallengeListContainer = styled.div`
   padding: 1rem;
@@ -68,17 +67,18 @@ const Mypage = () => {
   const state = useSelector((state) => state.userReducer);
   const myinfo = state.userInfo
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    requestMyinfo("1").then(result => {
-      setChallenges(result.challenge_info.challenges)
-      dispatch(updateUserinfo({
-        username: result.user_info.username,
-        bio: result.user_info.bio,
-        badgeId: result.user_info.badge_id,
-        badges: result.user_info.badges,            
-    }))
-  })
+    if (!state.isLogin) {
+      navigate('/')
+    } else {
+      requestMyinfo(`${myinfo.user_id}`).then(result => {
+        setChallenges(result.challenge_info.challenges)
+        const data = result.user_info
+        dispatch(updateUserinfo(data))
+      })
+    }
   // eslint-disable-next-line
   }, [])
 
