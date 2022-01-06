@@ -24,12 +24,11 @@ export const logout = () => {
   };
 };
 
-export const updateUserinfo = (userName, userBio) => {
+export const updateUserinfo = (userInfo) => {
   return {
     type: UPDATE_USERINFO,
     payload: {
-      userName,
-      userBio
+      ...userInfo,
     },
   };
 };
