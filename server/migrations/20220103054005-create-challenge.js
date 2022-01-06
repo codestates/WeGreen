@@ -27,10 +27,17 @@ module.exports = {
       updatedAt: {
         allowNull: false,
         type: Sequelize.DATE
-      }
-    });
+      },
+    })
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('challenges');
+    await queryInterface.changeColumn('challenges ', 'requirement', {
+      type: Sequelize.INTEGER,
+    })
+    await queryInterface.addColumn('challenges', 'join_count', {
+      type: Sequelize.INTEGER,
+      defaultValue:0
+    })
+    await queryInterface.removeColumn('challenges', 'visits')
   }
 };
