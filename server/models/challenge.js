@@ -17,10 +17,13 @@ module.exports = (sequelize, DataTypes) => {
     name: DataTypes.STRING,
     content: DataTypes.STRING,
     started_at: DataTypes.DATE,
-    requirement: DataTypes.STRING
+    requirement: DataTypes.INTEGER,
+    // visits : {type : DataTypes.INTEGER,
+    // }
   }, {
     sequelize,
-    modelName: 'challenge',
-  });
+    modelName: 'challenge'
+  }
+  );
   return challenge;
 };
