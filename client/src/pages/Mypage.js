@@ -1,4 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { updateUserinfo } from "../actions";
+import axios from 'axios'
 import styled from "styled-components";
 import { color, device, contentWidth } from "../styles";
 import Illust from "../components/Illust";
@@ -6,6 +9,8 @@ import UserProfile from "../components/UserProfile";
 import Tab from "../components/Tab";
 import ChallengeCard from "../components/ChallengeCard";
 import { dummyUserInfo } from "../data/dummyUserInfo";
+
+axios.defaults.withCredentials = true;
 
 const MypageContainer = styled.div`
   background-color: ${color.primaryLight};
@@ -54,6 +59,25 @@ const ChallengeList = styled.ul`
 
 const Mypage = () => {
   const [view, setView] = useState("ongoing");
+  const state = useSelector((state) => state.userReducer);
+  const myinfo = state.userInfo
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const getMyinfo = async () => {
+      const myinfo = await axios
+      .get(`${process.env.REACT_APP_SERVER_URL}/users/1`)
+      .then(res => res.data.data.user_info)
+      dispatch(updateUserinfo({
+        username: myinfo.username,
+        bio: myinfo.bio,
+        badge_id: myinfo.badge_id,
+        badges: myinfo.badges,
+      }))
+    }
+    getMyinfo()
+  // eslint-disable-next-line
+  }, [])
 
   const ongoingChallenges = dummyUserInfo.challenge_info.filter(el => el.is_finished === false)
   const finishedChallenges = dummyUserInfo.challenge_info.filter(el => el.is_finished === true)
@@ -91,7 +115,7 @@ const Mypage = () => {
     <MypageContainer>
       <Illust />
       <MyChallengesContainer>
-        <UserProfile userInfo={dummyUserInfo.user_info} successCounts={successCounts}/>
+        <UserProfile userInfo={myinfo} successCounts={successCounts}/>
         <Tab
           tabInfo={[
             ["ongoing", "참여중인 챌린지"],

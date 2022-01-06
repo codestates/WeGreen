@@ -7,8 +7,6 @@ const cors = require("cors");
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use("/", router);
-app.use(cookieParser());
 
 app.use(
   cors({
@@ -17,10 +15,13 @@ app.use(
     methods: ["GET", "POST", "OPTIONS", "PATCH", "DELETE"],
   })
 );
+app.use(cookieParser());
 
 app.get("/", (req, res) => {
   res.send("Hello WeGreen!");
 });
+
+app.use("/", router);
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);

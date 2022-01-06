@@ -73,6 +73,7 @@ const EditMyinfo = () => {
     re: "",
   });
   const [myinfo, setMyinfo] = useState(state.userInfo);
+  console.log(myinfo)
 
   const handleInputPassword = (key) => (value) => {
     setModify({ ...modify, [key]: value });
@@ -83,6 +84,13 @@ const EditMyinfo = () => {
 
   const handleIsExpanded = () => setIsExpanded(!isExpanded);
 
+  const dispatchUserinfo = () => {
+    return dispatch(updateUserinfo({
+      username: myinfo.username,
+      bio: myinfo.bio,
+    }))
+  }
+
   return (
     <EditMyinfoContainer>
       <Illust />
@@ -91,19 +99,19 @@ const EditMyinfo = () => {
           <div>
             <MainBadgeImg badgeId={1} alt="대표뱃지" />
             <InputForm
-              defaultValue={myinfo.userName}
+              defaultValue={myinfo.username}
               placeholder="사용자 이름"
-              handleValue={handleMyinfo("userName")}
+              handleValue={handleMyinfo("username")}
             />
           </div>
           <TextareaForm
-            defaultValue={myinfo.userBio}
+            defaultValue={myinfo.bio}
             placeholder="사용자 소개"
-            handleValue={handleMyinfo("userBio")}
+            handleValue={handleMyinfo("nio")}
           />
           <Button
             content="저장하기"
-            handler={() => dispatch(updateUserinfo(myinfo.userName, myinfo.userBio))}
+            handler={dispatchUserinfo}
           />
         </EditMyinfoBioContainer>
         <ModifyPasswordContainer>
