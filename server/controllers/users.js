@@ -18,41 +18,47 @@ module.exports = {
           email: req.body.email,
         },
       });
-      const compareResult = comparepassword(
-        req.body.password.toString(),
-        DBpassword.password
-      );
-      const user = await UserModel.findOne({
-        where: {
-          email: req.body.email,
-        },
-      });
-      if (user && compareResult) {
-        const data = {
-          user_id: user.id,
-          username: user.username,
-          is_admin: user.is_admin,
-        };
-        const { id, email, username, is_social, is_admin, bio, badge_id } =
-          user;
-        const accessToken = generateAccessToken(
-          JSON.stringify({
-            id,
-            email,
-            username,
-            is_social,
-            is_admin,
-            bio,
-            badge_id,
-          })
-        );
-        sendAccessToken(res, data, accessToken);
-      }
-      //user의 정보랑 일치하는게 없으면 "message":"Invalid password or email"랑 401을 보낸다.
-      else {
-        return res.status(401).send({
+      if (!DBpassword) {
+        res.status(401).send({
           message: "Invalid password or email",
         });
+      } else {
+        const compareResult = comparepassword(
+          req.body.password.toString(),
+          DBpassword.password
+        );
+        const user = await UserModel.findOne({
+          where: {
+            email: req.body.email,
+          },
+        });
+        if (user && compareResult) {
+          const data = {
+            user_id: user.id,
+            username: user.username,
+            is_admin: user.is_admin,
+          };
+          const { id, email, username, is_social, is_admin, bio, badge_id } =
+            user;
+          const accessToken = generateAccessToken(
+            JSON.stringify({
+              id,
+              email,
+              username,
+              is_social,
+              is_admin,
+              bio,
+              badge_id,
+            })
+          );
+          sendAccessToken(res, data, accessToken);
+        }
+        //user의 정보랑 일치하는게 없으면 "message":"Invalid password or email"랑 401을 보낸다.
+        else {
+          return res.status(401).send({
+            message: "Invalid password or email",
+          });
+        }
       }
     } catch (err) {
       res.status(500).send({
@@ -104,16 +110,20 @@ module.exports = {
     }
   },
   // 토큰 확인 후 회원탈퇴
-  signout: async (req, res, next) => {
+  signout: (req, res, next) => {
     try {
-      if (isAuthorized) {
-        const result = await UserModel.destroy({
+      if (isAuthorized(req)) {
+        const userInfo = JSON.parse(isAuthorized(req).data);
+        const userId = userInfo.id;
+        UserModel.destroy({
           where: {
-            email: req.body.email,
+            id: userId,
           },
+          cascade: true,
+        }).then(() => {
+          res.clearCookie("accessToken");
+          res.sendStatus(204);
         });
-        res.clearCookie("accessToken");
-        res.status(204).json(result);
       }
     } catch (err) {
       res.status(500).send({
@@ -126,7 +136,7 @@ module.exports = {
   //비밀번호 변경
   password: async (req, res, next) => {
     try {
-      if (isAuthorized) {
+      if (isAuthorized(req)) {
         const { currentPWD, newPWD } = req.body;
         const DBpassword = await UserModel.findOne({
           attributes: ["password"],
@@ -134,7 +144,11 @@ module.exports = {
             id: req.params.user_id,
           },
         });
-        if (currentPWD === DBpassword) {
+        if (!comparepassword(currentPWD.toString(), DBpassword.password)) {
+          res
+            .status(401)
+            .json({ message: "Invalid password or token expired" });
+        } else if (comparepassword(newPWD.toString(), DBpassword.password)) {
           res.status(409).json({ message: "Same password" });
         } else {
           const encrypted = hashedpassword(newPWD);

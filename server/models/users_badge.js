@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class users_badge extends Model {
     /**
@@ -11,13 +9,18 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      users_badge.belongsTo(models.user);
+      users_badge.belongsTo(models.badge);
     }
-  };
-  users_badge.init({
-    is_selected: DataTypes.BOOLEAN
-  }, {
-    sequelize,
-    modelName: 'users_badge',
-  });
+  }
+  users_badge.init(
+    {
+      is_selected: DataTypes.BOOLEAN,
+    },
+    {
+      sequelize,
+      modelName: "users_badge",
+    }
+  );
   return users_badge;
 };

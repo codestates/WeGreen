@@ -43,32 +43,5 @@ Object.keys(db).forEach((modelName) => {
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
-//associations 설정
-const {
-  user,
-  challenge,
-  users_challenge,
-  checkin,
-  badge,
-  comment,
-  users_badge,
-} = sequelize.models;
-challenge.hasMany(users_challenge);
-challenge.hasMany(checkin);
-challenge.hasMany(comment);
-user.hasMany(users_challenge);
-user.hasMany(checkin);
-user.hasMany(comment);
-user.hasMany(users_badge);
-badge.hasMany(users_badge);
-
-users_challenge.belongsTo(challenge);
-checkin.belongsTo(challenge);
-comment.belongsTo(challenge);
-users_challenge.belongsTo(user);
-checkin.belongsTo(user);
-comment.belongsTo(user);
-users_badge.belongsTo(user);
-users_badge.belongsTo(badge);
 
 module.exports = db;

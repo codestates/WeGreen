@@ -1,43 +1,38 @@
-'use strict';
+"use strict";
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('challenges', {
+    await queryInterface.createTable("challenges", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        onDelete: "cascade",
+        onUpdate: "cascade",
       },
       name: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       content: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       started_at: {
-        type: Sequelize.DATE
+        type: Sequelize.DATEONLY,
       },
       requirement: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
-    })
+    });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.changeColumn('challenges ', 'requirement', {
-      type: Sequelize.INTEGER,
-    })
-    await queryInterface.addColumn('challenges', 'join_count', {
-      type: Sequelize.INTEGER,
-      defaultValue:0
-    })
-    await queryInterface.removeColumn('challenges', 'visits')
-  }
+    await queryInterface.dropTable("challenges");
+  },
 };

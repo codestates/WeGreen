@@ -9,11 +9,14 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      users_challenge.belongsTo(models.challenge);
+      users_challenge.belongsTo(models.user);
     }
   }
   users_challenge.init(
     {
-      createAt: DataTypes.DATE,
+      user_id: DataTypes.INTEGER,
+      challenge_id: DataTypes.INTEGER,
     },
     {
       sequelize,
