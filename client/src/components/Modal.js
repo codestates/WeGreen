@@ -18,15 +18,18 @@ const ModalContainer = styled.div`
   transform: translate(-50%, -50%);
   z-index: 99999;
   display: flex;
+  width: 80vw;
   flex-direction: column;
-  width: 288px;
   padding: 1rem;
   background-color: white;
   border-radius: ${radius};
   text-align: center;
 
+  @media ${device.tablet} {
+    max-width: 400px;
+  }
   @media ${device.laptop} {
-    width: 400px;
+    max-width: 460px;
   }
 `;
 

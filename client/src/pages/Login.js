@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import InputForm from '../components/InputForm';
 import Button from '../components/Button';
 import SocialBtn from '../components/SocialBtn';
+import Modal from '../components/Modal';
 import { ReactComponent as Wave } from '../assets/images/wave.svg';
 import { color, device, radius, boxShadow } from '../styles';
 import mainIllust from '../assets/images/main_illust.png';
@@ -142,9 +143,41 @@ const ColoredSpan = styled.span`
   color: ${color.primary};
 `;
 
+const ModalMessage = ({ status }) => {
+  switch (status) {
+    case 'empty input':
+      return <p>반드시 모든 칸을 입력해야 합니다.</p>;
+    case 'unauthorized':
+      return (
+        <p>
+          비밀번호가 잘못되었습니다.
+          <br />
+          다시 시도해 주세요.
+        </p>
+      );
+    case 'network error':
+      return (
+        <p>
+          네트워크 에러가 발생하여 로그인이 실패하였습니다. <br />
+          다시 시도해 주세요.
+        </p>
+      );
+    default:
+      return (
+        <p>
+          에러가 발생하여 로그인이 실패하였습니다. <br />
+          다시 시도해 주세요.
+        </p>
+      );
+  }
+};
+
 const Login = () => {
   let navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [responseStatus, setResponseStatus] = useState('no status');
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -165,12 +198,28 @@ const Login = () => {
     event.preventDefault();
     if (email === '') {
       setIsEmptyEmail(true);
+      setResponseStatus('empty input');
+      setIsModalOpen(true);
     } else if (password === '') {
       setIsEmptyPassword(true);
+      setResponseStatus('empty input');
+      setIsModalOpen(true);
     } else {
       requestLogin(email, password).then((result) => {
-        dispatch(login(result));
-        navigate('/');
+        if (!result.status) {
+          setResponseStatus('network error');
+          setIsModalOpen(true);
+        } else if (result.status === 200) {
+          setResponseStatus('ok');
+          dispatch(login(result.data.data));
+          navigate('/');
+        } else if (result.status === 401) {
+          setResponseStatus('unauthorized');
+          setIsModalOpen(true);
+        } else if (result.status === 500) {
+          setResponseStatus('server error');
+          setIsModalOpen(true);
+        }
       });
     }
   };
@@ -221,6 +270,11 @@ const Login = () => {
           </Link>
         </LoginSection>
       </LoginContainer>
+      {isModalOpen ? (
+        <Modal closeModal={setIsModalOpen}>
+          <ModalMessage status={responseStatus} />
+        </Modal>
+      ) : null}
     </Container>
   );
 };
