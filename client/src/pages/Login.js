@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { color } from '../styles';
 import InputForm from '../components/InputForm';
@@ -7,6 +8,7 @@ import Button from '../components/Button';
 import SocialBtn from '../components/SocialBtn';
 import { ReactComponent as Wave } from '../assets/images/wave.svg';
 import { requestLogin } from '../apis';
+import { login } from '../actions';
 
 const LoginContainer = styled.div`
   background-color: ${color.white};
@@ -83,15 +85,19 @@ const ColoredSpan = styled.span`
 `;
 
 const Login = () => {
+  const state = useSelector((state) => state.userReducer);
+  const dispatch = useDispatch();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isEmptyEmail, setIsEmptyEmail] = useState(false);
   const [isEmptyPassword, setIsEmptyPassword] = useState(false);
 
-  const handleSubmit = () => {
+  const handleSubmit = (event) => {
+    event.preventDefault();
     if (isEmptyEmail || isEmptyPassword) {
     } else {
-      requestLogin(email, password);
+      requestLogin(email, password).then((result) => dispatch(login(result)));
     }
   };
 
@@ -116,7 +122,7 @@ const Login = () => {
           {isEmptyPassword ? (
             <InvalidMessage>*비밀번호를 입력해 주세요.</InvalidMessage>
           ) : null}
-          <Button content="로그인" onSubmit={handleSubmit}></Button>
+          <Button content="로그인" handler={handleSubmit}></Button>
         </LoginForm>
         <Divider>
           <span>or</span>
