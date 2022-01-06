@@ -4,7 +4,7 @@ import { color, radius } from '../styles'
 
 const Textarea = styled.textarea`
   width: 100%;
-  height: 80px;
+  height: 120px;
   padding: 1rem;
   border: 1px solid ${color.primaryBorder};
   border-radius: ${radius};
