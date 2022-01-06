@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { color } from '../styles';
 import InputForm from '../components/InputForm';
@@ -85,7 +85,7 @@ const ColoredSpan = styled.span`
 `;
 
 const Login = () => {
-  const state = useSelector((state) => state.userReducer);
+  let navigate = useNavigate();
   const dispatch = useDispatch();
 
   const [email, setEmail] = useState('');
@@ -93,11 +93,27 @@ const Login = () => {
   const [isEmptyEmail, setIsEmptyEmail] = useState(false);
   const [isEmptyPassword, setIsEmptyPassword] = useState(false);
 
+  const onChangeEmail = (val) => {
+    setEmail(val);
+    setIsEmptyEmail(val === '');
+  };
+
+  const onChangePassword = (val) => {
+    setPassword(val);
+    setIsEmptyPassword(val === '');
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
-    if (isEmptyEmail || isEmptyPassword) {
+    if (email === '') {
+      setIsEmptyEmail(true);
+    } else if (password === '') {
+      setIsEmptyPassword(true);
     } else {
-      requestLogin(email, password).then((result) => dispatch(login(result)));
+      requestLogin(email, password).then((result) => {
+        dispatch(login(result));
+        navigate('/');
+      });
     }
   };
 
@@ -110,13 +126,13 @@ const Login = () => {
           <Wave width="100%" height="100" fill={color.white} />
         </TitleContainer>
         <LoginForm>
-          <InputForm placeholder="이메일" handleValue={setEmail} />
+          <InputForm placeholder="이메일" handleValue={onChangeEmail} />
           {isEmptyEmail ? (
             <InvalidMessage>*이메일을 입력해 주세요.</InvalidMessage>
           ) : null}
           <InputForm
             placeholder="비밀번호"
-            handleValue={setPassword}
+            handleValue={onChangePassword}
             type="password"
           />
           {isEmptyPassword ? (
