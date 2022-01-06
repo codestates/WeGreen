@@ -1,18 +1,59 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { color } from '../styles';
 import InputForm from '../components/InputForm';
 import Button from '../components/Button';
 import SocialBtn from '../components/SocialBtn';
+import Modal from '../components/Modal';
 import { ReactComponent as Wave } from '../assets/images/wave.svg';
+import { color, device, radius, boxShadow } from '../styles';
+import mainIllust from '../assets/images/main_illust.png';
 import { requestSignup } from '../apis';
+
+const Container = styled.div`
+  @media ${device.laptop} {
+    width: 100%;
+    height: calc(100vh - 60px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: ${color.primaryLight};
+  }
+`;
 
 const SignupContainer = styled.div`
   background-color: ${color.white};
+
+  @media ${device.laptop} {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    width: 980px;
+    height: 600px;
+    border-radius: ${radius};
+    box-shadow: ${boxShadow};
+    overflow: hidden;
+  }
 `;
 
-const IllustSection = styled.section``;
+const IllustSection = styled.section`
+  display: none;
+
+  @media ${device.laptop} {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+    background-color: ${color.primary};
+    color: ${color.white};
+    text-align: center;
+    img {
+      width: 75%;
+      padding: 1rem;
+    }
+  }
+`;
 
 const SignupSection = styled.section`
   display: flex;
@@ -20,6 +61,12 @@ const SignupSection = styled.section`
   justify-content: space-between;
   align-items: center;
   gap: 1.5rem;
+
+  @media ${device.laptop} {
+    justify-content: flex-start;
+    padding: 1rem 0;
+    overflow-y: auto;
+  }
 `;
 
 const TitleContainer = styled.div`
@@ -33,6 +80,16 @@ const TitleContainer = styled.div`
     text-align: center;
   }
   background-color: ${color.primary};
+
+  @media ${device.laptop} {
+    h1 {
+      color: ${color.primary};
+    }
+    svg {
+      display: none;
+    }
+    background-color: transparent;
+  }
 `;
 
 const SignupForm = styled.form`
@@ -43,6 +100,10 @@ const SignupForm = styled.form`
   max-width: 460px;
   margin-top: -1.5rem;
   padding: 0 1rem;
+
+  @media ${device.laptop} {
+    margin-top: 1rem;
+  }
 `;
 
 const InvalidMessage = styled.p`
@@ -83,6 +144,10 @@ const ColoredSpan = styled.span`
 `;
 
 const Signup = () => {
+  const navigate = useNavigate();
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -137,64 +202,88 @@ const Signup = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    requestSignup(email, username, password);
+    if (
+      isValidEmail &&
+      isValidUsername &&
+      isValidPassword &&
+      isValidPasswordConfirm
+    ) {
+      requestSignup(email, username, password).then(() => navigate('/login'));
+    }
   };
 
   return (
-    <SignupContainer>
-      <IllustSection></IllustSection>
-      <SignupSection>
-        <TitleContainer>
-          <h1>회원가입</h1>
-          <Wave width="100%" height="100" fill={color.white} />
-        </TitleContainer>
-        <SignupForm>
-          <InputForm placeholder="이메일" handleValue={onChangeEmail} />
-          {isValidEmail ? null : (
-            <InvalidMessage>*이메일 형식이 유효하지 않습니다.</InvalidMessage>
-          )}
-          <InputForm placeholder="닉네임" handleValue={onChangeUsername} />
-          {isValidUsername ? null : (
-            <InvalidMessage>
-              *닉네임은 한글 또는 영문 대소문자 2~15자리만 사용 가능합니다.
-            </InvalidMessage>
-          )}
-          <InputForm
-            placeholder="비밀번호"
-            handleValue={onChangePassword}
-            type="password"
-          />
-          {isValidPassword ? null : (
-            <InvalidMessage>
-              *비밀번호는 최소 8자리 이상이어야 하며 영문자, 숫자,
-              특수문자(!@#$%^&*?)가 1개 이상 사용되어야 합니다.
-            </InvalidMessage>
-          )}
-          <InputForm
-            placeholder="비밀번호 확인"
-            handleValue={onChangePasswordConfirm}
-            type="password"
-          />
-          {isValidPasswordConfirm ? null : (
-            <InvalidMessage>*비밀번호가 다릅니다.</InvalidMessage>
-          )}
-          <Button content="회원가입" handler={handleSubmit}></Button>
-        </SignupForm>
-        <Divider>
-          <span>or</span>
-        </Divider>
-        <SocialContainer>
-          <SocialBtn />
-          <SocialBtn />
-          <SocialBtn />
-        </SocialContainer>
-        <Link to="/login">
-          <ColoredSpan>
-            이미 회원이신가요? <strong>로그인</strong>
-          </ColoredSpan>
-        </Link>
-      </SignupSection>
-    </SignupContainer>
+    <Container>
+      <SignupContainer>
+        <IllustSection>
+          <img src={mainIllust} />
+          <h3>환경을 지키는 습관, WeGreen과 함께 만들어요</h3>
+          <p>
+            실천하기 쉽도록 챌린지는 일주일 단위로 진행됩니다.
+            <br />
+            챌린지를 성공하면 뱃지가 주어져요. 뱃지들을 모아 마이페이지를
+            꾸며보세요.
+          </p>
+        </IllustSection>
+        <SignupSection>
+          <TitleContainer>
+            <h1>회원가입</h1>
+            <Wave width="100%" height="100" fill={color.white} />
+          </TitleContainer>
+          <SignupForm>
+            <InputForm placeholder="이메일" handleValue={onChangeEmail} />
+            {isValidEmail ? null : (
+              <InvalidMessage>*이메일 형식이 유효하지 않습니다.</InvalidMessage>
+            )}
+            <InputForm placeholder="닉네임" handleValue={onChangeUsername} />
+            {isValidUsername ? null : (
+              <InvalidMessage>
+                *닉네임은 한글 또는 영문 대소문자 2~15자리만 사용 가능합니다.
+              </InvalidMessage>
+            )}
+            <InputForm
+              placeholder="비밀번호"
+              handleValue={onChangePassword}
+              type="password"
+            />
+            {isValidPassword ? null : (
+              <InvalidMessage>
+                *비밀번호는 최소 8자리 이상이어야 하며 영문자, 숫자,
+                특수문자(!@#$%^&*?)가 1개 이상 사용되어야 합니다.
+              </InvalidMessage>
+            )}
+            <InputForm
+              placeholder="비밀번호 확인"
+              handleValue={onChangePasswordConfirm}
+              type="password"
+            />
+            {isValidPasswordConfirm ? null : (
+              <InvalidMessage>*비밀번호가 다릅니다.</InvalidMessage>
+            )}
+            <Button content="회원가입" handler={handleSubmit}></Button>
+          </SignupForm>
+          <Divider>
+            <span>or</span>
+          </Divider>
+          <SocialContainer>
+            <SocialBtn />
+            <SocialBtn />
+            <SocialBtn />
+          </SocialContainer>
+          <Link to="/login">
+            <ColoredSpan>
+              이미 회원이신가요? <strong>로그인</strong>
+            </ColoredSpan>
+          </Link>
+        </SignupSection>
+      </SignupContainer>
+      {isModalOpen ? (
+        <Modal closeModal={setIsModalOpen}>
+          <p>모달입니다 모달입니다 모달입니다 모달입니다</p>
+          <Button content="모달버튼" />
+        </Modal>
+      ) : null}
+    </Container>
   );
 };
 
