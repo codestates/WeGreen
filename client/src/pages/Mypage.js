@@ -1,35 +1,33 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { updateUserinfo } from "../actions";
-import axios from 'axios'
+import { requestMyinfo } from "../apis";
 import styled from "styled-components";
 import { color, device, contentWidth } from "../styles";
 import Illust from "../components/Illust";
 import UserProfile from "../components/UserProfile";
 import Tab from "../components/Tab";
 import ChallengeCard from "../components/ChallengeCard";
-import { dummyUserInfo } from "../data/dummyUserInfo";
-
-axios.defaults.withCredentials = true;
+// import { dummyUserInfo } from "../data/dummyUserInfo";
 
 const MypageContainer = styled.div`
   background-color: ${color.primaryLight};
-  padding: 0 1rem;
 
   @media ${device.laptop} {
     height: 100vh;
     max-width: ${contentWidth};
     margin: 0 auto;
     display: flex;
-    gap: 1rem;
   }
 `;
 
 const MyChallengesContainer = styled.section`
+  height: 70vh;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 1rem;
 `
 
 const ChallengeListContainer = styled.div`
@@ -46,68 +44,91 @@ const ChallengeList = styled.ul`
   display: grid;
   grid-template-columns: 1fr;
   gap: 1rem;
+  text-align: center;
+  font-weight: bold;
 
   @media ${device.mobileLandscape} {
     grid-template-columns: repeat(2, 1fr);
   }
-
   @media ${device.laptop} {
     grid-template-columns: 1fr;
   }
+`;
 
+const EmptyMessage = styled.p`
+  color: ${color.primary};
+  font-size: 3rem;
+  text-align: center;
+  word-break: keep-all;
 `;
 
 const Mypage = () => {
   const [view, setView] = useState("ongoing");
+  const [challenges, setChallenges] = useState([{}])
   const state = useSelector((state) => state.userReducer);
   const myinfo = state.userInfo
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const getMyinfo = async () => {
-      const myinfo = await axios
-      .get(`${process.env.REACT_APP_SERVER_URL}/users/1`)
-      .then(res => res.data.data.user_info)
+    requestMyinfo("1").then(result => {
+      setChallenges(result.challenge_info.challenges)
       dispatch(updateUserinfo({
-        username: myinfo.username,
-        bio: myinfo.bio,
-        badge_id: myinfo.badge_id,
-        badges: myinfo.badges,
-      }))
-    }
-    getMyinfo()
+        username: result.user_info.username,
+        bio: result.user_info.bio,
+        badgeId: result.user_info.badge_id,
+        badges: result.user_info.badges,            
+    }))
+  })
   // eslint-disable-next-line
   }, [])
 
-  const ongoingChallenges = dummyUserInfo.challenge_info.filter(el => el.is_finished === false)
-  const finishedChallenges = dummyUserInfo.challenge_info.filter(el => el.is_finished === true)
+  // const ongoingChallenges = dummyUserInfo.challenge_info.filter(el => el.is_finished === false)
+  // const finishedChallenges = dummyUserInfo.challenge_info.filter(el => el.is_finished === true)
 
-  const successCounts = dummyUserInfo.challenge_info.filter(el => el.is_accomplished === true).length
+  // const successCounts = dummyUserInfo.challenge_info
+  //                         .filter(el => el.is_finished === true && el.is_accomplished === true).length
+  const ongoingChallenges = challenges.filter(el => el.is_finished === false)
+  const finishedChallenges = challenges.filter(el => el.is_finished === true)
+
+  const successCounts = challenges
+                          .filter(el => el.is_finished === true && el.is_accomplished === true).length
 
   const tabContent = {
     ongoing: (
-        <ChallengeListContainer>
-            <ChallengeList>
-                {ongoingChallenges.map((el) => (
-                    <ChallengeCard 
-                      challenge={el}
-                      key={el.challenge_id}  
-                    />
-                ))}
-            </ChallengeList>
-        </ChallengeListContainer>
-      ),
+      <>
+        {ongoingChallenges.length === 0 ?
+          <EmptyMessage>
+            참여중인<br />챌린지가<br />없습니다
+          </EmptyMessage>
+          :
+          <ChallengeList> 
+            {ongoingChallenges.map((el) => (
+              <ChallengeCard 
+                challenge={el}
+                key={el.challenge_id}  
+              />              
+            ))}
+          </ChallengeList>
+        }
+      </>
+    ),
     finished: (
-      <ChallengeListContainer>
-            <ChallengeList>
-                {finishedChallenges.map((el) => (
-                    <ChallengeCard 
-                      challenge={el}
-                      key={el.challenge_id}  
-                    />
-                ))}
-            </ChallengeList>
-      </ChallengeListContainer>
+      <>
+        {finishedChallenges.length === 0 ?
+          <EmptyMessage>
+            완료된<br />챌린지가<br />없습니다
+          </EmptyMessage>
+          :
+          <ChallengeList> 
+            {finishedChallenges.map((el) => (
+              <ChallengeCard 
+                challenge={el}
+                key={el.challenge_id}  
+              />              
+            ))}
+          </ChallengeList>
+        }
+      </>
     ),
   };
 
@@ -115,7 +136,10 @@ const Mypage = () => {
     <MypageContainer>
       <Illust />
       <MyChallengesContainer>
-        <UserProfile userInfo={myinfo} successCounts={successCounts}/>
+        <UserProfile
+          userInfo={myinfo}
+          successCounts={successCounts}
+        />
         <Tab
           tabInfo={[
             ["ongoing", "참여중인 챌린지"],
@@ -123,7 +147,9 @@ const Mypage = () => {
           ]}
           handleView={setView}
         />
-        {tabContent[view]}
+        <ChallengeListContainer>
+          {tabContent[view]}    
+        </ChallengeListContainer>
       </MyChallengesContainer>
     </MypageContainer>
   );

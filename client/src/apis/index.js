@@ -28,3 +28,11 @@ export const requestSignup = (email, username, password) => {
     )
     .then((result) => console.log(result));
 };
+
+export const requestMyinfo = (userId) => {
+  return axios
+    .get(
+      `${process.env.REACT_APP_API_URL}/users/${userId}`,
+    )
+    .then((result) => result.data.data);
+};

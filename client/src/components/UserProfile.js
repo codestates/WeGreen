@@ -1,18 +1,24 @@
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { color, radius } from "../styles";
+import { color, device, radius, boxShadow } from "../styles";
 import Button from "./Button";
 
 const UserProfileContainer = styled.div`
+  position: relative;
+  top: -1rem;
   width: 100%; /* 임시 */
-  min-width: 240px; /* 임시 */
+  min-width: 300px; /* 임시 */
   max-width: 400px; /* 임시 */
   padding: 1rem;
   margin: 0 auto;
-  border: 1px solid ${color.primaryBorder};
   border-radius: ${radius};
   background-color: ${color.white};
+  box-shadow: ${boxShadow};
   word-break: keep-all;
+
+  @media ${device.laptop} {
+    top: 0;
+  }
 `;
 
 const UserNameContainer = styled.div`
@@ -47,13 +53,13 @@ const UserProfile = ({ userInfo, successCounts }) => {
         <Button
           width="20px"
           height="20px"
-          content="*"
-          handler={() => navigate("/editmyinfo", { state: userInfo })}
+          content="  "
+          handler={() => navigate("/editmyinfo")}
         />
       </UserNameContainer>
       <p>{userInfo.bio}</p>
       <UserProfileLowContainer>
-        <div>모은 뱃지 3개</div>
+        <div>모은 뱃지 {userInfo.badges.length}개</div>
         <div>성공한 챌린지 : {successCounts}개</div>
       </UserProfileLowContainer>
     </UserProfileContainer>
