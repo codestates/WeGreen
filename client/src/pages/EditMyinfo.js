@@ -1,6 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { updateUserinfo } from "../actions";
+import { requestMyinfo, updateMyinfo, modifyPassword, signout } from "../apis";
+import { initialState } from "../reducers/initialState";
 import styled from "styled-components";
 import { color, device, contentWidth } from "../styles";
 import Illust from "../components/Illust";
@@ -59,7 +62,7 @@ const EditMyinfoBioContainer = styled.div`
   display: flex;
   flex-direction: column;
   padding: 1rem;
-  gap: 1rem
+  gap: 1rem;
 `;
 
 const BadgeNameContainer = styled.div`
@@ -90,7 +93,7 @@ const SignoutContainer = styled.div`
   width: 100%;
   max-width: 460px;
   padding: 1rem;
-`
+`;
 
 const Divider = styled.div`
   position: relative;
@@ -110,6 +113,7 @@ const Divider = styled.div`
 const EditMyinfo = () => {
   const state = useSelector((state) => state.userReducer);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const [myinfo, setMyinfo] = useState(state.userInfo);
   const [modify, setModify] = useState({
@@ -121,6 +125,18 @@ const EditMyinfo = () => {
   const [isCorrectPassword, setIsCorrectPassword] = useState(true);
   const [isValidPassword, setIsValidPassword] = useState(true);
   const [isValidPasswordConfirm, setIsValidPasswordConfirm] = useState(true);
+  
+  useEffect(() => {
+    if (!state.isLogin) {
+      navigate('/')
+    } else {
+      requestMyinfo(`${myinfo.user_id}`).then(result => {
+        const data = result.user_info
+        dispatch(updateUserinfo(data))
+      })
+    }
+  // eslint-disable-next-line
+  }, [])
 
   const onChangePassword = (val) => {
     handleInputPassword("new")(val);
@@ -140,7 +156,6 @@ const EditMyinfo = () => {
     } else {
       setIsValidPasswordConfirm(true);
     }
-    console.log('pw', modify.new, 'pwr', modify.re);
   };
   
   const handleInputPassword = (key) => (value) => {
@@ -150,13 +165,43 @@ const EditMyinfo = () => {
     setMyinfo({ ...myinfo, [key]: value });
   };
 
-  const handleIsExpanded = () => setIsExpanded(!isExpanded);
+  const handleIsExpanded = () => setIsExpanded(true);
 
-  const dispatchUserinfo = () => {
-    return dispatch(updateUserinfo({
-      username: myinfo.username,
-      bio: myinfo.bio,
-    }))
+  const handleUpdateMyinfo = () => {
+    updateMyinfo(
+      `${myinfo.user_id}`,
+      {
+        username: myinfo.username,
+        bio: myinfo.bio,
+        badge_id: myinfo.badge_id,
+      }
+    )
+      .then(result => {
+        dispatch(updateUserinfo(result))
+      })
+  }
+
+  const handleModifyPassword = () => {
+    if (isValidPassword && isValidPasswordConfirm) {
+      modifyPassword(
+        `${myinfo.user_id}`,
+        { currentPWD: modify.now, newPWD: modify.new }
+      )
+        .then(result => {
+        console.log(result)
+        //TODO 모달 창 필요?
+      })
+    }
+  }
+
+  const handleSignout = () => {
+    //TODO 모달 창 필요?
+    signout()
+      .then(result => {
+        console.log(result)
+        dispatch(updateUserinfo(initialState))
+        navigate('/')
+      })
   }
 
   return (
@@ -183,7 +228,7 @@ const EditMyinfo = () => {
           />
           <Button
             content="저장하기"
-            handler={dispatchUserinfo}
+            handler={handleUpdateMyinfo}
           />
         </EditMyinfoBioContainer>
         <Divider />
@@ -220,7 +265,10 @@ const EditMyinfo = () => {
             {isValidPasswordConfirm ? null : (
               <InvalidMessage>*비밀번호가 다릅니다.</InvalidMessage>
             )}
-            <Button content="비밀번호 변경" handler={handleIsExpanded} />
+            <Button
+              content="비밀번호 변경"
+              handler={handleModifyPassword}
+            />
           </>
         ) : (
           <Button
@@ -233,7 +281,11 @@ const EditMyinfo = () => {
         <Divider />
         <SignoutContainer>
           <h4>회원탈퇴</h4>
-          <Button content="회원탈퇴" color="tertiary" />
+          <Button
+            content="회원탈퇴"
+            color="tertiary"
+            handler={handleSignout}
+          />
         </SignoutContainer>
       </EditMyinfoSection>
     </EditMyinfoContainer>
