@@ -143,10 +143,51 @@ const ColoredSpan = styled.span`
   color: ${color.primary};
 `;
 
-const Signup = () => {
+const ModalMessage = ({ status }) => {
   const navigate = useNavigate();
+  switch (status) {
+    case 'empty input':
+      return <p>반드시 모든 칸을 입력해야 합니다.</p>;
+    case 'created':
+      return (
+        <>
+          <p>회원가입이 성공적으로 완료되었습니다.</p>
+          <Button
+            content="로그인하러 가기"
+            handler={() => navigate('/login')}
+          ></Button>
+        </>
+      );
+    case 'conflict':
+      return (
+        <>
+          <p>이미 회원가입된 이메일입니다.</p>{' '}
+          <Button
+            content="로그인하러 가기"
+            handler={() => navigate('/login')}
+          ></Button>
+        </>
+      );
+    case 'network error':
+      return (
+        <p>
+          네트워크 에러가 발생하여 로그인이 실패하였습니다. <br />
+          다시 시도해 주세요.
+        </p>
+      );
+    default:
+      return (
+        <p>
+          에러가 발생하여 회원가입을 완료할 수 없습니다. <br />
+          다시 시도해 주세요.
+        </p>
+      );
+  }
+};
 
+const Signup = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [responseStatus, setResponseStatus] = useState('no status');
 
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
@@ -197,18 +238,40 @@ const Signup = () => {
     } else {
       setIsValidPasswordConfirm(true);
     }
-    console.log('pw', password, 'pwr', passwordConfirm);
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
     if (
+      // 입력칸이 하나라도 비어있는 경우
+      email === '' ||
+      username === '' ||
+      password === '' ||
+      passwordConfirm === ''
+    ) {
+      setResponseStatus('empty input');
+      setIsModalOpen(true);
+      return;
+    }
+    if (
+      // 입력값이 모두 유효한 경우
       isValidEmail &&
       isValidUsername &&
       isValidPassword &&
       isValidPasswordConfirm
     ) {
-      requestSignup(email, username, password).then(() => navigate('/login'));
+      requestSignup(email, username, password).then((result) => {
+        if (!result.status) {
+          setResponseStatus('network error');
+        } else if (result.status === 201) {
+          setResponseStatus('created');
+        } else if (result.status === 409) {
+          setResponseStatus('conflict');
+        } else if (result.status === 500) {
+          setResponseStatus('server error');
+        }
+        setIsModalOpen(true);
+      });
     }
   };
 
@@ -279,8 +342,7 @@ const Signup = () => {
       </SignupContainer>
       {isModalOpen ? (
         <Modal closeModal={setIsModalOpen}>
-          <p>모달입니다 모달입니다 모달입니다 모달입니다</p>
-          <Button content="모달버튼" />
+          <ModalMessage status={responseStatus} />
         </Modal>
       ) : null}
     </Container>

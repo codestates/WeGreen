@@ -11,7 +11,10 @@ export const requestLogin = (email, password) => {
       { 'Content-Type': 'application/json', withCredentials: true }
     )
     .then((result) => {
-      return result.data.data;
+      return result;
+    })
+    .catch((err) => {
+      return err.response ? err.response : 'network error';
     });
 };
 
@@ -26,5 +29,10 @@ export const requestSignup = (email, username, password) => {
       },
       { 'Content-Type': 'application/json', withCredentials: true }
     )
-    .then((result) => console.log(result));
+    .then((result) => {
+      return result;
+    })
+    .catch((err) => {
+      return err.response ? err.response : 'network error';
+    });
 };
