@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import InputForm from '../components/InputForm';
 import Button from '../components/Button';
 import SocialBtn from '../components/SocialBtn';
+import Modal from '../components/Modal';
 import { ReactComponent as Wave } from '../assets/images/wave.svg';
 import { color, device, radius, boxShadow } from '../styles';
 import mainIllust from '../assets/images/main_illust.png';
@@ -145,6 +146,8 @@ const ColoredSpan = styled.span`
 const Signup = () => {
   const navigate = useNavigate();
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -274,6 +277,12 @@ const Signup = () => {
           </Link>
         </SignupSection>
       </SignupContainer>
+      {isModalOpen ? (
+        <Modal closeModal={setIsModalOpen}>
+          <p>모달입니다 모달입니다 모달입니다 모달입니다</p>
+          <Button content="모달버튼" />
+        </Modal>
+      ) : null}
     </Container>
   );
 };
