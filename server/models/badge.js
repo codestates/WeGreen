@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      badge.hasMany(models.users_badge);
+      models.badge.hasMany(models.users_badge);
     }
   }
   badge.init(
