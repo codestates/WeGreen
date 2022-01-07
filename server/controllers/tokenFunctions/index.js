@@ -12,7 +12,7 @@ module.exports = {
   },
   generateAccessToken: (data) => {
     return sign({ data: data }, process.env.ACCESS_SECRET, {
-      expiresIn: 60 * 60,
+      expiresIn: 60 * 60 * 1000,
     });
   },
   sendAccessToken: (res, data, accessToken) => {
@@ -38,11 +38,5 @@ module.exports = {
       //return null if invalid token
       return null;
     }
-  },
-  getUserInfo: (req) => {
-    const authorization = req.headers["authorization"];
-    const token = authorization.split(" ")[1];
-    const data = JSON.parse(verify(token, process.env.ACCESS_SECRET).data); //객체 형식
-    return data;
   },
 };
