@@ -15,6 +15,8 @@ module.exports = (sequelize, DataTypes) => {
   }
   users_badge.init(
     {
+      user_id: DataTypes.INTEGER,
+      badge_id: DataTypes.INTEGER,
       is_selected: DataTypes.BOOLEAN,
     },
     {

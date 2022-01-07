@@ -9,9 +9,9 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      challenge.hasMany(models.users_challenge);
-      challenge.hasMany(models.checkin);
-      challenge.hasMany(models.comment);
+      models.challenge.hasMany(models.users_challenge);
+      models.challenge.hasMany(models.checkin);
+      models.challenge.hasMany(models.comment);
     }
   }
   challenge.init(

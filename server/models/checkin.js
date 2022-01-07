@@ -15,6 +15,8 @@ module.exports = (sequelize, DataTypes) => {
   }
   checkin.init(
     {
+      user_id: DataTypes.INTEGER,
+      challenge_id: DataTypes.INTEGER,
       content: DataTypes.STRING,
     },
     {

@@ -20,7 +20,7 @@ router.patch("/:challenge_id", challenges.edit);
 router.delete("/:challenge_id", challenges.delete);
 
 //체크인(인증) 확인하기
-router.get("/:challenge_id/checkins", challenges.checkins);
+router.post("/:challenge_id/checkins", challenges.checkins); //! 포스트로 변경??
 
 //댓글 목록 불러오기
 router.get("/:challenge_id/comments", challenges.comments.get);
@@ -36,5 +36,8 @@ router.delete(
 
 //댓글 작성하기
 router.post("/:challenge_id/comments", challenges.comments.post);
+
+//챌린지 참가하기
+router.post("/:challenge_id", challenges.join);
 
 module.exports = router;
