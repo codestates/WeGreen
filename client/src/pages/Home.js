@@ -4,7 +4,8 @@ import styled from 'styled-components';
 import Button from '../components/Button';
 import ChallengeCard from '../components/ChallengeCard';
 import { color, device, contentWidth } from '../styles';
-// import { dummyChallenges } from '../data/dummyData';
+import mainIllust from '../assets/images/main_illust.png';
+import { ReactComponent as Wave } from '../assets/images/wave.svg';
 import { requestPopularChallenges, requestPopularChallengess } from '../apis';
 
 const HomeContainer = styled.div`
@@ -21,6 +22,17 @@ const HeroSection = styled.section`
   height: 100vh;
   text-align: center;
 
+  img {
+    width: 80%;
+    max-width: 500px;
+    margin-top: -1rem;
+    padding-bottom: 1rem;
+  }
+
+  span {
+    color: ${color.primary};
+  }
+
   p {
     display: none;
   }
@@ -32,10 +44,20 @@ const HeroSection = styled.section`
   }
 `;
 
+const ChallengesContainer = styled.div`
+  background-color: ${color.primary};
+`;
+
 const ChallengeListContainer = styled.div`
   padding: 1rem;
   max-width: ${contentWidth};
   margin: 0 auto;
+
+  h2 {
+    color: ${color.white};
+    text-align: center;
+    padding-bottom: 1rem;
+  }
 
   @media ${device.laptop} {
     padding: 1rem 0;
@@ -68,7 +90,10 @@ const Home = () => {
   return (
     <HomeContainer>
       <HeroSection>
-        <h1>일주일 챌린지로 환경을 지켜요, WeGreen</h1>
+        <img src={mainIllust}></img>
+        <h1>
+          일주일 챌린지로 환경을 지켜요, <span>WeGreen</span>
+        </h1>
         <p>
           다른 사람들과 함께 챌린지를 진행하며 서로를 응원해요.
           <br />
@@ -79,23 +104,26 @@ const Home = () => {
           있습니다.
         </p>
         <Button
-          width="fit-content"
+          width='fit-content'
           content={'챌린지 보러가기'}
           handler={() => navigate('/challenges')}
         />
       </HeroSection>
-      <ChallengeListContainer>
-        <h2>인기 챌린지를 확인해 보세요</h2>
-        <ChallengeList>
-          {challenges.length === 0 ? (
-            <p>챌린지가 없습니다.</p>
-          ) : (
-            challenges.map((el) => (
-              <ChallengeCard challenge={el} key={el.challenge_id} />
-            ))
-          )}
-        </ChallengeList>
-      </ChallengeListContainer>
+      <Wave width='100%' height='100' fill={color.primary} />
+      <ChallengesContainer>
+        <ChallengeListContainer>
+          <h2>인기 챌린지를 확인해 보세요</h2>
+          <ChallengeList>
+            {challenges.length === 0 ? (
+              <p>챌린지가 없습니다.</p>
+            ) : (
+              challenges.map((el) => (
+                <ChallengeCard challenge={el} key={el.challenge_id} />
+              ))
+            )}
+          </ChallengeList>
+        </ChallengeListContainer>
+      </ChallengesContainer>
     </HomeContainer>
   );
 };

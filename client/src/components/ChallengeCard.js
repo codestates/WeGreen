@@ -16,6 +16,9 @@ const Highlighted = styled.p`
 const ChallengeCardStatusContainer = styled.div`
   display: flex;
   justify-content: space-between;
+  p {
+    margin: 0;
+  }
 `;
 
 const ChallengeCard = ({ challenge }) => {
