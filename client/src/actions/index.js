@@ -17,9 +17,12 @@ export const logout = () => {
   return {
     type: LOGOUT,
     payload: {
-      userId: -1,
-      userName: 'guest',
-      isAdmin: false,
+      user_id: -1,
+      username: 'guest',
+      bio: 'guest user',
+      badge_id: -1,
+      badges: [],
+      is_admin: false,
     },
   };
 };
@@ -32,4 +35,3 @@ export const updateUserinfo = (userInfo) => {
     },
   };
 };
-
