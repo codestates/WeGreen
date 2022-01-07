@@ -1,8 +1,10 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { color, device, contentWidth, boxShadow } from '../styles';
+import { requestLogout } from '../apis';
+import { logout } from '../actions';
 
 const NavigationContainer = styled.div`
   position: fixed;
@@ -144,8 +146,18 @@ const LinksContainer = styled.div`
 
   a {
     width: 100%;
-    text-align: center;
     padding: 0.5rem;
+    text-align: center;
+  }
+
+  button {
+    width: 100%;
+    padding: 0.5rem;
+    color: inherit;
+    background-color: transparent;
+    text-align: center;
+    font-size: inherit;
+    cursor: pointer;
   }
 
   @media ${device.laptop} {
@@ -162,10 +174,20 @@ const LinksContainer = styled.div`
 
 const Navigation = () => {
   const state = useSelector((state) => state.userReducer);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const { isLogin } = state;
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const handleMenuToggle = () => {
     setIsMenuOpen(!isMenuOpen);
+  };
+  const handleLogout = (event) => {
+    event.preventDefault();
+    requestLogout().then(() => {
+      dispatch(logout());
+      navigate('/');
+    });
   };
   return (
     <NavigationContainer isMenuOpen={isMenuOpen}>
@@ -182,7 +204,7 @@ const Navigation = () => {
           <Link to="/challenges">챌린지</Link>
           {isLogin ? (
             <>
-              <Link to="/">로그아웃</Link>
+              <button onClick={handleLogout}>로그아웃</button>
               <Link to="/mypage">마이페이지</Link>
             </>
           ) : (
