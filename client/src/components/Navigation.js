@@ -14,24 +14,6 @@ const NavigationContainer = styled.div`
   width: 100%;
   background-color: ${color.primary};
   box-shadow: ${boxShadow};
-
-  &:before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: -10;
-    height: 100vh;
-    width: 100vw;
-    background-color: ${color.backdrop};
-    opacity: ${(props) => (props.isMenuOpen ? 1 : 0)};
-    transition: all 0.4s ease;
-    pointer-events: ${(props) => (props.isMenuOpen ? 'auto' : 'none')};
-
-    @media ${device.laptop} {
-      display: none;
-    }
-  }
 `;
 
 const MainNav = styled.nav`
@@ -40,7 +22,6 @@ const MainNav = styled.nav`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  max-width: ${contentWidth};
   height: 60px;
   margin: 0 auto;
   /* padding: 1rem; */
@@ -52,6 +33,7 @@ const MainNav = styled.nav`
   }
 
   @media ${device.laptop} {
+    max-width: ${contentWidth};
     padding: 1rem 0;
   }
 `;
@@ -142,7 +124,9 @@ const LinksContainer = styled.div`
   width: 100%;
   padding: 1rem 0;
   background-color: ${color.primary};
+  opacity: ${(props) => (props.isMenuOpen ? 1 : 0)};
   transition: all 0.8s ease;
+  box-shadow: ${boxShadow};
 
   a {
     width: 100%;
@@ -167,8 +151,30 @@ const LinksContainer = styled.div`
     z-index: auto;
     flex-direction: row;
     width: max-content;
-    word-break: keep-all;
     padding: 0;
+    opacity: 1;
+    word-break: keep-all;
+    box-shadow: none;
+  }
+`;
+
+const Backdrop = styled.div`
+  &:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -10;
+    height: 100vh;
+    width: 100vw;
+    background-color: ${color.backdrop};
+    opacity: ${(props) => (props.isMenuOpen ? 1 : 0)};
+    transition: all 0.4s ease;
+    pointer-events: ${(props) => (props.isMenuOpen ? 'auto' : 'none')};
+  }
+
+  @media ${device.laptop} {
+    display: none;
   }
 `;
 
@@ -190,7 +196,7 @@ const Navigation = () => {
     });
   };
   return (
-    <NavigationContainer isMenuOpen={isMenuOpen}>
+    <NavigationContainer>
       <MainNav>
         <MobileNavContainer>
           <Link to="/">
@@ -215,6 +221,10 @@ const Navigation = () => {
           )}
         </LinksContainer>
       </MainNav>
+      <Backdrop
+        isMenuOpen={isMenuOpen}
+        onClick={() => setIsMenuOpen(false)}
+      ></Backdrop>
     </NavigationContainer>
   );
 };

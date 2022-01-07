@@ -58,6 +58,11 @@ main {
   margin-top: 60px;
 }
 
+svg,
+img {
+  vertical-align: top;
+}
+
 ::placeholder {
   color: #81c0ba;
   opacity: 1; /* Firefox */
