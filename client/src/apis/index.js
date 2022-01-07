@@ -50,6 +50,21 @@ export const requestLogout = () => {
     .then((result) => console.log(result));
 };
 
+export const requestPopularChallenges = (limit, query) => {
+  return axios
+    .get(
+      `${process.env.REACT_APP_API_URL}/challenges/popular?limit=${limit}${
+        query ? '$query=' + query : ''
+      }`,
+      {},
+      {
+        'Content-Type': 'application/json',
+        withCredentials: true,
+      }
+    )
+    .then((result) => result.data.data);
+};
+
 export const requestMyinfo = (userId) => {
   return axios
     .get(`${process.env.REACT_APP_API_URL}/users/${userId}`)

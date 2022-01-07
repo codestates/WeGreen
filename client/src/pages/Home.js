@@ -1,9 +1,11 @@
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import Button from '../components/Button';
 import ChallengeCard from '../components/ChallengeCard';
 import { color, device, contentWidth } from '../styles';
-import { dummyChallenges } from '../data/dummyData';
+// import { dummyChallenges } from '../data/dummyData';
+import { requestPopularChallenges, requestPopularChallengess } from '../apis';
 
 const HomeContainer = styled.div`
   background-color: ${color.primaryLight};
@@ -56,6 +58,13 @@ const ChallengeList = styled.ul`
 
 const Home = () => {
   const navigate = useNavigate();
+
+  const [challenges, setChallenges] = useState([]);
+
+  useEffect(() => {
+    requestPopularChallenges(4).then((result) => setChallenges(result));
+  }, []);
+
   return (
     <HomeContainer>
       <HeroSection>
@@ -78,9 +87,13 @@ const Home = () => {
       <ChallengeListContainer>
         <h2>인기 챌린지를 확인해 보세요</h2>
         <ChallengeList>
-          {dummyChallenges.map((el) => (
-            <ChallengeCard challenge={el} key={el.challenge_id} />
-          ))}
+          {challenges.length === 0 ? (
+            <p>챌린지가 없습니다.</p>
+          ) : (
+            challenges.map((el) => (
+              <ChallengeCard challenge={el} key={el.challenge_id} />
+            ))
+          )}
         </ChallengeList>
       </ChallengeListContainer>
     </HomeContainer>
