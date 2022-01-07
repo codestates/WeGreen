@@ -12,7 +12,7 @@ const Backdrop = styled.div`
   background-color: ${color.backdrop};
 `;
 
-const BadgeModalContainer = styled.div`
+const BadgesModalContainer = styled.div`
   position: fixed;
   top: 50%;
   left: 50%;
@@ -49,6 +49,8 @@ const BadgeType = {
   unselected: '1px dashed black',
   selected: '1px solid black',
 };
+
+const MainBadgeStyle = '2px';
 
 const Badge = styled.img`
   width: 80px;
@@ -93,7 +95,7 @@ const CloseBtn = styled.button`
   }
 `;
 
-const BadgeModal = ({ closeModal }) => {
+const BadgesModal = ({ closeModal }) => {
   const dummyTotalBadges = [
     { id: 1, src: 'src' },
     { id: 2, src: 'src' },
@@ -106,12 +108,13 @@ const BadgeModal = ({ closeModal }) => {
     { id: 9, src: 'src' },
   ];
   const badges = [1, 2, 3, 5, 8];
+  let selected = [2, 5];
   const badge_id = 2;
 
   const arranged = [...dummyTotalBadges];
   arranged.forEach((el, idx) => {
     if (badges.includes(idx + 1)) {
-      if (idx + 1 === badge_id) {
+      if (selected.includes(idx + 1)) {
         el.type = 'selected';
       } else {
         el.type = 'unselected';
@@ -123,35 +126,36 @@ const BadgeModal = ({ closeModal }) => {
 
   const [badgeInfo, setbadgeInfo] = useState(arranged);
 
-  const handleMainBadge = (e) => {
+  const handlebadgeInfo = (e) => {
     let idx = Number(e.target.alt);
     if (!badges.includes(idx)) {
       return;
     }
+
     const selectedBadges = badgeInfo
       .filter((el) => el.type === 'selected')
-      .map((el) => el.id)[0];
+      .map((el) => el.id);
 
-    if (selectedBadges === idx) {
+    if (selectedBadges.includes(idx)) {
+      const change = [...badgeInfo];
+      change[idx - 1] = Object.assign({}, badgeInfo[idx - 1], {
+        type: 'unselected',
+      });
+      setbadgeInfo(change);
     } else {
       const change = [...badgeInfo];
       change[idx - 1] = Object.assign({}, badgeInfo[idx - 1], {
-        id: idx,
         type: 'selected',
-      });
-      change[selectedBadges - 1] = Object.assign({}, badgeInfo[idx - 1], {
-        id: selectedBadges,
-        type: 'unselected',
       });
       setbadgeInfo(change);
     }
   };
-  console.log(badgeInfo)
+  console.log(badgeInfo);
 
   return (
     <>
       <Backdrop></Backdrop>
-      <BadgeModalContainer>
+      <BadgesModalContainer>
         <CloseBtn onClick={() => closeModal(false)}>close</CloseBtn>
         <BadgesViewer>
           {badgeInfo.map((el, idx) => {
@@ -160,15 +164,16 @@ const BadgeModal = ({ closeModal }) => {
                 key={el.id}
                 src={el.src}
                 alt={el.id}
+                isMain={idx + 1 === badge_id ? MainBadgeStyle : null}
                 border={BadgeType[el.type]}
-                onClick={handleMainBadge}
+                onClick={handlebadgeInfo}
               />
             );
           })}
         </BadgesViewer>
-      </BadgeModalContainer>
+      </BadgesModalContainer>
     </>
   );
 };
 
-export default BadgeModal;
+export default BadgesModal;
