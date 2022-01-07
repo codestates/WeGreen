@@ -9,7 +9,6 @@ import Illust from "../components/Illust";
 import UserProfile from "../components/UserProfile";
 import Tab from "../components/Tab";
 import ChallengeCard from "../components/ChallengeCard";
-// import { dummyUserInfo } from "../data/dummyUserInfo";
 
 const MypageContainer = styled.div`
   @media ${device.laptop} {
@@ -63,15 +62,18 @@ const EmptyMessage = styled.p`
 
 const Mypage = () => {
   const [view, setView] = useState("ongoing");
+
   const [challenges, setChallenges] = useState([{}])
+
   const state = useSelector((state) => state.userReducer);
   const myinfo = state.userInfo
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   useEffect(() => {
     if (!state.isLogin) {
-      navigate('/')
+      navigate('/login')
     } else {
       requestMyinfo(`${myinfo.user_id}`).then(result => {
         setChallenges(result.challenge_info.challenges)
@@ -82,11 +84,6 @@ const Mypage = () => {
   // eslint-disable-next-line
   }, [])
 
-  // const ongoingChallenges = dummyUserInfo.challenge_info.filter(el => el.is_finished === false)
-  // const finishedChallenges = dummyUserInfo.challenge_info.filter(el => el.is_finished === true)
-
-  // const successCounts = dummyUserInfo.challenge_info
-  //                         .filter(el => el.is_finished === true && el.is_accomplished === true).length
   const ongoingChallenges = challenges.filter(el => el.is_finished === false)
   const finishedChallenges = challenges.filter(el => el.is_finished === true)
 
