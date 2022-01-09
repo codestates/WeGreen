@@ -27,9 +27,8 @@ const ChallengeCard = ({ challenge }) => {
   
   let message = ""
   
-  const regex = /[^0-9]/g;	
-  const requirement = parseInt(challenge.requirement.replace(regex, ""))
-  const progress = (challenge.checkin_count / requirement) >= 1 ? 1 : (challenge.checkin_count / requirement).toFixed(2)
+  const progress = (challenge.checkin_count / challenge.requirement) >= 1 ?
+                     1 : (challenge.checkin_count / challenge.requirement).toFixed(2)
 
   if (challenge.is_finished === true) {
     if (challenge.is_accomplished) message = "챌린지 성공";
