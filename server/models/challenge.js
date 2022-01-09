@@ -1,5 +1,5 @@
-"use strict";
-const { Model } = require("sequelize");
+'use strict';
+const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class challenge extends Model {
     /**
@@ -12,6 +12,7 @@ module.exports = (sequelize, DataTypes) => {
       models.challenge.hasMany(models.users_challenge);
       models.challenge.hasMany(models.checkin);
       models.challenge.hasMany(models.comment);
+      models.challenge.belongsTo(models.user);
     }
   }
   challenge.init(
@@ -20,12 +21,18 @@ module.exports = (sequelize, DataTypes) => {
       content: DataTypes.STRING,
       started_at: DataTypes.DATEONLY,
       requirement: DataTypes.INTEGER,
+      author: DataTypes.INTEGER,
       // visits : {type : DataTypes.INTEGER,
       // }
+      created_at: {
+        type: DataTypes.DATEONLY,
+        defaultValue: DataTypes.NOW,
+      },
     },
     {
       sequelize,
-      modelName: "challenge",
+      timestamps: false,
+      modelName: 'challenge',
     }
   );
   return challenge;

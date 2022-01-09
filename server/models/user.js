@@ -1,5 +1,5 @@
-"use strict";
-const { Model } = require("sequelize");
+'use strict';
+const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class user extends Model {
     /**
@@ -10,16 +10,19 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       models.user.hasMany(models.users_challenge, {
-        foreignKey: "id",
+        foreignKey: 'id',
       });
       models.user.hasMany(models.checkin, {
-        foreignKey: "id",
+        foreignKey: 'id',
       });
       models.user.hasMany(models.comment, {
-        foreignKey: "id",
+        foreignKey: 'id',
       });
       models.user.hasMany(models.users_badge, {
-        foreignKey: "id",
+        foreignKey: 'id',
+      });
+      models.user.hasMany(models.challenge, {
+        foreignKey: 'id',
       });
     }
   }
@@ -38,16 +41,21 @@ module.exports = (sequelize, DataTypes) => {
       },
       bio: {
         type: DataTypes.STRING,
-        defaultValue: "자기소개를 입력해주세요.",
+        defaultValue: '자기소개를 입력해주세요.',
       },
       badge_id: {
         type: DataTypes.INTEGER,
         defaultValue: 0,
       },
+      created_at: {
+        type: DataTypes.DATEONLY,
+        defaultValue: DataTypes.NOW,
+      },
     },
     {
       sequelize,
-      modelName: "user",
+      timestamps: false,
+      modelName: 'user',
     }
   );
   return user;

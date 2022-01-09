@@ -1,7 +1,7 @@
-"use strict";
+'use strict';
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable("users", {
+    await queryInterface.createTable('users', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -27,23 +27,20 @@ module.exports = {
       },
       bio: {
         type: Sequelize.STRING,
-        defaultValue: "자기소개를 입력해주세요.",
+        defaultValue: '자기소개를 입력해주세요.',
       },
       badge_id: {
         type: Sequelize.INTEGER,
         defaultValue: 0,
       },
-      createdAt: {
+      created_at: {
         allowNull: false,
-        type: Sequelize.DATE,
-      },
-      updatedAt: {
-        allowNull: false,
-        type: Sequelize.DATE,
+        type: Sequelize.DATEONLY,
+        default: Sequelize.fn('NOW'),
       },
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable("users");
+    await queryInterface.dropTable('users');
   },
 };
