@@ -11,7 +11,7 @@ import TextareaForm from '../components/TextareaForm';
 import Button from '../components/Button';
 import Modal from '../components/Modal';
 import BadgeModal from '../components/BadgeModal';
-// import { ReactComponent as Wave } from '../assets/images/wave.svg';
+import { ReactComponent as Wave } from '../assets/images/wave.svg';
 
 const Container = styled.div`
   @media ${device.laptop} {
@@ -31,7 +31,7 @@ const EditMyinfoContainer = styled.div`
     display: none;
   }
   & h4 {
-    margin-bottom: .5rem;
+    margin-bottom: 0.5rem;
   }
 
   @media ${device.laptop} {
@@ -51,25 +51,25 @@ const EditMyinfoSection = styled.section`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: .5rem;
+  gap: 0.5rem;
 
   @media ${device.laptop} {
     width: 100%;
   }
 `;
 
-// const TitleContainer = styled.div`
-//   display: flex;
-//   flex-direction: column;
-//   justify-content: space-between;
-//   width: 100%;
-//   padding-top: 2rem;
-//   h1 {
-//     color: ${color.white};
-//     text-align: center;
-//   }
-//   background-color: ${color.primary};
-// `;
+const TitleContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  padding-top: 2rem;
+  h1 {
+    color: ${color.white};
+    text-align: center;
+  }
+  background-color: ${color.primary};
+`;
 
 const EditMyinfoBioContainer = styled.div`
   width: 100%;
@@ -322,14 +322,14 @@ const EditMyinfo = () => {
       <EditMyinfoContainer>
         <Illust />
         <EditMyinfoSection>
-          {/* <TitleContainer>
+          <TitleContainer>
             <h1>회원정보수정</h1>
             <Wave width='100%' height='100' fill={color.white} />
-          </TitleContainer> */}
+          </TitleContainer>
           <EditMyinfoBioContainer>
             <BadgeNameContainer>
-              <MainBadgeImg 
-                badgeId={1} 
+              <MainBadgeImg
+                badgeId={1}
                 alt='대표뱃지'
                 onClick={() => setIsBadgeModalOpen(true)}
               />
@@ -375,7 +375,10 @@ const EditMyinfo = () => {
                 {isValidPasswordConfirm ? null : (
                   <InvalidMessage>*비밀번호가 다릅니다.</InvalidMessage>
                 )}
-                <Button content='비밀번호 변경' handler={handleModifyPassword} />
+                <Button
+                  content='비밀번호 변경'
+                  handler={handleModifyPassword}
+                />
               </>
             ) : (
               <Button
