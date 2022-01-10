@@ -1,16 +1,168 @@
-import styled from "styled-components";
-import { color } from '../styles'
+import { useState } from 'react';
+import styled from 'styled-components';
+import { color, contentWidth, radius } from '../styles';
 
 const CalendarContainer = styled.div`
-    border: 1px solid ${color.primaryBorder};
-`
+  width: 100%;
+  height: 330px;
+  max-width: calc(${contentWidth} / 2);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  border-radius: ${radius};
+  background-color: ${color.primaryLight};
+`;
 
-const Calendar = () => {
-    return (
-        <CalendarContainer>
-            달력
-        </CalendarContainer>
-    )
+const CalendarHeaderSection = styled.section`
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+`;
+
+const CalendarDatesContainer = styled.div`
+  width: 100%;
+  padding: 1rem;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1rem;
+  font-size: 0.875rem;
+  text-align: center;
+`;
+
+const DayContainer = styled.div`
+  width: 100%;
+  color: ${(props) => props.day};
+`;
+
+const DateContainer = styled.div`
+  width: 100%;
+  opacity: ${(props) => props.opacity};
+  color: ${(props) => props.days};
+  font-weight: ${(props) => props.today};
+
+  &:hover {
+    cursor: pointer;
+  }
+`;
+
+const Divider = styled.div`
+  position: relative;
+  width: 100%;
+  height: 0;
+  padding: 0 1rem;
+  text-align: center;
+
+  &::before {
+    content: '';
+    display: block;
+    border-bottom: 1px solid ${color.primaryBorder};
+  }
+`;
+
+const Calendar = ({ today, pickedDate, setPickedDate }) => {
+  const [viewDate, setViewDate] = useState(today);
+
+  const getDates = () => {
+    const prevLast = new Date(viewDate.getFullYear(), viewDate.getMonth(), 0);
+    const nowLast = new Date(
+      viewDate.getFullYear(),
+      viewDate.getMonth() + 1,
+      0
+    );
+
+    const prevDates = [];
+    if (prevLast.getDay() !== 6) {
+      for (let i = 0; i < prevLast.getDay() + 1; i++) {
+        prevDates.unshift(prevLast.getDate() - i);
+      }
+    }
+
+    const nowDates = new Array(nowLast.getDate()).fill().map((_, i) => i + 1);
+    const nextDates = new Array(6 - nowLast.getDay())
+      .fill()
+      .map((_, i) => i + 1);
+
+    const dates = [prevDates, nowDates, nextDates];
+    return dates;
+  };
+
+  const days = ['일', '월', '화', '수', '목', '금', '토'];
+
+  const dates = getDates();
+
+  const handleViewer = (e) => {
+    const changed = new Date(viewDate);
+    if (e.target.textContent === '<') {
+      changed.setMonth(viewDate.getMonth() - 1);
+    } else {
+      changed.setMonth(viewDate.getMonth() + 1);
+    }
+    setViewDate(changed);
+  };
+
+  const handlePickedDate = (e) => {
+    const picked = new Date(viewDate);
+    picked.setDate(Number(e.target.textContent));
+    if (today < picked) {
+      setPickedDate(picked);
+    }
+  };
+
+  return (
+    <CalendarContainer>
+      <CalendarHeaderSection>
+        <button onClick={handleViewer}>&lt;</button>
+        {viewDate.getFullYear()}-{('0' + (viewDate.getMonth() + 1)).slice(-2)}
+        <button onClick={handleViewer}>&gt;</button>
+      </CalendarHeaderSection>
+      <Divider />
+      <CalendarDatesContainer>
+        {days.map((day, i) => {
+          return (
+            <DayContainer key={day} day={i === 0}>
+              {day}
+            </DayContainer>
+          );
+        })}
+        {dates.flat().map((date, i) => {
+          return (
+            <DateContainer
+              key={i}
+              opacity={
+                i < dates[0].length || i > [...dates[0], ...dates[1]].length - 1
+                  ? '0.5'
+                  : '1'
+              }
+              today={
+                today.getFullYear() === viewDate.getFullYear() &&
+                today.getMonth() === viewDate.getMonth() &&
+                i === dates[0].length + today.getDate() - 1
+                  ? 'bold'
+                  : null
+              }
+              days={
+                pickedDate.getFullYear() === viewDate.getFullYear() &&
+                pickedDate.getMonth() === viewDate.getMonth() &&
+                i === dates[0].length + pickedDate.getDate() - 1
+                  ? 'blue'
+                  : i % 7 === 0 || i % 7 === 6
+                  ? 'red'
+                  : 'null'
+              }
+              onClick={
+                i < dates[0].length || i > [...dates[0], ...dates[1]].length - 1
+                  ? null
+                  : handlePickedDate
+              }
+            >
+              {date}
+            </DateContainer>
+          );
+        })}
+      </CalendarDatesContainer>
+    </CalendarContainer>
+  );
 };
 
 export default Calendar;
