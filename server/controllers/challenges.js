@@ -15,20 +15,38 @@ module.exports = {
   popular: async (req, res) => {
     try {
       var searchModel = ChallengeModel;
-      if (req.query.query) {
-        //!query search 아직 미완성
-        const search = req.query.query;
+      const search = req.query.query;
+      if (search) {
+        var searchModel = await ChallengeModel.findAll({
+          attributes: ['id','name', 'content','started_at','requirement','createdAt','updatedAt'],
+          raw: true,
+          where:{
+            'name':{
+              [Op.like]: `%${search}%`,
+            }
+          }
+        });
       }
-      console.log('!!!THIS IS SEARCH MODEL', searchModel);
       const joinCountArray = await UserChallengeModel.findAll({
         attributes: [
-          [sequelize.fn('COUNT', sequelize.col('user_id')), 'JOIN COUNT'],
+          [sequelize.fn('COUNT', sequelize.col('user_id')), 'join_count'],
           'challenge_id',
         ],
         group: ['challenge_id'],
-        order: [[sequelize.col('JOIN COUNT'), 'DESC']],
+        order: [[sequelize.col('join_count'), 'DESC']],
         raw: true,
       });
+
+      for(let i=0; i<joinCountArray.length; i++){
+        for(let j=0; j<searchModel.length; j++){
+        if(searchModel[j].id===joinCountArray[i].challenge_id){
+          searchModel[j].join_count = joinCountArray[i].join_count
+        }
+        else{
+          continue;
+        }
+      }
+      }
       const limitNum = req.query.limit || 10;
       const slicedJoinCount = joinCountArray.slice(0, limitNum);
       const popularResult = [];
@@ -47,12 +65,12 @@ module.exports = {
         }).then((result) =>
           popularResult.push(
             Object.assign(result, {
-              join_count: slicedJoinCount[i]['JOIN COUNT'],
+              join_count: slicedJoinCount[i]['join_count'],
             })
           )
         );
       }
-      res.status(200).json({ message: 'OK', data: popularResult });
+      res.status(200).json({ message: 'OK', data: search ? searchModel : popularResult });
     } catch (err) {
       console.log('ERROR', err);
       res.status(500).send({
@@ -64,25 +82,43 @@ module.exports = {
   latest: async (req, res) => {
     try {
       var searchModel = ChallengeModel;
-      if (req.query.query) {
+      const search = req.query.query;
+      if (search) {
         //!query search 아직 미완성
-        const search = req.query.query;
         var searchModel = await ChallengeModel.findAll({
-          attributes: ['name', 'content', 'id'],
+          attributes: ['id','name', 'content','started_at','requirement','createdAt','updatedAt'],
           raw: true,
+          where:{
+            'name':{
+              [Op.like]: `%${search}%`,
+            }
+          },
         });
       }
+
       const joinCountArray = await UserChallengeModel.findAll({
         attributes: [
-          [sequelize.fn('COUNT', sequelize.col('user_id')), 'JOIN COUNT'],
+          [sequelize.fn('COUNT', sequelize.col('user_id')), 'join_count'],
           'challenge_id',
         ],
         group: ['challenge_id'],
-        order: [['challenge_id', 'ASC']],
+        order: [['challenge_id', 'ASC']], //별건 아닌데 DESC로 내림차순으로 정리해서 드릴까요?
         raw: true,
       });
-      const limitNum = req.query.limit || 10;
-      const slicedJoinCount = joinCountArray.slice(0, limitNum);
+      for(let i=0; i<joinCountArray.length; i++){
+        for(let j=0; j<searchModel.length; j++){
+          if(searchModel[j].id===joinCountArray[i].challenge_id){
+            searchModel[j].join_count = joinCountArray[i].join_count
+        }
+        else{
+          continue;
+        }
+      }
+    }
+
+    
+    const limitNum = req.query.limit || 10;
+    const slicedJoinCount = joinCountArray.slice(0, limitNum);
       const latestResult = [];
       for (let i = 0; i < slicedJoinCount.length; i++) {
         await ChallengeModel.findOne({
@@ -91,14 +127,14 @@ module.exports = {
         }).then((result) =>
           latestResult.push(
             Object.assign(result, {
-              join_count: slicedJoinCount[i]['JOIN COUNT'],
+              join_count: slicedJoinCount[i]['join_count'],
             })
           )
         );
       }
       res.status(200).send({
         message: 'OK',
-        data: latestResult,
+        data: search ? searchModel : latestResult
       });
     } catch (err) {
       res.status(500).send({
