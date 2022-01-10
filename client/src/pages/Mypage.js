@@ -4,38 +4,47 @@ import { useNavigate } from "react-router-dom";
 import { updateUserinfo } from "../actions";
 import { requestMyinfo } from "../apis";
 import styled from "styled-components";
-import { color, device, contentWidth } from "../styles";
+import { color, device, contentWidth, boxShadow } from "../styles";
 import Illust from "../components/Illust";
 import UserProfile from "../components/UserProfile";
 import Tab from "../components/Tab";
 import ChallengeCard from "../components/ChallengeCard";
 
-const MypageContainer = styled.div`
+
+const Container = styled.div`
   @media ${device.laptop} {
-    height: 100vh;
-    max-width: ${contentWidth};
-    margin: 0 auto;
+    width: 100%;
+    height: calc(100vh - 60px);
     display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: ${color.primaryLight};
+  }
+`;
+
+const MypageContainer = styled.div`
+  background-color: ${color.white};
+
+  @media ${device.laptop} {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    width: ${contentWidth};
+    height: 100%;
+    box-shadow: ${boxShadow};
   }
 `;
 
 const MyChallengesContainer = styled.section`
-  height: 70vh;
-  margin: 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding: 1rem;
   gap: 1rem;
 `;
 
 const ChallengeListContainer = styled.div`
+  width: 100%;
   padding: 1rem;
-  margin: 0 auto;
-
-  @media ${device.laptop} {
-    padding: 1rem 0;
-    width: calc(${contentWidth} * 1 / 3);
-  }
 `;
 
 const ChallengeList = styled.ul`
@@ -130,25 +139,27 @@ const Mypage = () => {
   };
 
   return (
-    <MypageContainer>
-      <Illust />
-      <MyChallengesContainer>
-        <UserProfile
-          userInfo={myinfo}
-          successCounts={successCounts}
-        />
-        <Tab
-          tabInfo={[
-            ["ongoing", "참여중인 챌린지"],
-            ["finished", "완료된 챌린지"],
-          ]}
-          handleView={setView}
-        />
-        <ChallengeListContainer>
-          {tabContent[view]}    
-        </ChallengeListContainer>
-      </MyChallengesContainer>
-    </MypageContainer>
+    <Container>
+      <MypageContainer>
+        <Illust />
+        <MyChallengesContainer>
+          <UserProfile
+            userInfo={myinfo}
+            successCounts={successCounts}
+          />
+          <Tab
+            tabInfo={[
+              ["ongoing", "참여중인 챌린지"],
+              ["finished", "완료된 챌린지"],
+            ]}
+            handleView={setView}
+          />
+          <ChallengeListContainer>
+            {tabContent[view]}    
+          </ChallengeListContainer>
+        </MyChallengesContainer>
+      </MypageContainer>
+    </Container>
   );
 };
 

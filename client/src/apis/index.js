@@ -94,3 +94,12 @@ export const signout = () => {
     )
     .then((result) => result.data);
 };
+
+export const createChallenge = (body) => {
+  return axios
+    .post(`${process.env.REACT_APP_API_URL}/challenges`,
+      body,
+      { 'Content-Type': 'application/json', withCredentials: true, }
+    )
+    .then((result) => result.data);
+}
