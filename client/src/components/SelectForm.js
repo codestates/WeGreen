@@ -17,7 +17,7 @@ const DropButton = styled.button`
   padding: 0 1rem;
   z-index: 999;
   background-color: transparent;
-  color: #81c0ba;
+  color: ${color.primary};
   font-size: 1rem;
   text-align: left;
   line-height: 40px;

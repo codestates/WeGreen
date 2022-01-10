@@ -229,7 +229,7 @@ const EditMyinfo = () => {
         })
         .catch((err) => {
           if (err.response.status === 401) {
-            setResponseStatus('wrong current password');
+            setResponseStatus('unauthorized');
             setIsModalOpen(true);
           } else {
             setResponseStatus('no status');
@@ -275,7 +275,7 @@ const EditMyinfo = () => {
             <Button content='확인' handler={btnHandler} />
           </>
         );
-      case 'wrong current password':
+      case 'unauthorized':
         return (
           <>
             <p>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { color, contentWidth, device } from '../styles';
@@ -61,26 +61,29 @@ const InvalidMessage = styled.p`
 `;
 
 const CreateChallenge = () => {
-  const state = useSelector((state) => state.userReducer);
-
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!state.isLogin) {
-      navigate('/login');
-    }
-  });
-
+  const loginState = useSelector((state) => state.userReducer);
+  const { state } = useLocation();
+  
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const requirementArr = new Array(7).fill().map((_, i) => i + 1);
 
-  const [challengeInfo, setChallengeInfo] = useState({
-    name: '',
-    content: '',
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!loginState.isLogin) {
+      navigate('/login');
+    }
+  });
+
+  const info = state ? state : {
+    name: "",
+    content: "",
     started_at: today,
     requirement: '챌린지 성공 조건',
-  });
+  }
+
+  const [challengeInfo, setChallengeInfo] = useState(info);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [responseStatus, setResponseStatus] = useState('no status');
@@ -151,6 +154,7 @@ const CreateChallenge = () => {
       <CreateChallengeContainer>
         <InputForm
           placeholder='챌린지 제목'
+          defaultValue={challengeInfo.name}
           handleValue={onChangeChallengeInfo('name')}
         />
         {isValidChallengeTitle ? null : (
@@ -161,6 +165,7 @@ const CreateChallenge = () => {
         <TextareaForm
           height='160px'
           placeholder='챌린지 소개'
+          defaultValue={challengeInfo.content}
           handleValue={onChangeChallengeInfo('content')}
           limit={300}
         />
