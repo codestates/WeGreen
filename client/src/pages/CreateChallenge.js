@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { color, contentWidth, device } from '../styles';
 import InputForm from '../components/InputForm';
@@ -60,7 +61,16 @@ const InvalidMessage = styled.p`
 `;
 
 const CreateChallenge = () => {
+  const state = useSelector((state) => state.userReducer);
+
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!state.isLogin) {
+      navigate('/login');
+    }
+  });
+
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const requirementArr = new Array(7).fill().map((_, i) => i + 1);
@@ -90,7 +100,7 @@ const CreateChallenge = () => {
 
   const moveToConfirm = () => {
     if (isValidChallenge()) {
-      navigate('/confirmchallenge', { state: challengeInfo })
+      navigate('/confirmchallenge', { state: challengeInfo });
     } else {
       setResponseStatus('wrong challenge info');
       setIsModalOpen(true);
