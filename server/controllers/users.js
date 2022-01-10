@@ -1,26 +1,26 @@
-const { user: UserModel } = require("../models");
+const { user: UserModel } = require('../models');
 const {
   hashedpassword,
   comparepassword,
   generateAccessToken,
   sendAccessToken,
   isAuthorized,
-} = require("./tokenFunctions");
-require("dotenv").config();
+} = require('./tokenFunctions');
+require('dotenv').config();
 
 module.exports = {
   //로그인
   login: async (req, res, next) => {
     try {
       const DBpassword = await UserModel.findOne({
-        attributes: ["password"],
+        attributes: ['password'],
         where: {
           email: req.body.email,
         },
       });
       if (!DBpassword) {
         res.status(401).send({
-          message: "Invalid password or email",
+          message: 'Invalid password or email',
         });
       } else {
         const compareResult = comparepassword(
@@ -56,13 +56,13 @@ module.exports = {
         //user의 정보랑 일치하는게 없으면 "message":"Invalid password or email"랑 401을 보낸다.
         else {
           return res.status(401).send({
-            message: "Invalid password or email",
+            message: 'Invalid password or email',
           });
         }
       }
     } catch (err) {
       res.status(500).send({
-        message: "Internal server error",
+        message: 'Internal server error',
       });
       next(err);
     }
@@ -71,11 +71,11 @@ module.exports = {
   //토큰 구현 후 로그아웃
   logout: async (req, res, next) => {
     try {
-      res.clearCookie("accessToken"); //쿠키 클리어
-      res.status(200).send({ message: "OK" });
+      res.clearCookie('accessToken'); //쿠키 클리어
+      res.status(200).send({ message: 'OK' });
     } catch (err) {
       res.status(500).send({
-        message: "Internal server error",
+        message: 'Internal server error',
       });
       next(err);
     }
@@ -93,18 +93,19 @@ module.exports = {
         },
       });
       if (created) {
-        const { badge_id, id, username, email, updatedAt, createdAt } = result;
+        const { badge_id, id, username, email, updatedAt, created_at } = result;
         res
           .status(201)
-          .json({ badge_id, id, username, email, updatedAt, createdAt }); //password 뺀 result 보내줘야함
+          .json({ badge_id, id, username, email, updatedAt, created_at }); //password 뺀 result 보내줘야함
       } else if (!created) {
-        res.status(409).json({ message: "Email already exists" });
+        res.status(409).json({ message: 'Email already exists' });
       } else {
-        res.status(500).json({ message: "Internal server error" });
+        res.status(500).json({ message: 'Internal server error' });
       }
     } catch (err) {
+      console.log('ERROR', err);
       res.status(500).send({
-        message: "Internal server error",
+        message: 'Internal server error',
       });
       next(err);
     }
@@ -121,13 +122,13 @@ module.exports = {
           },
           cascade: true,
         }).then(() => {
-          res.clearCookie("accessToken");
+          res.clearCookie('accessToken');
           res.sendStatus(204);
         });
       }
     } catch (err) {
       res.status(500).send({
-        message: "Internal server error",
+        message: 'Internal server error',
       });
       next(err);
     }
@@ -139,7 +140,7 @@ module.exports = {
       if (isAuthorized(req)) {
         const { currentPWD, newPWD } = req.body;
         const DBpassword = await UserModel.findOne({
-          attributes: ["password"],
+          attributes: ['password'],
           where: {
             id: req.params.user_id,
           },
@@ -147,9 +148,9 @@ module.exports = {
         if (!comparepassword(currentPWD.toString(), DBpassword.password)) {
           res
             .status(401)
-            .json({ message: "Invalid password or token expired" });
+            .json({ message: 'Invalid password or token expired' });
         } else if (comparepassword(newPWD.toString(), DBpassword.password)) {
-          res.status(409).json({ message: "Same password" });
+          res.status(409).json({ message: 'Same password' });
         } else {
           const encrypted = hashedpassword(newPWD);
           const changed = await UserModel.update(
@@ -164,18 +165,18 @@ module.exports = {
           );
           if (changed) {
             res.status(200).json({
-              message: "OK",
+              message: 'OK',
             });
           } else {
-            res.status(500).json({ message: "Internal server error" });
+            res.status(500).json({ message: 'Internal server error' });
           }
         }
       } else {
-        res.status(401).json({ message: "Invalid password or token expired" });
+        res.status(401).json({ message: 'Invalid password or token expired' });
       }
     } catch (err) {
       res.status(500).send({
-        message: "Internal server error",
+        message: 'Internal server error',
       });
       next(err);
     }
@@ -224,7 +225,7 @@ module.exports = {
           where: { id: req.params.user_id },
         });
         res.status(200).json({
-          message: "OK",
+          message: 'OK',
           data: {
             user_id: req.params.user_id,
             username: user.username,
@@ -234,7 +235,7 @@ module.exports = {
         });
       } catch (err) {
         res.status(500).send({
-          message: "Internal server error",
+          message: 'Internal server error',
         });
         next(err);
       }
@@ -246,7 +247,7 @@ module.exports = {
           where: { id: req.params.user_id },
         });
         res.status(200).json({
-          message: "OK",
+          message: 'OK',
           data: {
             user_info: {
               username: user.username,
@@ -262,7 +263,7 @@ module.exports = {
         });
       } catch (err) {
         res.status(500).send({
-          message: "Internal server error",
+          message: 'Internal server error',
         });
         next(err);
       }
