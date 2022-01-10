@@ -25,22 +25,29 @@ module.exports = {
       const search = req.query.query;
       if (search) {
         var searchModel = await ChallengeModel.findAll({
-          attributes: ['id','name', 'content','started_at','requirement','created_at'],
+          attributes: [
+            'id',
+            'name',
+            'content',
+            'started_at',
+            'requirement',
+            'created_at',
+          ],
           raw: true,
-          where:{
-            [Op.or]:[
-               {
-                'name':{
+          where: {
+            [Op.or]: [
+              {
+                name: {
                   [Op.like]: `%${search}%`,
-                }
-               },
-               {
-                 'content' :{
+                },
+              },
+              {
+                content: {
                   [Op.like]: `%${search}%`,
-                 }
-               }
+                },
+              },
             ],
-          }
+          },
         });
       }
       const joinCountArray = await UserChallengeModel.findAll({
@@ -103,21 +110,28 @@ module.exports = {
       if (search) {
         //!query search 아직 미완성
         var searchModel = await ChallengeModel.findAll({
-          attributes: ['id','name', 'content','started_at','requirement','created_at'],
+          attributes: [
+            'id',
+            'name',
+            'content',
+            'started_at',
+            'requirement',
+            'created_at',
+          ],
           raw: true,
-          where:{
-            [Op.or]:[
+          where: {
+            [Op.or]: [
               {
-               'name':{
-                 [Op.like]: `%${search}%`,
-               }
+                name: {
+                  [Op.like]: `%${search}%`,
+                },
               },
               {
-                'content' :{
-                 [Op.like]: `%${search}%`,
-                }
-              }
-           ],
+                content: {
+                  [Op.like]: `%${search}%`,
+                },
+              },
+            ],
           },
         });
       }
@@ -147,7 +161,14 @@ module.exports = {
       for (let i = 0; i < slicedJoinCount.length; i++) {
         await ChallengeModel.findOne({
           where: { id: slicedJoinCount[i].challenge_id },
-          attributes:["id","name","content","started_at","requirement","created_at"],
+          attributes: [
+            'id',
+            'name',
+            'content',
+            'started_at',
+            'requirement',
+            'created_at',
+          ],
           raw: true,
         }).then((result) =>
           latestResult.push(
@@ -211,6 +232,8 @@ module.exports = {
   list: async (req, res) => {
     try {
       var is_joined = false;
+      var total_checkin_count = 0;
+      var is_success = false;
       const joinCountArray = await UserChallengeModel.findAll({
         attributes: ['user_id'],
         where: { challenge_id: req.params.challenge_id },
@@ -218,16 +241,45 @@ module.exports = {
       const join_count = joinCountArray.length;
       const newChallenge = await ChallengeModel.findOne({
         attributes: [
-          'id',
+          ['id', 'challenge_id'],
           'name',
           'content',
           'started_at',
           'requirement',
+          'author',
           'created_at',
         ],
         where: {
           id: req.params.challenge_id,
         },
+      });
+      const checkinTimes = await CheckInModel.findAll({
+        attributes: ['created_at'],
+        where: { challenge_id: req.params.challenge_id },
+        raw: true,
+      });
+      total_checkin_count = checkinTimes.length;
+      const checkin_log = [];
+      for (let element of checkinTimes) {
+        checkin_log.push(element.created_at);
+      }
+      const findRequirement = await ChallengeModel.findOne({
+        attributes: ['requirement'],
+        where: { id: req.params.challenge_id },
+        raw: true,
+      });
+      if (Number(findRequirement.requirement) <= checkin_log.length) {
+        is_success = true;
+      }
+      const allComments = await CommentModel.findAll({
+        attributes: [
+          ['id', 'comment_id'],
+          'user_id',
+          'challenge_id',
+          'content',
+          'created_at',
+        ],
+        where: { challenge_id: req.params.challenge_id },
       });
       if (isAuthorized(req)) {
         const authorization = isAuthorized(req);
@@ -245,9 +297,17 @@ module.exports = {
         res.status(200).json({
           message: 'OK',
           data: {
-            ...newChallenge.dataValues,
-            join_count: join_count,
-            is_joined: is_joined,
+            challenge_info: {
+              ...newChallenge.dataValues,
+              join_count: join_count,
+              is_joined: is_joined,
+            },
+            checkin_info: {
+              checkin_count: total_checkin_count,
+              checkin_log: checkin_log,
+              is_accomplished: is_success,
+            },
+            comments: allComments,
           },
         });
       } else {
