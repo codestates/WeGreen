@@ -199,24 +199,27 @@ const Navigation = () => {
     <NavigationContainer>
       <MainNav>
         <MobileNavContainer>
-          <Link to="/">
+          <Link to='/'>
             <span>WeGreen</span>
           </Link>
           <MenuBtn isMenuOpen={isMenuOpen} onClick={handleMenuToggle}>
             <span>Menu</span>
           </MenuBtn>
         </MobileNavContainer>
-        <LinksContainer isMenuOpen={isMenuOpen} onClick={handleMenuToggle}>
-          <Link to="/challenges">챌린지</Link>
+        <LinksContainer
+          isMenuOpen={isMenuOpen}
+          onClick={() => setIsMenuOpen(false)}
+        >
+          <Link to='/challenges'>챌린지</Link>
           {isLogin ? (
             <>
               <button onClick={handleLogout}>로그아웃</button>
-              <Link to="/mypage">마이페이지</Link>
+              <Link to='/mypage'>마이페이지</Link>
             </>
           ) : (
             <>
-              <Link to="/login">로그인</Link>
-              <Link to="/signup">회원가입</Link>
+              <Link to='/login'>로그인</Link>
+              <Link to='/signup'>회원가입</Link>
             </>
           )}
         </LinksContainer>
