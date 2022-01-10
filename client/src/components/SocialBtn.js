@@ -7,10 +7,14 @@ const SocialBtn = styled.button`
   margin: 0.5rem;
   border-radius: 50%;
   background-color: ${color.primaryLight};
+  background-image: url(${(props) => props.image});
+  border: ${(props) =>
+    props.hasBorder ? `1px solid ${color.primaryBorder};` : 'none'};
+  cursor: pointer;
 `;
 
-const Illust = () => {
-  return <SocialBtn></SocialBtn>;
+const Illust = ({ image, hasBorder = false }) => {
+  return <SocialBtn image={image} hasBorder={hasBorder}></SocialBtn>;
 };
 
 export default SocialBtn;

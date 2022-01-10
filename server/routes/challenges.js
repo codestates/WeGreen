@@ -17,7 +17,7 @@ router.get('/:challenge_id', challenges.list);
 router.patch('/:challenge_id', challenges.edit);
 
 //챌린지 삭제하기
-router.delete('/:challenge_id', challenges.delete);
+router.post('/:challenge_id', challenges.delete);
 
 //체크인(인증) 화면보기
 router.get('/:challenge_id/checkins', challenges.checkins.get);
@@ -32,10 +32,7 @@ router.get('/:challenge_id/comments', challenges.comments.get);
 router.patch('/:challenge_id/comments/:comment_id', challenges.comments.patch);
 
 //댓글 삭제하기
-router.delete(
-  '/:challenge_id/comments/:comment_id',
-  challenges.comments.delete
-);
+router.post('/:challenge_id/comments/:comment_id', challenges.comments.delete);
 
 //댓글 작성하기
 router.post('/:challenge_id/comments', challenges.comments.post);

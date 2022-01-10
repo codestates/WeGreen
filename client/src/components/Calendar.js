@@ -1,24 +1,36 @@
 import { useState } from 'react';
 import styled from 'styled-components';
-import { color, contentWidth, radius } from '../styles';
+import { color, radius } from '../styles';
 
 const CalendarContainer = styled.div`
   width: 100%;
   height: 330px;
-  max-width: calc(${contentWidth} / 2);
+  min-width: 300px;
   padding: 1rem;
   display: flex;
   flex-direction: column;
   gap: .5rem;
+  border: 1px solid ${color.primaryBorder};
   border-radius: ${radius};
-  background-color: ${color.primaryLight};
 `;
 
 const CalendarHeaderSection = styled.section`
   width: 100%;
+  padding: .25rem 1rem;
   display: flex;
   justify-content: space-between;
 `;
+
+const ChangeMonthButton = styled.button`
+  color: ${color.primary};
+  background-color: transparent;
+  font-weight: bold;
+`
+
+const TodayButton = styled.button`
+  background-color: transparent;
+  font-weight: bold;
+`
 
 const CalendarDatesContainer = styled.div`
   width: 100%;
@@ -32,7 +44,7 @@ const CalendarDatesContainer = styled.div`
 
 const DayContainer = styled.div`
   width: 100%;
-  color: ${(props) => props.day};
+  color: ${(props) => props.days};
 `;
 
 const DateContainer = styled.div`
@@ -104,23 +116,30 @@ const Calendar = ({ today, pickedDate, setPickedDate }) => {
   const handlePickedDate = (e) => {
     const picked = new Date(viewDate);
     picked.setDate(Number(e.target.textContent));
-    if (today < picked) {
+    if (today <= picked) {
       setPickedDate(picked);
     }
   };
 
+  const handleTodayButton = () => {
+    setViewDate(today)
+  }
+
   return (
     <CalendarContainer>
       <CalendarHeaderSection>
-        <button onClick={handleViewer}>&lt;</button>
-        {viewDate.getFullYear()}-{('0' + (viewDate.getMonth() + 1)).slice(-2)}
-        <button onClick={handleViewer}>&gt;</button>
+        <ChangeMonthButton onClick={handleViewer}>&lt;</ChangeMonthButton>
+          {viewDate.getFullYear()}-{('0' + (viewDate.getMonth() + 1)).slice(-2)}
+          <TodayButton onClick={handleTodayButton}>오늘</TodayButton>
+        <ChangeMonthButton onClick={handleViewer}>&gt;</ChangeMonthButton>
       </CalendarHeaderSection>
       <Divider />
       <CalendarDatesContainer>
         {days.map((day, i) => {
           return (
-            <DayContainer key={day} day={i === 0}>
+            <DayContainer key={day} days={i % 7 === 0 || i % 7 === 6
+              ? 'red'
+              : 'null'}>
               {day}
             </DayContainer>
           );
@@ -145,7 +164,7 @@ const Calendar = ({ today, pickedDate, setPickedDate }) => {
                 pickedDate.getFullYear() === viewDate.getFullYear() &&
                 pickedDate.getMonth() === viewDate.getMonth() &&
                 i === dates[0].length + pickedDate.getDate() - 1
-                  ? 'blue'
+                  ? 'green'
                   : i % 7 === 0 || i % 7 === 6
                   ? 'red'
                   : 'null'
