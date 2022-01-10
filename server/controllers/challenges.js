@@ -25,21 +25,22 @@ module.exports = {
       const search = req.query.query;
       if (search) {
         var searchModel = await ChallengeModel.findAll({
-          attributes: [
-            'id',
-            'name',
-            'content',
-            'started_at',
-            'requirement',
-            'createdAt',
-            'updatedAt',
-          ],
+          attributes: ['id','name', 'content','started_at','requirement','created_at'],
           raw: true,
-          where: {
-            name: {
-              [Op.like]: `%${search}%`,
-            },
-          },
+          where:{
+            [Op.or]:[
+               {
+                'name':{
+                  [Op.like]: `%${search}%`,
+                }
+               },
+               {
+                 'content' :{
+                  [Op.like]: `%${search}%`,
+                 }
+               }
+            ],
+          }
         });
       }
       const joinCountArray = await UserChallengeModel.findAll({
@@ -102,20 +103,21 @@ module.exports = {
       if (search) {
         //!query search 아직 미완성
         var searchModel = await ChallengeModel.findAll({
-          attributes: [
-            'id',
-            'name',
-            'content',
-            'started_at',
-            'requirement',
-            'createdAt',
-            'updatedAt',
-          ],
+          attributes: ['id','name', 'content','started_at','requirement','created_at'],
           raw: true,
-          where: {
-            name: {
-              [Op.like]: `%${search}%`,
-            },
+          where:{
+            [Op.or]:[
+              {
+               'name':{
+                 [Op.like]: `%${search}%`,
+               }
+              },
+              {
+                'content' :{
+                 [Op.like]: `%${search}%`,
+                }
+              }
+           ],
           },
         });
       }
@@ -145,6 +147,7 @@ module.exports = {
       for (let i = 0; i < slicedJoinCount.length; i++) {
         await ChallengeModel.findOne({
           where: { id: slicedJoinCount[i].challenge_id },
+          attributes:["id","name","content","started_at","requirement","created_at"],
           raw: true,
         }).then((result) =>
           latestResult.push(
