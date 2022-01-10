@@ -4,28 +4,42 @@ import { useNavigate } from 'react-router-dom';
 import { updateUserinfo, logout } from '../actions';
 import { requestMyinfo, updateMyinfo, modifyPassword, signout } from '../apis';
 import styled from 'styled-components';
-import { color, device, contentWidth } from '../styles';
+import { color, device, contentWidth, boxShadow } from '../styles';
 import Illust from '../components/Illust';
 import InputForm from '../components/InputForm';
 import TextareaForm from '../components/TextareaForm';
 import Button from '../components/Button';
 import Modal from '../components/Modal';
 import BadgeModal from '../components/BadgeModal';
-import { ReactComponent as Wave } from '../assets/images/wave.svg';
+// import { ReactComponent as Wave } from '../assets/images/wave.svg';
+
+const Container = styled.div`
+  @media ${device.laptop} {
+    width: 100%;
+    height: calc(100vh - 60px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: ${color.primaryLight};
+  }
+`;
 
 const EditMyinfoContainer = styled.div`
+  background-color: ${color.white};
+
   & > div:first-child {
     display: none;
   }
   & h4 {
-    margin-bottom: 1rem;
+    margin-bottom: .5rem;
   }
 
   @media ${device.laptop} {
-    height: 100vh;
-    max-width: ${contentWidth};
-    margin: 0 auto;
-    display: flex;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    width: ${contentWidth};
+    height: 100%;
+    box-shadow: ${boxShadow};
 
     & > div:first-child {
       display: block;
@@ -37,25 +51,25 @@ const EditMyinfoSection = styled.section`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
+  gap: .5rem;
 
   @media ${device.laptop} {
-    width: calc(${contentWidth} * 1 / 3);
+    width: 100%;
   }
 `;
 
-const TitleContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  width: 100%;
-  padding-top: 2rem;
-  h1 {
-    color: ${color.white};
-    text-align: center;
-  }
-  background-color: ${color.primary};
-`;
+// const TitleContainer = styled.div`
+//   display: flex;
+//   flex-direction: column;
+//   justify-content: space-between;
+//   width: 100%;
+//   padding-top: 2rem;
+//   h1 {
+//     color: ${color.white};
+//     text-align: center;
+//   }
+//   background-color: ${color.primary};
+// `;
 
 const EditMyinfoBioContainer = styled.div`
   width: 100%;
@@ -69,13 +83,14 @@ const EditMyinfoBioContainer = styled.div`
 const BadgeNameContainer = styled.div`
   display: flex;
   align-items: center;
+  gap: 1.5rem;
 `;
 
 const MainBadgeImg = styled.img`
   width: 80px;
   height: 80px;
-  border: 1px solid black;
-  border-radius: 50%;
+  object-fit: cover;
+  background-color: ${color.primary};
 `;
 
 const ModifyPasswordContainer = styled.div`
@@ -303,94 +318,96 @@ const EditMyinfo = () => {
   };
 
   return (
-    <EditMyinfoContainer>
-      <Illust />
-      <EditMyinfoSection>
-        <TitleContainer>
-          <h1>회원정보수정</h1>
-          <Wave width='100%' height='100' fill={color.white} />
-        </TitleContainer>
-        <EditMyinfoBioContainer>
-          <BadgeNameContainer>
-            <MainBadgeImg 
-              badgeId={1} 
-              alt='대표뱃지'
-              onClick={() => setIsBadgeModalOpen(true)}
+    <Container>
+      <EditMyinfoContainer>
+        <Illust />
+        <EditMyinfoSection>
+          {/* <TitleContainer>
+            <h1>회원정보수정</h1>
+            <Wave width='100%' height='100' fill={color.white} />
+          </TitleContainer> */}
+          <EditMyinfoBioContainer>
+            <BadgeNameContainer>
+              <MainBadgeImg 
+                badgeId={1} 
+                alt='대표뱃지'
+                onClick={() => setIsBadgeModalOpen(true)}
+              />
+              <InputForm
+                defaultValue={myinfo.username}
+                placeholder='사용자 이름'
+                handleValue={handleMyinfo('username')}
+              />
+            </BadgeNameContainer>
+            <TextareaForm
+              defaultValue={myinfo.bio}
+              placeholder='사용자 소개'
+              handleValue={handleMyinfo('bio')}
             />
-            <InputForm
-              defaultValue={myinfo.username}
-              placeholder='사용자 이름'
-              handleValue={handleMyinfo('username')}
-            />
-          </BadgeNameContainer>
-          <TextareaForm
-            defaultValue={myinfo.bio}
-            placeholder='사용자 소개'
-            handleValue={handleMyinfo('bio')}
-          />
-          <Button content='저장하기' handler={handleUpdateMyinfo} />
-        </EditMyinfoBioContainer>
-        <Divider />
-        <ModifyPasswordContainer>
-          <h4>비밀번호 변경</h4>
-          {isExpanded ? (
-            <>
-              <InputForm
-                type='password'
-                placeholder='현재 비밀번호'
-                handleValue={handleInputPassword('now')}
+            <Button content='저장하기' handler={handleUpdateMyinfo} />
+          </EditMyinfoBioContainer>
+          <Divider />
+          <ModifyPasswordContainer>
+            <h4>비밀번호 변경</h4>
+            {isExpanded ? (
+              <>
+                <InputForm
+                  type='password'
+                  placeholder='현재 비밀번호'
+                  handleValue={handleInputPassword('now')}
+                />
+                <InputForm
+                  type='password'
+                  placeholder='새로운 비밀번호'
+                  handleValue={onChangePassword}
+                />
+                {isValidPassword ? null : (
+                  <InvalidMessage>
+                    *비밀번호는 최소 8자리 이상이어야 하며 영문자, 숫자,
+                    특수문자(!@#$%^&*?)가 1개 이상 사용되어야 합니다.
+                  </InvalidMessage>
+                )}
+                <InputForm
+                  type='password'
+                  placeholder='새로운 비밀번호 확인'
+                  handleValue={onChangePasswordConfirm}
+                />
+                {isValidPasswordConfirm ? null : (
+                  <InvalidMessage>*비밀번호가 다릅니다.</InvalidMessage>
+                )}
+                <Button content='비밀번호 변경' handler={handleModifyPassword} />
+              </>
+            ) : (
+              <Button
+                content='비밀번호 변경'
+                color='tertiary'
+                handler={handleIsExpanded}
               />
-              <InputForm
-                type='password'
-                placeholder='새로운 비밀번호'
-                handleValue={onChangePassword}
-              />
-              {isValidPassword ? null : (
-                <InvalidMessage>
-                  *비밀번호는 최소 8자리 이상이어야 하며 영문자, 숫자,
-                  특수문자(!@#$%^&*?)가 1개 이상 사용되어야 합니다.
-                </InvalidMessage>
-              )}
-              <InputForm
-                type='password'
-                placeholder='새로운 비밀번호 확인'
-                handleValue={onChangePasswordConfirm}
-              />
-              {isValidPasswordConfirm ? null : (
-                <InvalidMessage>*비밀번호가 다릅니다.</InvalidMessage>
-              )}
-              <Button content='비밀번호 변경' handler={handleModifyPassword} />
-            </>
-          ) : (
+            )}
+          </ModifyPasswordContainer>
+          <Divider />
+          <SignoutContainer>
+            <h4>회원탈퇴</h4>
             <Button
-              content='비밀번호 변경'
+              content='회원탈퇴'
               color='tertiary'
-              handler={handleIsExpanded}
+              handler={handleSignoutModal}
             />
-          )}
-        </ModifyPasswordContainer>
-        <Divider />
-        <SignoutContainer>
-          <h4>회원탈퇴</h4>
-          <Button
-            content='회원탈퇴'
-            color='tertiary'
-            handler={handleSignoutModal}
-          />
-        </SignoutContainer>
-      </EditMyinfoSection>
-      {isModalOpen ? (
-        <Modal closeModal={setIsModalOpen}>
-          <ModalMessage
-            status={responseStatus}
-            btnHandler={() => setIsModalOpen(false)}
-          />
-        </Modal>
-      ) : null}
-      {isBadgeModalOpen ? (
-        <BadgeModal closeModal={setIsBadgeModalOpen}></BadgeModal>
-      ) : null}
-    </EditMyinfoContainer>
+          </SignoutContainer>
+        </EditMyinfoSection>
+        {isModalOpen ? (
+          <Modal closeModal={setIsModalOpen}>
+            <ModalMessage
+              status={responseStatus}
+              btnHandler={() => setIsModalOpen(false)}
+            />
+          </Modal>
+        ) : null}
+        {isBadgeModalOpen ? (
+          <BadgeModal closeModal={setIsBadgeModalOpen}></BadgeModal>
+        ) : null}
+      </EditMyinfoContainer>
+    </Container>
   );
 };
 

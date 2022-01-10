@@ -7,12 +7,11 @@ import BadgesModal from './BadgesModal';
 
 const UserProfileContainer = styled.div`
   position: relative;
-  top: -1rem;
+  top: -2rem;
   width: 100%; /* 임시 */
-  min-width: 300px; /* 임시 */
+  min-width: 240px; /* 임시 */
   max-width: 400px; /* 임시 */
   padding: 1rem;
-  margin: 0 auto;
   border-radius: ${radius};
   background-color: ${color.white};
   box-shadow: ${boxShadow};
@@ -40,6 +39,7 @@ const UserProfileLowContainer = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  font-size: .875rem;
 `;
 
 const UserProfile = ({ userInfo, successCounts }) => {

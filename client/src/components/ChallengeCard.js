@@ -22,20 +22,16 @@ const ChallengeCardStatusContainer = styled.div`
 `;
 
 const ChallengeCard = ({ challenge }) => {
-  const href = '/challenge/' + challenge.challenge_id;
+  const href = "/challenge/" + challenge.challenge_id
 
-  const startedAt = new Date(challenge.started_at);
-  const finishedAt = new Date(challenge.started_at);
-  finishedAt.setDate(startedAt.getDate() + 6);
-
-  let message = '';
-
-  const regex = /[^0-9]/g;
-  const requirement = parseInt(challenge.requirement.replace(regex, ''));
-  const progress =
-    challenge.checkin_count / requirement >= 1
-      ? 1
-      : (challenge.checkin_count / requirement).toFixed(2);
+  const startedAt = new Date(challenge.started_at)
+  const finishedAt = new Date(challenge.started_at)
+  finishedAt.setDate(startedAt.getDate() + 6)
+  
+  let message = ""
+  
+  const progress = (challenge.checkin_count / challenge.requirement) >= 1 ?
+                     1 : (challenge.checkin_count / challenge.requirement).toFixed(2)
 
   if (challenge.is_finished === true) {
     if (challenge.is_accomplished) message = '챌린지 성공';
