@@ -7,8 +7,11 @@ import Button from '../components/Button';
 import SocialBtn from '../components/SocialBtn';
 import Modal from '../components/Modal';
 import { ReactComponent as Wave } from '../assets/images/wave.svg';
-import { color, device, radius, boxShadow } from '../styles';
 import mainIllust from '../assets/images/main_illust.png';
+import kakaoIcon from '../assets/images/login_icon_kakao.svg';
+import googleIcon from '../assets/images/login_icon_google.svg';
+import naverIcon from '../assets/images/login_icon_naver.svg';
+import { color, device, radius, boxShadow } from '../styles';
 import { requestLogin } from '../apis';
 import { login } from '../actions';
 
@@ -238,32 +241,32 @@ const Login = () => {
         <LoginSection>
           <TitleContainer>
             <h1>로그인</h1>
-            <Wave width="100%" height="100" fill={color.white} />
+            <Wave width='100%' height='100' fill={color.white} />
           </TitleContainer>
           <LoginForm>
-            <InputForm placeholder="이메일" handleValue={onChangeEmail} />
+            <InputForm placeholder='이메일' handleValue={onChangeEmail} />
             {isEmptyEmail ? (
               <InvalidMessage>*이메일을 입력해 주세요.</InvalidMessage>
             ) : null}
             <InputForm
-              placeholder="비밀번호"
+              placeholder='비밀번호'
               handleValue={onChangePassword}
-              type="password"
+              type='password'
             />
             {isEmptyPassword ? (
               <InvalidMessage>*비밀번호를 입력해 주세요.</InvalidMessage>
             ) : null}
-            <Button content="로그인" handler={handleSubmit}></Button>
+            <Button content='로그인' handler={handleSubmit}></Button>
           </LoginForm>
           <Divider>
             <span>or</span>
           </Divider>
           <SocialContainer>
-            <SocialBtn />
-            <SocialBtn />
-            <SocialBtn />
+            <SocialBtn image={kakaoIcon} />
+            <SocialBtn image={naverIcon} />
+            <SocialBtn image={googleIcon} hasBorder={true} />
           </SocialContainer>
-          <Link to="/signup">
+          <Link to='/signup'>
             <ColoredSpan>
               아직 회원이 아니신가요? <strong>회원가입</strong>
             </ColoredSpan>

@@ -8,6 +8,9 @@ import Modal from '../components/Modal';
 import { ReactComponent as Wave } from '../assets/images/wave.svg';
 import { color, device, radius, boxShadow } from '../styles';
 import mainIllust from '../assets/images/main_illust.png';
+import kakaoIcon from '../assets/images/login_icon_kakao.svg';
+import googleIcon from '../assets/images/login_icon_google.svg';
+import naverIcon from '../assets/images/login_icon_naver.svg';
 import { requestSignup } from '../apis';
 
 const Container = styled.div`
@@ -153,7 +156,7 @@ const ModalMessage = ({ status }) => {
         <>
           <p>회원가입이 성공적으로 완료되었습니다.</p>
           <Button
-            content="로그인하러 가기"
+            content='로그인하러 가기'
             handler={() => navigate('/login')}
           ></Button>
         </>
@@ -163,7 +166,7 @@ const ModalMessage = ({ status }) => {
         <>
           <p>이미 회원가입된 이메일입니다.</p>{' '}
           <Button
-            content="로그인하러 가기"
+            content='로그인하러 가기'
             handler={() => navigate('/login')}
           ></Button>
         </>
@@ -291,23 +294,23 @@ const Signup = () => {
         <SignupSection>
           <TitleContainer>
             <h1>회원가입</h1>
-            <Wave width="100%" height="100" fill={color.white} />
+            <Wave width='100%' height='100' fill={color.white} />
           </TitleContainer>
           <SignupForm>
-            <InputForm placeholder="이메일" handleValue={onChangeEmail} />
+            <InputForm placeholder='이메일' handleValue={onChangeEmail} />
             {isValidEmail ? null : (
               <InvalidMessage>*이메일 형식이 유효하지 않습니다.</InvalidMessage>
             )}
-            <InputForm placeholder="닉네임" handleValue={onChangeUsername} />
+            <InputForm placeholder='닉네임' handleValue={onChangeUsername} />
             {isValidUsername ? null : (
               <InvalidMessage>
                 *닉네임은 한글 또는 영문 대소문자 2~15자리만 사용 가능합니다.
               </InvalidMessage>
             )}
             <InputForm
-              placeholder="비밀번호"
+              placeholder='비밀번호'
               handleValue={onChangePassword}
-              type="password"
+              type='password'
             />
             {isValidPassword ? null : (
               <InvalidMessage>
@@ -316,24 +319,24 @@ const Signup = () => {
               </InvalidMessage>
             )}
             <InputForm
-              placeholder="비밀번호 확인"
+              placeholder='비밀번호 확인'
               handleValue={onChangePasswordConfirm}
-              type="password"
+              type='password'
             />
             {isValidPasswordConfirm ? null : (
               <InvalidMessage>*비밀번호가 다릅니다.</InvalidMessage>
             )}
-            <Button content="회원가입" handler={handleSubmit}></Button>
+            <Button content='회원가입' handler={handleSubmit}></Button>
           </SignupForm>
           <Divider>
             <span>or</span>
           </Divider>
           <SocialContainer>
-            <SocialBtn />
-            <SocialBtn />
-            <SocialBtn />
+            <SocialBtn image={kakaoIcon} />
+            <SocialBtn image={naverIcon} />
+            <SocialBtn image={googleIcon} hasBorder={true} />
           </SocialContainer>
-          <Link to="/login">
+          <Link to='/login'>
             <ColoredSpan>
               이미 회원이신가요? <strong>로그인</strong>
             </ColoredSpan>
