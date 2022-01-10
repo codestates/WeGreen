@@ -1,25 +1,25 @@
-const router = require("express").Router();
-const { users } = require("../controllers");
+const router = require('express').Router();
+const { users } = require('../controllers');
 
 //로그인;
-router.post("/login", users.login);
+router.post('/login', users.login);
 
 //로그아웃
-router.post("/logout", users.logout);
+router.post('/logout', users.logout);
 
 //회원가입
-router.post("/signup", users.signup);
+router.post('/signup', users.signup);
 
 //회원탈퇴
-router.delete("/signout", users.signout);
+router.post('/signout', users.signout);
 
 //비밀번호 변경
-router.patch("/:user_id/password", users.password);
+router.patch('/:user_id/password', users.password);
 
 //유저정보 변경
-router.patch("/:user_id", users.userinfo.patch);
+router.patch('/:user_id', users.userinfo.patch);
 
 //유저정보 불러오기
-router.get("/:user_id", users.userinfo.get);
+router.get('/:user_id', users.userinfo.get);
 
 module.exports = router;
