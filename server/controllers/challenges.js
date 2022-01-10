@@ -3,12 +3,19 @@ const {
   users_challenge: UserChallengeModel,
   comment: CommentModel,
   checkin: CheckInModel,
+  users_badge: UserBadgeModel,
   sequelize,
 } = require('../models');
 var express = require('express');
 var router = express.Router();
 const { Op } = require('sequelize'); //sequelize or 쓸때 필요합니다.
 const { isAuthorized } = require('./tokenFunctions');
+
+function getRandomBadge(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1)) + min; //최댓값도 포함, 최솟값도 포함
+}
 
 module.exports = {
   //인기 챌린지 목록 불러오기 GET /challenges/popular/?query=검색어&limit=3
@@ -18,13 +25,21 @@ module.exports = {
       const search = req.query.query;
       if (search) {
         var searchModel = await ChallengeModel.findAll({
-          attributes: ['id','name', 'content','started_at','requirement','createdAt','updatedAt'],
+          attributes: [
+            'id',
+            'name',
+            'content',
+            'started_at',
+            'requirement',
+            'createdAt',
+            'updatedAt',
+          ],
           raw: true,
-          where:{
-            'name':{
+          where: {
+            name: {
               [Op.like]: `%${search}%`,
-            }
-          }
+            },
+          },
         });
       }
       const joinCountArray = await UserChallengeModel.findAll({
@@ -37,15 +52,14 @@ module.exports = {
         raw: true,
       });
 
-      for(let i=0; i<joinCountArray.length; i++){
-        for(let j=0; j<searchModel.length; j++){
-        if(searchModel[j].id===joinCountArray[i].challenge_id){
-          searchModel[j].join_count = joinCountArray[i].join_count
+      for (let i = 0; i < joinCountArray.length; i++) {
+        for (let j = 0; j < searchModel.length; j++) {
+          if (searchModel[j].id === joinCountArray[i].challenge_id) {
+            searchModel[j].join_count = joinCountArray[i].join_count;
+          } else {
+            continue;
+          }
         }
-        else{
-          continue;
-        }
-      }
       }
       const limitNum = req.query.limit || 10;
       const slicedJoinCount = joinCountArray.slice(0, limitNum);
@@ -70,7 +84,9 @@ module.exports = {
           )
         );
       }
-      res.status(200).json({ message: 'OK', data: search ? searchModel : popularResult });
+      res
+        .status(200)
+        .json({ message: 'OK', data: search ? searchModel : popularResult });
     } catch (err) {
       console.log('ERROR', err);
       res.status(500).send({
@@ -86,12 +102,20 @@ module.exports = {
       if (search) {
         //!query search 아직 미완성
         var searchModel = await ChallengeModel.findAll({
-          attributes: ['id','name', 'content','started_at','requirement','createdAt','updatedAt'],
+          attributes: [
+            'id',
+            'name',
+            'content',
+            'started_at',
+            'requirement',
+            'createdAt',
+            'updatedAt',
+          ],
           raw: true,
-          where:{
-            'name':{
+          where: {
+            name: {
               [Op.like]: `%${search}%`,
-            }
+            },
           },
         });
       }
@@ -105,20 +129,18 @@ module.exports = {
         order: [['challenge_id', 'ASC']], //별건 아닌데 DESC로 내림차순으로 정리해서 드릴까요?
         raw: true,
       });
-      for(let i=0; i<joinCountArray.length; i++){
-        for(let j=0; j<searchModel.length; j++){
-          if(searchModel[j].id===joinCountArray[i].challenge_id){
-            searchModel[j].join_count = joinCountArray[i].join_count
-        }
-        else{
-          continue;
+      for (let i = 0; i < joinCountArray.length; i++) {
+        for (let j = 0; j < searchModel.length; j++) {
+          if (searchModel[j].id === joinCountArray[i].challenge_id) {
+            searchModel[j].join_count = joinCountArray[i].join_count;
+          } else {
+            continue;
+          }
         }
       }
-    }
 
-    
-    const limitNum = req.query.limit || 10;
-    const slicedJoinCount = joinCountArray.slice(0, limitNum);
+      const limitNum = req.query.limit || 10;
+      const slicedJoinCount = joinCountArray.slice(0, limitNum);
       const latestResult = [];
       for (let i = 0; i < slicedJoinCount.length; i++) {
         await ChallengeModel.findOne({
@@ -134,7 +156,7 @@ module.exports = {
       }
       res.status(200).send({
         message: 'OK',
-        data: search ? searchModel : latestResult
+        data: search ? searchModel : latestResult,
       });
     } catch (err) {
       res.status(500).send({
@@ -313,7 +335,7 @@ module.exports = {
               id: req.params.challenge_id,
             },
           });
-          res.sendStatus(204); //응답 바디 없음
+          res.status(200).json({ message: 'OK' });
         }
       } else {
         res.status(401).json({
@@ -370,7 +392,7 @@ module.exports = {
             join_count: join_count,
             checkin_count: total_checkin_count,
             checkin_log: checkin_log,
-            is_success: is_success,
+            is_accomplished: is_success,
           },
         });
       } catch (err) {
@@ -429,12 +451,18 @@ module.exports = {
           }
           if (Number(findIfSuccess.requirement) <= checkin_log.length) {
             is_success = true;
+            const randombadge = getRandomBadge(1, 20);
+            const obtainBadge = await UserBadgeModel.create({
+              user_id: userId,
+              badge_id: randombadge,
+              is_selected: false,
+            });
           }
           res.status(201).json({
             message: 'OK',
             data: {
               checkin_log: checkin_log,
-              is_success: is_success,
+              is_accomplished: is_success,
             },
           });
         }
@@ -541,7 +569,7 @@ module.exports = {
             await CommentModel.destroy({
               where: { id: req.params.comment_id },
             });
-            res.sendStatus(204);
+            res.status(200).json({ message: 'OK' });
           } else {
             res.status(401).json({ message: 'Invalid token' });
           }

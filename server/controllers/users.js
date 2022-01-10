@@ -1,4 +1,11 @@
-const { user: UserModel } = require('../models');
+const {
+  user: UserModel,
+  users_badge: UserBadgeModel,
+  challenge: ChallengeModel,
+  users_challenge: UserChallengeModel,
+  checkin: CheckInModel,
+  sequelize,
+} = require('../models');
 const {
   hashedpassword,
   comparepassword,
@@ -7,6 +14,12 @@ const {
   isAuthorized,
 } = require('./tokenFunctions');
 require('dotenv').config();
+
+function getRandomBadge(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1)) + min; //최댓값도 포함, 최솟값도 포함
+}
 
 module.exports = {
   //로그인
@@ -93,10 +106,31 @@ module.exports = {
         },
       });
       if (created) {
-        const { badge_id, id, username, email, updatedAt, created_at } = result;
-        res
-          .status(201)
-          .json({ badge_id, id, username, email, updatedAt, created_at }); //password 뺀 result 보내줘야함
+        const { badge_id, id } = result;
+        const randombadge = getRandomBadge(1, 20);
+        const obtainBadge = await UserBadgeModel.create({
+          user_id: id,
+          badge_id: randombadge,
+          is_selected: true,
+        });
+        const updateBadge = await UserModel.update(
+          {
+            badge_id: randombadge,
+          },
+          { where: { id: id } }
+        );
+        const finalUserInfo = await UserModel.findOne({
+          attributes: ['id', 'badge_id', 'username', 'email', 'created_at'],
+          where: { id: id },
+          raw: true,
+        });
+        res.status(201).json({
+          message: 'Created',
+          data: {
+            email: finalUserInfo.email,
+            username: finalUserInfo.username,
+          },
+        }); //password 뺀 result 보내줘야함
       } else if (!created) {
         res.status(409).json({ message: 'Email already exists' });
       } else {
@@ -123,7 +157,7 @@ module.exports = {
           cascade: true,
         }).then(() => {
           res.clearCookie('accessToken');
-          res.sendStatus(204);
+          res.status(200).json({ message: 'OK' });
         });
       }
     } catch (err) {
@@ -246,6 +280,60 @@ module.exports = {
         const user = await UserModel.findOne({
           where: { id: req.params.user_id },
         });
+        const badgeArray = await UserBadgeModel.findAll({
+          attributes: ['badge_id', 'is_selected'],
+          where: { user_id: req.params.user_id },
+          raw: true,
+        });
+        const badges = [];
+        const selected_badges = [];
+        for (let badge of badgeArray) {
+          badges.push(badge.badge_id);
+          if (badge.is_selected === 1) {
+            selected_badges.push(badge.badge_id);
+          }
+        }
+        const checkinLog = await CheckInModel.findAll({
+          attributes: [
+            [
+              sequelize.fn('COUNT', sequelize.col('created_at')),
+              'checkin_count',
+            ],
+            'challenge_id',
+          ],
+          where: { user_id: req.params.user_id },
+          group: ['challenge_id'],
+          order: [['challenge_id', 'ASC']],
+          raw: true,
+        });
+        const result = [];
+        for (let challengeIdx of checkinLog) {
+          const toCalculate = await ChallengeModel.findOne({
+            attributes: ['started_at', 'requirement'],
+            where: { id: challengeIdx.challenge_id },
+            raw: true,
+          });
+          const sevenDaysLater = new Date(toCalculate.started_at);
+          const finishedDate = new Date(
+            sevenDaysLater.setDate(sevenDaysLater.getDate() + 8) //00시 기준이라 8일 더했음
+          );
+          const is_accomplished =
+            challengeIdx.checkin_count >= Number(toCalculate.requirement);
+          result.push(
+            Object.assign(
+              await ChallengeModel.findOne({
+                attributes: ['id', 'name', 'started_at', 'requirement'],
+                where: { id: challengeIdx.challenge_id },
+                raw: true,
+              }),
+              {
+                checkin_count: challengeIdx.checkin_count,
+                is_finished: finishedDate < new Date(), //8일 더해서 같거나 작은게 아니라 작은걸로..
+                is_accomplished: is_accomplished,
+              }
+            )
+          );
+        }
         res.status(200).json({
           message: 'OK',
           data: {
@@ -253,11 +341,11 @@ module.exports = {
               username: user.username,
               bio: user.bio,
               badge_id: user.badge_id,
-              badges: [],
-              selected_badges: [],
+              badges: badges,
+              selected_badges: selected_badges,
             },
             challenge_info: {
-              challenges: [{}],
+              challenges: result,
             },
           },
         });
