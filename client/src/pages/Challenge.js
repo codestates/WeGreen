@@ -66,16 +66,27 @@ const ContentContainer = styled.div`
   background-color: ${color.white};
   border-top-right-radius: 60px;
 
+  h3 {
+    margin-left: 1rem;
+    margin-bottom: 1rem;
+    color: ${color.primary};
+  }
+
   @media ${device.laptop} {
     display: grid;
     grid-template-columns: 1fr 2fr;
     gap: 20px;
     width: ${contentWidth};
     margin: 0 auto;
-    padding: 0;
+    padding: 0 0 3rem 0;
     background-color: ${color.primaryLight};
     border-radius: 0;
   }
+`;
+
+const GridSpan = styled.div`
+  grid-row: 1 / 3;
+  grid-column: 2;
 `;
 
 const Challenge = () => {
@@ -174,9 +185,18 @@ const Challenge = () => {
             tabContent[view]
           ) : (
             <>
-              <ChallengeInfo challengeInfo={challengeInfo} />
-              <ChallengeComments />
-              <ChallengeCheckin challengeInfo={challengeInfo} checkinInfo={checkinInfo} />
+              <div>
+                <h3>정보</h3>
+                <ChallengeInfo challengeInfo={challengeInfo}/>
+              </div>
+              <GridSpan>
+                <h3>댓글</h3>
+                <ChallengeComments />
+              </GridSpan>
+              <div>
+                <h3>체크인</h3>
+                <ChallengeCheckin challengeInfo={challengeInfo} checkinInfo={checkinInfo} />
+              </div>
             </>
           )}
         </ContentContainer>
