@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { color, device, radius, boxShadow } from '../styles';
 import Button from './Button';
 import BadgesModal from './BadgesModal';
+import { ReactComponent as SettingIcon } from '../assets/images/icon_setting.svg';
 
 const UserProfileContainer = styled.div`
   position: relative;
@@ -35,15 +37,45 @@ const UserNameContainer = styled.div`
 
 const MainBadgeImg = styled.img``;
 
+const SettingBtn = styled.button`
+  position: relative;
+  width: 40px;
+  height: 27px;
+  background-color: ${color.secondary};
+  border-radius: 17px;
+  cursor: pointer;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background-color: black;
+    border-radius: 17px;
+    opacity: 0;
+    transition: all 0.2s ease;
+  }
+
+  &:hover {
+    &::after {
+      opacity: 0.1;
+    }
+  }
+`;
+
 const UserProfileLowContainer = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: .875rem;
+  font-size: 0.875rem;
 `;
 
-const UserProfile = ({ userInfo, successCounts }) => {
+const UserProfile = ({ successCounts }) => {
   const navigate = useNavigate();
+  const state = useSelector((state) => state.userReducer);
+  const userInfo = state.userInfo;
 
   const [isBadgesModalOpen, setIsBadgesModalOpen] = useState(false);
 
@@ -56,12 +88,9 @@ const UserProfile = ({ userInfo, successCounts }) => {
           <MainBadgeImg badgeId={userInfo.badge_id} alt='대표뱃지' />
           <h3>{userInfo.username}</h3>
         </div>
-        <Button
-          width='20px'
-          height='20px'
-          content='  '
-          handler={() => navigate('/editmyinfo')}
-        />
+        <SettingBtn onClick={() => navigate('/editmyinfo')}>
+          <SettingIcon width='20' height='20' fill={color.white} />
+        </SettingBtn>
       </UserNameContainer>
       <p>{userInfo.bio}</p>
       <UserProfileLowContainer>
