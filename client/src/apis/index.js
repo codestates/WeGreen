@@ -99,6 +99,15 @@ export const updateMyinfo = (userId, body) => {
     .then((result) => result.data.data);
 };
 
+export const updateMyBadges = (body) => {
+  return axios
+    .patch(`${process.env.REACT_APP_API_URL}/users-badges`, body, {
+      'Content-Type': 'application/json',
+      withCredentials: true,
+    })
+    .then((result) => result.data.data);
+};
+
 export const modifyPassword = (userId, body) => {
   return axios
     .patch(`${process.env.REACT_APP_API_URL}/users/${userId}/password`, body, {
