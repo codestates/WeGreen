@@ -22,7 +22,7 @@ const ChallengeCardStatusContainer = styled.div`
 `;
 
 const ChallengeCard = ({ challenge }) => {
-  const href = "/challenge/" + challenge.challenge_id
+  const href = "/challenge/" + challenge.id
 
   const startedAt = new Date(challenge.started_at)
   const finishedAt = new Date(challenge.started_at)

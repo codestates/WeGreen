@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { requestChallenge, requestMyinfo } from "../apis";
 import styled from 'styled-components';
 import { color, contentWidth, device } from '../styles';
 import Tab from '../components/Tab';
@@ -77,8 +79,24 @@ const ContentContainer = styled.div`
 `;
 
 const Challenge = () => {
+  const params = useParams()
+  const loginState = useSelector((state) => state.userReducer);
+  const navigate = useNavigate()
+  
   const [view, setView] = useState('info');
   const [challengeInfo, setChallengeInfo] = useState(dummyChallenge);
+  const [checkinInfo, setCheckinInfo] = useState({
+    checkin_count: 2,
+    checkin_log: ["2022-01-10", "2022-01-11"],
+    is_accomplished: false,
+  });
+
+  useEffect(() => {
+    requestChallenge(params.id).then(result => {
+      setChallengeInfo(result.challenge_info)
+      // setCheckinInfo(result.checkin_info)
+    })
+  }, []);
 
   const getWindowWidth = () => {
     const { innerWidth: width } = window;
@@ -107,6 +125,12 @@ const Challenge = () => {
     };
   };
 
+  const moveToEditChallenge = () => {
+    if (loginState.userInfo.user_id === challengeInfo.author) {
+      navigate(`/editchallenge/${challengeInfo.challenge_id}`, { state: challengeInfo })
+    }
+  }
+
   useEffect(() => {
     function handleResize() {
       setWindowWidth(getWindowWidth());
@@ -117,15 +141,15 @@ const Challenge = () => {
   }, []);
 
   const tabContent = {
-    info: <ChallengeInfo></ChallengeInfo>,
-    checkin: <ChallengeCheckin></ChallengeCheckin>,
+    info: <ChallengeInfo challengeInfo={challengeInfo}></ChallengeInfo>,
+    checkin: <ChallengeCheckin challengeInfo={challengeInfo} checkinInfo={checkinInfo}></ChallengeCheckin>,
     comments: <ChallengeComments></ChallengeComments>,
   };
   return (
     <OuterContainer>
       <ChallengeContainer>
         <CommonContainer>
-          <EditBtn>
+          <EditBtn onClick={moveToEditChallenge}>
             <EditIcon width='20' height='20' fill={color.secondaryDark} />
           </EditBtn>
           <Title>{challengeInfo.name}</Title>
@@ -150,9 +174,9 @@ const Challenge = () => {
             tabContent[view]
           ) : (
             <>
-              <ChallengeInfo />
-              <ChallengeCheckin />
+              <ChallengeInfo challengeInfo={challengeInfo} />
               <ChallengeComments />
+              <ChallengeCheckin challengeInfo={challengeInfo} checkinInfo={checkinInfo} />
             </>
           )}
         </ContentContainer>

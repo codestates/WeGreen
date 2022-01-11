@@ -50,7 +50,7 @@ const DayContainer = styled.div`
 const DateContainer = styled.div`
   width: 100%;
   opacity: ${(props) => props.opacity};
-  color: ${(props) => props.days};
+  color: ${(props) => props.pickedDate};
   font-weight: ${(props) => props.today};
 
   &:hover {
@@ -116,9 +116,9 @@ const Calendar = ({ today, pickedDate, setPickedDate }) => {
   const handlePickedDate = (e) => {
     const picked = new Date(viewDate);
     picked.setDate(Number(e.target.textContent));
-    if (today <= picked) {
+    // if (today <= picked) {
       setPickedDate(picked);
-    }
+    // }
   };
 
   const handleTodayButton = () => {
@@ -160,7 +160,7 @@ const Calendar = ({ today, pickedDate, setPickedDate }) => {
                   ? 'bold'
                   : null
               }
-              days={
+              pickedDate={
                 pickedDate.getFullYear() === viewDate.getFullYear() &&
                 pickedDate.getMonth() === viewDate.getMonth() &&
                 i === dates[0].length + pickedDate.getDate() - 1
