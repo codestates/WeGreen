@@ -27,3 +27,15 @@ export const dummyChallenges = [
     join_count: 30,
   },
 ];
+
+export const dummyChallenge = {
+  challenge_id: 3,
+  name: '텀블러 사용하기',
+  content: '일회용컵대신 텀블러를 사용합시다. 외출시 텀블러를 챙겨주세요.',
+  started_at: '2022-01-10',
+  requirement: 5,
+  author: 1,
+  created_at: '2021-01-08',
+  join_count: 15,
+  is_joined: false,
+};

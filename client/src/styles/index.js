@@ -12,6 +12,7 @@ export const color = {
   primaryLight: '#E9F3F2',
   primaryBorder: '#81C0BA',
   secondary: '#94DD8B',
+  secondaryDark: '#46BA37',
   secondaryLight: '#BEE8BE',
   warning: '#FF3104',
   tertiary: '#FFEA9F',
