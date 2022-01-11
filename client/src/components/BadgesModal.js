@@ -1,4 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { updateUserinfo } from '../actions';
+import { updateMyinfo } from '../apis';
 import styled from 'styled-components';
 import { color, device, radius } from '../styles';
 
@@ -18,9 +21,9 @@ const BadgesModalContainer = styled.div`
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 99999;
-  display: flex;
   width: 320px;
-  height: 540px;
+  height: 560px;
+  display: flex;
   flex-direction: column;
   padding: 1rem;
   background-color: white;
@@ -32,39 +35,12 @@ const BadgesModalContainer = styled.div`
   }
 `;
 
-const BadgesViewer = styled.div`
-  padding: 1rem;
-  display: grid;
-  justify-content: center;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
-
-  @media ${device.laptop} {
-    grid-template-columns: repeat(4, 1fr);
-  }
-`;
-
-const BadgeType = {
-  absent: '',
-  unselected: '1px dashed black',
-  selected: '1px solid black',
-};
-
-const MainBadgeStyle = '2px';
-
-const Badge = styled.img`
-  width: 80px;
-  height: 80px;
-  border: ${(props) => props.border};
-  border-width: ${(props) => props.isMain};
-  border-radius: 40px;
-`;
-
 const CloseBtn = styled.button`
   position: relative;
   align-self: flex-end;
   width: 20px;
   height: 20px;
+  z-index: 9999;
   background-color: transparent;
   text-indent: -999px;
   overflow: hidden;
@@ -95,26 +71,56 @@ const CloseBtn = styled.button`
   }
 `;
 
-const BadgesModal = ({ closeModal }) => {
-  const dummyTotalBadges = [
-    { id: 1, src: 'src' },
-    { id: 2, src: 'src' },
-    { id: 3, src: 'src' },
-    { id: 4, src: 'src' },
-    { id: 5, src: 'src' },
-    { id: 6, src: 'src' },
-    { id: 7, src: 'src' },
-    { id: 8, src: 'src' },
-    { id: 9, src: 'src' },
-  ];
-  const badges = [1, 2, 3, 5, 8];
-  let selected = [2, 5];
-  const badge_id = 2;
+const BadgesViewer = styled.div`
+  position: relative;
+  padding: 1rem;
+  z-index: 999;
+  display: grid;
+  justify-content: center;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  overflow-x: hidden;
+  overflow-y: scroll;
 
-  const arranged = [...dummyTotalBadges];
-  arranged.forEach((el, idx) => {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+  &::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera*/
+  }
+
+  @media ${device.laptop} {
+    grid-template-columns: repeat(4, 1fr);
+  }
+`;
+
+const BadgeType = {
+  absent: '',
+  unselected: '1px dashed black',
+  selected: '1px solid black',
+};
+
+const MainBadgeStyle = '2px';
+
+const Badge = styled.img`
+  position: relative;
+  z-index: 99;
+  width: 80px;
+  height: 80px;
+  border: ${(props) => props.border};
+  border-width: ${(props) => props.isMain};
+  border-radius: 40px;
+`;
+
+const BadgesModal = ({ closeModal }) => {
+  const state = useSelector((state) => state.userReducer);
+  const { badges, selected_badges, badge_id } = state.userInfo;
+
+  const TotalBadges = new Array(20).fill();
+  for (let i = 0; i < TotalBadges.length; i++)
+    TotalBadges[i] = { id: i + 1, src: 'src' };
+  TotalBadges.forEach((el, idx) => {
     if (badges.includes(idx + 1)) {
-      if (selected.includes(idx + 1)) {
+      if (selected_badges.includes(idx + 1)) {
         el.type = 'selected';
       } else {
         el.type = 'unselected';
@@ -124,10 +130,11 @@ const BadgesModal = ({ closeModal }) => {
     }
   });
 
-  const [badgeInfo, setbadgeInfo] = useState(arranged);
+  const [badgeInfo, setbadgeInfo] = useState(TotalBadges);
+  const dispatch = useDispatch();
 
   const handlebadgeInfo = (e) => {
-    let idx = Number(e.target.alt);
+    const idx = Number(e.target.alt);
     if (!badges.includes(idx)) {
       return;
     }
@@ -150,11 +157,32 @@ const BadgesModal = ({ closeModal }) => {
       setbadgeInfo(change);
     }
   };
-  console.log(badgeInfo);
+
+  useEffect(() => {
+    const result = {
+      selected_badges: badgeInfo
+        .filter((el) => el.type === 'selected')
+        .map((el) => el.id),
+    };
+    dispatch(updateUserinfo(result));
+  // eslint-disable-next-line
+  }, [badgeInfo]);
+
+  useEffect(() => {
+    return () => {
+      const result = {
+        selected_badges: badgeInfo
+          .filter((el) => el.type === 'selected')
+          .map((el) => el.id),
+      };
+      updateMyinfo(`${state.userInfo.user_id}`, result).then(result => console.log(result))
+    }
+  // eslint-disable-next-line
+  }, []);
 
   return (
     <>
-      <Backdrop></Backdrop>
+      <Backdrop onClick={() => closeModal(false)}></Backdrop>
       <BadgesModalContainer>
         <CloseBtn onClick={() => closeModal(false)}>close</CloseBtn>
         <BadgesViewer>

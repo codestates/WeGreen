@@ -126,13 +126,27 @@ export const signout = () => {
     .then((result) => result.data);
 };
 
-// 챌린지 생성
+export const requestChallenge = (challengeId) => {
+  return axios
+    .get(`${process.env.REACT_APP_API_URL}/challenges/${challengeId}`)
+    .then((result) => result.data.data);
+}
+
 export const createChallenge = (body) => {
   return axios
     .post(`${process.env.REACT_APP_API_URL}/challenges`, body, {
       'Content-Type': 'application/json',
       withCredentials: true,
     })
+    .then((result) => result.data);
+}
+
+export const editChallenge = (body) => {
+  return axios
+    .patch(`${process.env.REACT_APP_API_URL}/challenges/${body.challenge_id}`,
+      body,
+      { 'Content-Type': 'application/json', withCredentials: true, }
+    )
     .then((result) => result.data);
 };
 

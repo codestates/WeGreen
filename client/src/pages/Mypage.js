@@ -144,7 +144,6 @@ const Mypage = () => {
         <Illust />
         <MyChallengesContainer>
           <UserProfile
-            userInfo={myinfo}
             successCounts={successCounts}
           />
           <Tab
