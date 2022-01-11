@@ -18,6 +18,8 @@ export const color = {
   tertiary: '#FFEA9F',
   black: '#111111',
   white: '#FFFFFF',
+  greyLight: '#D5D8DC',
+  grey: '#A0A9B1',
   backdrop: 'rgba(0, 0, 0, 0.7)',
 };
 

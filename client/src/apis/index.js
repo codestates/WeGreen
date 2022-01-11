@@ -1,5 +1,6 @@
 import axios from 'axios';
 
+// 로그인
 export const requestLogin = (email, password) => {
   return axios
     .post(
@@ -18,6 +19,7 @@ export const requestLogin = (email, password) => {
     });
 };
 
+// 회원가입
 export const requestSignup = (email, username, password) => {
   return axios
     .post(
@@ -37,6 +39,7 @@ export const requestSignup = (email, username, password) => {
     });
 };
 
+// 로그아웃
 export const requestLogout = () => {
   return axios
     .post(
@@ -47,6 +50,7 @@ export const requestLogout = () => {
     .then((result) => console.log(result));
 };
 
+// 챌린지 리스트 - 인기순
 export const requestPopularChallenges = (limit, query) => {
   console.log(limit, query);
   return axios
@@ -66,6 +70,7 @@ export const requestPopularChallenges = (limit, query) => {
     });
 };
 
+// 챌린지 리스트 - 최신순
 export const requestLatestChallenges = (limit, query) => {
   return axios
     .get(
@@ -84,12 +89,14 @@ export const requestLatestChallenges = (limit, query) => {
     });
 };
 
+// 개인정보
 export const requestMyinfo = (userId) => {
   return axios
     .get(`${process.env.REACT_APP_API_URL}/users/${userId}`)
     .then((result) => result.data.data);
 };
 
+// 개인정보 수정
 export const updateMyinfo = (userId, body) => {
   return axios
     .patch(`${process.env.REACT_APP_API_URL}/users/${userId}`, body, {
@@ -117,6 +124,7 @@ export const modifyPassword = (userId, body) => {
     .then((result) => result.data);
 };
 
+// 회원탈퇴
 export const signout = () => {
   console.log(`${process.env.REACT_APP_API_URL}/users/signout`);
   return axios
@@ -134,10 +142,10 @@ export const requestChallenge = (challengeId) => {
 
 export const createChallenge = (body) => {
   return axios
-    .post(`${process.env.REACT_APP_API_URL}/challenges`,
-      body,
-      { 'Content-Type': 'application/json', withCredentials: true, }
-    )
+    .post(`${process.env.REACT_APP_API_URL}/challenges`, body, {
+      'Content-Type': 'application/json',
+      withCredentials: true,
+    })
     .then((result) => result.data);
 }
 
@@ -148,4 +156,20 @@ export const editChallenge = (body) => {
       { 'Content-Type': 'application/json', withCredentials: true, }
     )
     .then((result) => result.data);
-}
+};
+
+// 댓글 생성
+export const createComment = (id, content) => {
+  return axios
+    .post(
+      `${process.env.REACT_APP_API_URL}/challenges/${id}/comments`,
+      { content },
+      {
+        'Content-Type': 'application/json',
+        withCredentials: true,
+      }
+    )
+    .then((result) => {
+      console.log(result.data);
+    });
+};
