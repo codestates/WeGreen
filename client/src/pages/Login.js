@@ -12,7 +12,7 @@ import kakaoIcon from '../assets/images/login_icon_kakao.svg';
 import googleIcon from '../assets/images/login_icon_google.svg';
 import naverIcon from '../assets/images/login_icon_naver.svg';
 import { color, device, radius, boxShadow } from '../styles';
-import { requestLogin } from '../apis';
+import { requestKakaoLogin, requestLogin } from '../apis';
 import { login } from '../actions';
 
 const Container = styled.div`
@@ -262,7 +262,7 @@ const Login = () => {
             <span>or</span>
           </Divider>
           <SocialContainer>
-            <SocialBtn image={kakaoIcon} />
+            <SocialBtn image={kakaoIcon} onClick={requestKakaoLogin} />
             <SocialBtn image={naverIcon} />
             <SocialBtn image={googleIcon} hasBorder={true} />
           </SocialContainer>

@@ -119,9 +119,15 @@ export const signout = () => {
 
 export const createChallenge = (body) => {
   return axios
-    .post(`${process.env.REACT_APP_API_URL}/challenges`,
-      body,
-      { 'Content-Type': 'application/json', withCredentials: true, }
-    )
+    .post(`${process.env.REACT_APP_API_URL}/challenges`, body, {
+      'Content-Type': 'application/json',
+      withCredentials: true,
+    })
     .then((result) => result.data);
-}
+};
+
+export const requestKakaoLogin = () => {
+  window.location.assign(
+    `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.REACT_APP_KAKAO_REST_API_KEY}&redirect_uri=${process.env.REACT_APP_KAKAO_REDIRECT_URI}&response_type=code`
+  );
+};
