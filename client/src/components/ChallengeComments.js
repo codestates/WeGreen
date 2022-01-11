@@ -1,9 +1,11 @@
+import { useState } from 'react';
+import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { color, device, radius } from '../styles';
 import { ReactComponent as SendIcon } from '../assets/images/icon_send.svg';
 import Comment from './Comment';
-import { useState } from 'react';
 import { dummyComments } from '../data/dummyData';
+import { createComment } from '../apis';
 
 const ChallengeCommentsContainer = styled.div`
   background-color: ${color.white};
@@ -110,12 +112,36 @@ const CommentsList = styled.ul`
 
 const ChallengeComments = () => {
   const [comments, setComments] = useState(dummyComments);
+  const [content, setContent] = useState('');
+  const challenge_id = useParams().id;
+
+  const handleInput = (event) => {
+    setContent(event.target.value);
+  };
+
+  const handleKeyPress = (event) => {
+    console.log(event.key);
+    if (event.key === 'Enter') {
+      handleSubmit();
+    }
+  };
+
+  const handleSubmit = () => {
+    createComment(challenge_id, content);
+    setContent('');
+  };
+
   return (
     <ChallengeCommentsContainer>
       <SendCommentContainer>
         <CommentInputContainer>
-          <CommentInput placeholder='댓글을 입력해주세요'></CommentInput>
-          <SendBtn>
+          <CommentInput
+            placeholder='댓글을 입력해주세요'
+            value={content}
+            onChange={handleInput}
+            onKeyPress={handleKeyPress}
+          ></CommentInput>
+          <SendBtn onClick={handleSubmit}>
             <SendIcon width='20' height='20' fill={color.white} />
             <span>보내기</span>
           </SendBtn>
