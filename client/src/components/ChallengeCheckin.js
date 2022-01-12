@@ -1,12 +1,35 @@
 import styled from 'styled-components';
-import { color, device, radius } from '../styles';
+import { color, contentWidth, device, radius } from '../styles';
+
+const Container = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
 
 const ChallengeCheckinContainer = styled.div`
+  width: 100%;
+  max-width: calc(${contentWidth} / 2);
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+  gap: 1rem;
   background-color: ${color.white};
+  
+  & p {
+    margin: 0;
+  }
 
+  & p[class] {
+    margin-top: 1rem;
+  }
+
+  & p:first-child {
+    margin-top: 0;
+  }
+  
   @media ${device.laptop} {
-    width: 100%;
-    padding: 1rem 2rem;
     border-radius: ${radius};
   }
 `;
@@ -86,22 +109,24 @@ const ChallengeCheckin = ({ challengeInfo, checkinInfo }) => {
     1 : (checkinInfo.checkin_log.length / Number(challengeInfo.requirement)).toFixed(2)
 
   return (
-    <ChallengeCheckinContainer>
-      <p>
-        오늘은 {challengeInfo.join_count}명 중 {checkinInfo.checkin_count}명이{' '}
-        <br />
-        체크인 하였습니다.
-      </p>
-      <Highlighted>나의 체크인 현황</Highlighted>
-      <BoxContainer>{Boxes.map((box) => box)}</BoxContainer>
-      <Highlighted>나의 목표 달성률</Highlighted>
-      <ProgressContainer>
-        <p>{progress * 100}%</p>
-        <ProgressBarContainer>
-          <ProgressBar width={`${progress * 100}%`} />
-        </ProgressBarContainer>
-      </ProgressContainer>
-    </ChallengeCheckinContainer>
+    <Container>
+      <ChallengeCheckinContainer>
+        <p>
+          오늘은 {challengeInfo.join_count}명 중 {checkinInfo.checkin_count}명이{' '}
+          <br />
+          체크인 하였습니다.
+        </p>
+        <Highlighted>나의 체크인 현황</Highlighted>
+        <BoxContainer>{Boxes.map((box) => box)}</BoxContainer>
+        <Highlighted>나의 목표 달성률</Highlighted>
+        <ProgressContainer>
+          <p>{progress * 100}%</p>
+          <ProgressBarContainer>
+            <ProgressBar width={`${progress * 100}%`} />
+          </ProgressBarContainer>
+        </ProgressContainer>
+      </ChallengeCheckinContainer>
+    </Container>
   );
 };
 

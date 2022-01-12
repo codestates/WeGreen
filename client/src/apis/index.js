@@ -128,9 +128,7 @@ export const modifyPassword = (userId, body) => {
 export const signout = () => {
   console.log(`${process.env.REACT_APP_API_URL}/users/signout`);
   return axios
-    .delete(`${process.env.REACT_APP_API_URL}/users/signout`, {
-      headers: { 'Content-Type': 'application/json', withCredentials: true },
-    })
+    .post(`${process.env.REACT_APP_API_URL}/users/signout`, {}, { 'Content-Type': 'application/json', withCredentials: true })
     .then((result) => result.data);
 };
 

@@ -98,7 +98,7 @@ const Challenge = () => {
   const [challengeInfo, setChallengeInfo] = useState(dummyChallenge);
   const [checkinInfo, setCheckinInfo] = useState({
     checkin_count: 2,
-    checkin_log: ["2022-01-10", "2022-01-11"],
+    checkin_log: ["2022-01-13", "2022-01-16"],
     is_accomplished: false,
   });
 
