@@ -12,7 +12,7 @@ import kakaoIcon from '../assets/images/login_icon_kakao.svg';
 import googleIcon from '../assets/images/login_icon_google.svg';
 import naverIcon from '../assets/images/login_icon_naver.svg';
 import { color, device, radius, boxShadow } from '../styles';
-import { requestKakaoLogin,requestGoogleLogin, requestLogin } from '../apis';
+import { requestKakaoLogin, requestNaverLogin, requestGoogleLogin, requestLogin } from '../apis';
 import { login } from '../actions';
 
 const Container = styled.div`
@@ -263,7 +263,7 @@ const Login = () => {
           </Divider>
           <SocialContainer>
             <SocialBtn image={kakaoIcon} onClick={requestKakaoLogin} />
-            <SocialBtn image={naverIcon} />
+            <SocialBtn image={naverIcon} onClick={requestNaverLogin} />
             <SocialBtn image={googleIcon} onClick={requestGoogleLogin} hasBorder={true} />
           </SocialContainer>
           <Link to='/signup'>

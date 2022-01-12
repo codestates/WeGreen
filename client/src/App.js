@@ -12,6 +12,7 @@ import ConfirmChallenge from './pages/ConfirmChallenge';
 import Mypage from './pages/Mypage';
 import EditMyinfo from './pages/EditMyinfo';
 import KakaoPage from './pages/KakaoPage';
+import NaverPage from './pages/NaverPage';
 import GooglePage from './pages/GooglePage'
 
 function App() {
@@ -31,6 +32,7 @@ function App() {
           <Route path='/mypage' element={<Mypage />} />
           <Route path='/editmyinfo' element={<EditMyinfo />} />
           <Route path='/oauth/callback/kakao' element={<KakaoPage />} />
+          <Route path='/oauth/callback/naver' element={<NaverPage />} />
           <Route path='/oauth/callback/google' element={<GooglePage />} />
         </Routes>
       </main>

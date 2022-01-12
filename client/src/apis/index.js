@@ -128,7 +128,11 @@ export const modifyPassword = (userId, body) => {
 // 회원탈퇴
 export const signout = () => {
   return axios
-    .post(`${process.env.REACT_APP_API_URL}/users/signout`, {}, { 'Content-Type': 'application/json', withCredentials: true })
+    .post(
+      `${process.env.REACT_APP_API_URL}/users/signout`,
+      {},
+      { 'Content-Type': 'application/json', withCredentials: true }
+    )
     .then((result) => result.data);
 };
 
@@ -136,7 +140,7 @@ export const requestChallenge = (challengeId) => {
   return axios
     .get(`${process.env.REACT_APP_API_URL}/challenges/${challengeId}`)
     .then((result) => result.data.data);
-}
+};
 
 export const createChallenge = (body) => {
   return axios
@@ -150,22 +154,22 @@ export const createChallenge = (body) => {
 export const requestKakaoLogin = () => {
   window.location.assign(
     `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.REACT_APP_KAKAO_REST_API_KEY}&redirect_uri=${process.env.REACT_APP_KAKAO_REDIRECT_URI}&response_type=code`
-  )
-}
+  );
+};
 //구글 로그인
 export const requestGoogleLogin = () => {
   window.location.assign(
     `https://accounts.google.com/o/oauth2/v2/auth?client_id=${process.env.REACT_APP_GOOGLE_REST_API_KEY}&redirect_uri=${process.env.REACT_APP_GOOGLE_REDIRECT_URI}&response_type=code&scope=https://www.googleapis.com/auth/userinfo.email`
-  )
-}
-
+  );
+};
 
 // 챌린지 수정
 export const editChallenge = (body) => {
   return axios
-    .patch(`${process.env.REACT_APP_API_URL}/challenges/${body.challenge_id}`,
+    .patch(
+      `${process.env.REACT_APP_API_URL}/challenges/${body.challenge_id}`,
       body,
-      { 'Content-Type': 'application/json', withCredentials: true, }
+      { 'Content-Type': 'application/json', withCredentials: true }
     )
     .then((result) => result.data);
 };
@@ -229,4 +233,10 @@ export const createComment = (id, content) => {
     .then((result) => {
       console.log(result.data);
     });
+};
+
+export const requestNaverLogin = () => {
+  window.location.assign(
+    `https://nid.naver.com/oauth2.0/authorize?client_id=${process.env.REACT_APP_NAVER_CLIENT_ID}&redirect_uri=${process.env.REACT_APP_NAVER_REDIRECT_URI}&state='wegreen'&response_type=code`
+  );
 };
