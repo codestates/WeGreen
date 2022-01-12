@@ -64,10 +64,7 @@ export const requestPopularChallenges = (limit, query) => {
         withCredentials: true,
       }
     )
-    .then((result) => {
-      console.log(result);
-      return result.data.data;
-    });
+    .then((result) => result.data.data);
 };
 
 // 챌린지 리스트 - 최신순
@@ -189,4 +186,16 @@ export const requestComments = (challengeId) => {
     .then((result) => {
       return result;
     });
+};
+
+export const editComment = (challengeId, commentId, content) => {
+  return axios
+    .patch(
+      `${process.env.REACT_APP_API_URL}/challenges/${challengeId}/comments/${commentId}`,
+      {
+        content,
+      },
+      { 'Content-Type': 'application/json', withCredentials: true }
+    )
+    .then((result) => result);
 };

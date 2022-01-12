@@ -134,21 +134,26 @@ const ModalMessage = ({ status }) => {
     case 'network error':
       return (
         <p>
-          네트워크 에러가 발생하여 로그인이 실패하였습니다. <br />
+          서버에서 에러가 발생하여 댓글을 작성할 수 없습니다. <br />
           다시 시도해 주세요.
         </p>
       );
     default:
       return (
         <p>
-          에러가 발생하여 로그인이 실패하였습니다. <br />
+          에러가 발생하여 댓글을 작성할 수 없습니다. <br />
           다시 시도해 주세요.
         </p>
       );
   }
 };
 
-const ChallengeComments = ({ comments, isJoined }) => {
+const ChallengeComments = ({
+  comments,
+  handleCommentsUpdate,
+  handleCommentEdit,
+  isJoined,
+}) => {
   const state = useSelector((state) => state.userReducer);
   const isLogin = state.isLogin;
 
@@ -156,7 +161,6 @@ const ChallengeComments = ({ comments, isJoined }) => {
   const challenge_id = useParams().id;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [responseStatus, setResponseStatus] = useState('');
-  const [commentList, setCommentList] = useState(comments);
 
   const handleInput = (event) => {
     setContent(event.target.value);
@@ -183,14 +187,14 @@ const ChallengeComments = ({ comments, isJoined }) => {
     createComment(challenge_id, content)
       .then((result) => {
         if (result.status === 500) {
-          setResponseStatus('network error');
+          setResponseStatus('server error');
           setIsModalOpen(true);
           return;
         }
         if (result.status === 201) {
           setContent('');
           return requestComments(challenge_id).then((result) =>
-            setCommentList(result.data.data.comments)
+            handleCommentsUpdate(result.data.data.comments)
           );
         }
       })
@@ -220,8 +224,12 @@ const ChallengeComments = ({ comments, isJoined }) => {
         </SendCommentContainer>
         <CommentsListContainer>
           <CommentsList>
-            {commentList.map((el) => (
-              <Comment comment={el} key={el.comment_id} />
+            {comments.map((el) => (
+              <Comment
+                comment={el}
+                key={el.comment_id}
+                handleCommentEdit={handleCommentEdit}
+              />
             ))}
           </CommentsList>
         </CommentsListContainer>

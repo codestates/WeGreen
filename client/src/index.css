@@ -9,6 +9,7 @@
 * {
   box-sizing: border-box;
   font-family: NanumSquareRound, sans-serif;
+  color: #111111;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

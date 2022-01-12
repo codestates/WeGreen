@@ -146,6 +146,19 @@ const Challenge = () => {
     }
   };
 
+  const handleCommentEdit = (commentId, content) => {
+    const targetIdx = comments.findIndex((el) => el.comment_id === commentId);
+    const targetComment = comments.filter(
+      (el) => el.comment_id === commentId
+    )[0];
+    const editedComment = { ...targetComment, content };
+    setComments([
+      ...comments.slice(0, targetIdx),
+      editedComment,
+      ...comments.slice(targetIdx + 1),
+    ]);
+  };
+
   useEffect(() => {
     function handleResize() {
       setWindowWidth(getWindowWidth());
@@ -166,6 +179,8 @@ const Challenge = () => {
     comments: (
       <ChallengeComments
         comments={comments}
+        handleCommentsUpdate={setComments}
+        handleCommentEdit={handleCommentEdit}
         isJoined={challengeInfo.is_joined}
       ></ChallengeComments>
     ),
@@ -207,6 +222,8 @@ const Challenge = () => {
                 <h3>댓글</h3>
                 <ChallengeComments
                   comments={comments}
+                  handleCommentsUpdate={setComments}
+                  handleCommentEdit={handleCommentEdit}
                   isJoined={challengeInfo.is_joined}
                 />
               </GridSpan>
