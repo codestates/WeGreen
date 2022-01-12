@@ -1,11 +1,13 @@
 import { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { color, device, radius } from '../styles';
 import { ReactComponent as SendIcon } from '../assets/images/icon_send.svg';
 import Comment from './Comment';
-import { dummyComments } from '../data/dummyData';
-import { createComment } from '../apis';
+import Modal from './Modal';
+import Button from './Button';
+import { createComment, requestComments } from '../apis';
 
 const ChallengeCommentsContainer = styled.div`
   background-color: ${color.white};
@@ -106,55 +108,138 @@ const CommentsListContainer = styled.div`
 
 const CommentsList = styled.ul`
   @media ${device.laptop} {
-    padding: 0 1rem;
+    padding: 0 1rem 1rem;
   }
 `;
 
-const ChallengeComments = () => {
-  const [comments, setComments] = useState(dummyComments);
+const ModalMessage = ({ status }) => {
+  const navigate = useNavigate();
+  switch (status) {
+    case 'login required':
+      return (
+        <>
+          <p>
+            챌린지 참여자만 댓글을 작성할 수 있습니다.
+            <br />
+            먼저 로그인을 진행해 주세요.
+          </p>
+          <Button
+            content='로그인하러 가기'
+            handler={() => navigate('/login')}
+          ></Button>
+        </>
+      );
+    case 'join required':
+      return <p>챌린지 참여자만 댓글을 작성할 수 있습니다.</p>;
+    case 'network error':
+      return (
+        <p>
+          서버에서 에러가 발생하여 댓글을 작성할 수 없습니다. <br />
+          다시 시도해 주세요.
+        </p>
+      );
+    default:
+      return (
+        <p>
+          에러가 발생하여 댓글을 작성할 수 없습니다. <br />
+          다시 시도해 주세요.
+        </p>
+      );
+  }
+};
+
+const ChallengeComments = ({
+  comments,
+  handleCommentsUpdate,
+  handleCommentEdit,
+  isJoined,
+}) => {
+  const state = useSelector((state) => state.userReducer);
+  const isLogin = state.isLogin;
+
   const [content, setContent] = useState('');
   const challenge_id = useParams().id;
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [responseStatus, setResponseStatus] = useState('');
 
   const handleInput = (event) => {
     setContent(event.target.value);
   };
 
   const handleKeyPress = (event) => {
-    console.log(event.key);
     if (event.key === 'Enter') {
       handleSubmit();
     }
   };
 
   const handleSubmit = () => {
-    createComment(challenge_id, content);
-    setContent('');
+    if (!isLogin) {
+      setResponseStatus('login required');
+      setIsModalOpen(true);
+      return;
+    }
+    if (!isJoined) {
+      setResponseStatus('join required');
+      setIsModalOpen(true);
+      return;
+    }
+
+    createComment(challenge_id, content)
+      .then((result) => {
+        if (result.status === 500) {
+          setResponseStatus('server error');
+          setIsModalOpen(true);
+          return;
+        }
+        if (result.status === 201) {
+          setContent('');
+          return requestComments(challenge_id).then((result) =>
+            handleCommentsUpdate(result.data.data.comments)
+          );
+        }
+      })
+      .catch((err) => {
+        setResponseStatus('');
+        setIsModalOpen(true);
+        return;
+      });
   };
 
   return (
-    <ChallengeCommentsContainer>
-      <SendCommentContainer>
-        <CommentInputContainer>
-          <CommentInput
-            placeholder='댓글을 입력해주세요'
-            value={content}
-            onChange={handleInput}
-            onKeyPress={handleKeyPress}
-          ></CommentInput>
-          <SendBtn onClick={handleSubmit}>
-            <SendIcon width='20' height='20' fill={color.white} />
-            <span>보내기</span>
-          </SendBtn>
-        </CommentInputContainer>
-      </SendCommentContainer>
-      <CommentsListContainer>
-        <CommentsList>
-          {comments.map((el) => (
-            <Comment comment={el} />
-          ))}
-        </CommentsList>
-      </CommentsListContainer>
-    </ChallengeCommentsContainer>
+    <>
+      <ChallengeCommentsContainer>
+        <SendCommentContainer>
+          <CommentInputContainer>
+            <CommentInput
+              placeholder='댓글을 입력해주세요'
+              value={content}
+              onChange={handleInput}
+              onKeyPress={handleKeyPress}
+            ></CommentInput>
+            <SendBtn onClick={handleSubmit}>
+              <SendIcon width='20' height='20' fill={color.white} />
+              <span>보내기</span>
+            </SendBtn>
+          </CommentInputContainer>
+        </SendCommentContainer>
+        <CommentsListContainer>
+          <CommentsList>
+            {comments.map((el) => (
+              <Comment
+                comment={el}
+                key={el.comment_id}
+                handleCommentEdit={handleCommentEdit}
+              />
+            ))}
+          </CommentsList>
+        </CommentsListContainer>
+      </ChallengeCommentsContainer>
+      {isModalOpen ? (
+        <Modal closeModal={setIsModalOpen}>
+          <ModalMessage status={responseStatus} />
+        </Modal>
+      ) : null}
+    </>
   );
 };
 

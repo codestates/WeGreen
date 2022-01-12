@@ -64,10 +64,7 @@ export const requestPopularChallenges = (limit, query) => {
         withCredentials: true,
       }
     )
-    .then((result) => {
-      console.log(result);
-      return result.data.data;
-    });
+    .then((result) => result.data.data);
 };
 
 // 챌린지 리스트 - 최신순
@@ -156,6 +153,7 @@ export const requestKakaoLogin = () => {
     `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.REACT_APP_KAKAO_REST_API_KEY}&redirect_uri=${process.env.REACT_APP_KAKAO_REDIRECT_URI}&response_type=code`
   );
 };
+
 //구글 로그인
 export const requestGoogleLogin = () => {
   window.location.assign(
@@ -231,8 +229,28 @@ export const createComment = (id, content) => {
       }
     )
     .then((result) => {
-      console.log(result.data);
+      return result;
     });
+};
+
+export const requestComments = (challengeId) => {
+  return axios
+    .get(`${process.env.REACT_APP_API_URL}/challenges/${challengeId}/comments`)
+    .then((result) => {
+      return result;
+    });
+};
+
+export const editComment = (challengeId, commentId, content) => {
+  return axios
+    .patch(
+      `${process.env.REACT_APP_API_URL}/challenges/${challengeId}/comments/${commentId}`,
+      {
+        content,
+      },
+      { 'Content-Type': 'application/json', withCredentials: true }
+    )
+    .then((result) => result);
 };
 
 export const requestNaverLogin = () => {

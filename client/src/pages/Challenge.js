@@ -18,7 +18,7 @@ import ChallengeComments from '../components/ChallengeComments';
 import { ReactComponent as EditIcon } from '../assets/images/icon_edit.svg';
 import { ReactComponent as DeleteIcon } from '../assets/images/icon_delete.svg';
 import { ReactComponent as PersonIcon } from '../assets/images/icon_person.svg';
-import { dummyChallenge } from '../data/dummyData';
+import { dummyChallenge, dummyComments } from '../data/dummyData';
 
 const OuterContainer = styled.div`
   @media ${device.laptop} {
@@ -120,6 +120,7 @@ const Challenge = () => {
     checkin_log: [],
     is_accomplished: false,
   });
+  const [comments, setComments] = useState(dummyComments);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [responseStatus, setResponseStatus] = useState('no status');
@@ -144,6 +145,7 @@ const Challenge = () => {
     requestChallenge(params.id)
       .then((result) => {
         setChallengeInfo(result.challenge_info);
+        setComments(result.comments);
         return result;
       })
       .then((result) => {
@@ -218,6 +220,19 @@ const Challenge = () => {
         }, waits - (Date.now() - lastRan));
       }
     };
+  };
+
+  const handleCommentEdit = (commentId, content) => {
+    const targetIdx = comments.findIndex((el) => el.comment_id === commentId);
+    const targetComment = comments.filter(
+      (el) => el.comment_id === commentId
+    )[0];
+    const editedComment = { ...targetComment, content };
+    setComments([
+      ...comments.slice(0, targetIdx),
+      editedComment,
+      ...comments.slice(targetIdx + 1),
+    ]);
   };
 
   useEffect(() => {
@@ -301,7 +316,14 @@ const Challenge = () => {
         checkinInfo={checkinInfo}
       ></ChallengeCheckin>
     ),
-    comments: <ChallengeComments></ChallengeComments>,
+    comments: (
+      <ChallengeComments
+        comments={comments}
+        handleCommentsUpdate={setComments}
+        handleCommentEdit={handleCommentEdit}
+        isJoined={challengeInfo.is_joined}
+      ></ChallengeComments>
+    ),
   };
 
   return (
@@ -382,7 +404,12 @@ const Challenge = () => {
               </div>
               <GridSpan>
                 <h3>댓글</h3>
-                <ChallengeComments />
+                <ChallengeComments
+                  comments={comments}
+                  handleCommentsUpdate={setComments}
+                  handleCommentEdit={handleCommentEdit}
+                  isJoined={challengeInfo.is_joined}
+                />
               </GridSpan>
               <div>
                 <h3>체크인</h3>
