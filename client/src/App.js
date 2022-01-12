@@ -25,7 +25,7 @@ function App() {
           <Route path='/challenges' element={<Challenges />} />
           <Route path='/challenge/:id' element={<Challenge />} />
           <Route path='/createchallenge' element={<CreateChallenge />} />
-          <Route path='/editchallenge' element={<EditChallenge />} />
+          <Route path='/editchallenge/:id' element={<EditChallenge />} />
           <Route path='/confirmchallenge' element={<ConfirmChallenge />} />
           <Route path='/mypage' element={<Mypage />} />
           <Route path='/editmyinfo' element={<EditMyinfo />} />

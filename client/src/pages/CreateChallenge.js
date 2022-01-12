@@ -24,17 +24,6 @@ const Container = styled.div`
   }
 `;
 
-const CreateChallengeContainer = styled.div`
-  width: 100%;
-  max-width: calc(${contentWidth} / 2);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 1rem;
-  gap: 1.5rem;
-  background-color: ${color.white};
-`;
-
 const TitleContainer = styled.div`
   display: none;
 
@@ -50,6 +39,17 @@ const TitleContainer = styled.div`
     }
     background-color: ${color.primary};
   }
+`;
+
+const CreateChallengeContainer = styled.div`
+  width: 100%;
+  max-width: calc(${contentWidth} / 2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+  gap: 1.5rem;
+  background-color: ${color.white};
 `;
 
 const InvalidMessage = styled.p`

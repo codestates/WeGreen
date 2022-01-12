@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { createChallenge } from '../apis';
+import { createChallenge, editChallenge } from '../apis';
 import styled from 'styled-components';
 import { color, contentWidth, device, radius } from '../styles';
 import Button from '../components/Button';
@@ -112,21 +112,39 @@ const ConfirmChallenge = () => {
   finishedAt.setDate(startedAt.getDate() + 6);
 
   const requestCreateChallenge = () => {
-    createChallenge(challengeInfo)
-      .then((result) => {
-        setResponseStatus('success create challenge');
-        setIsModalOpen(true);
-        navigate(`/challenges/${result.data.id}`)
-      })
-      .catch((err) => {
-        if (err.response.status === 401) {
-          setResponseStatus('unauthorized');
+    if (!info.challenge_id) {
+      createChallenge(challengeInfo)
+        .then((result) => {
+          setResponseStatus('success create challenge');
           setIsModalOpen(true);
-        } else {
-          setResponseStatus('no status');
+          navigate(`/challenge/${result.data.id}`)
+        })
+        .catch((err) => {
+          if (err.response.status === 401) {
+            setResponseStatus('unauthorized');
+            setIsModalOpen(true);
+          } else {
+            setResponseStatus('no status');
+            setIsModalOpen(true);
+          }
+        });
+    } else {
+      editChallenge(challengeInfo)
+        .then((result) => {
+          setResponseStatus('success edit challenge');
           setIsModalOpen(true);
-        }
-      });
+          navigate(`/challenge/${result.data.id}`)
+        })
+        .catch((err) => {
+          if (err.response.status === 401) {
+            setResponseStatus('unauthorized');
+            setIsModalOpen(true);
+          } else {
+            setResponseStatus('no status');
+            setIsModalOpen(true);
+          }
+        });
+    }
   }
 
   const ModalMessage = ({ status, btnHandler = () => {} }) => {
@@ -135,6 +153,13 @@ const ConfirmChallenge = () => {
         return (
           <>
             <p>챌린지가 생성되었습니다.</p>
+            <Button content='확인' handler={btnHandler} />
+          </>
+        );
+      case 'success edit challenge':
+        return (
+          <>
+            <p>챌린지가 수정되었습니다.</p>
             <Button content='확인' handler={btnHandler} />
           </>
         );
@@ -196,8 +221,13 @@ const ConfirmChallenge = () => {
           <Button
             content='아니오'
             color='tertiary'
-            handler={() =>
-              navigate('/createchallenge', { state: challengeInfo })
+            handler={() => {
+                if (!info.challenge_id) {
+                  navigate('/createchallenge', { state: challengeInfo })
+                } else {
+                  navigate(`/editchallenge/${challengeInfo.challenge_id}`, { state: challengeInfo })
+                }
+              }
             }
           />
           <Button content='네' handler={requestCreateChallenge} />
