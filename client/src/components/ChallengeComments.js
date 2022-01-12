@@ -1,11 +1,13 @@
 import { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { color, device, radius } from '../styles';
 import { ReactComponent as SendIcon } from '../assets/images/icon_send.svg';
 import Comment from './Comment';
 import Modal from './Modal';
-import { createComment } from '../apis';
+import Button from './Button';
+import { createComment, requestComments } from '../apis';
 
 const ChallengeCommentsContainer = styled.div`
   background-color: ${color.white};
@@ -110,10 +112,51 @@ const CommentsList = styled.ul`
   }
 `;
 
+const ModalMessage = ({ status }) => {
+  const navigate = useNavigate();
+  switch (status) {
+    case 'login required':
+      return (
+        <>
+          <p>
+            챌린지 참여자만 댓글을 작성할 수 있습니다.
+            <br />
+            먼저 로그인을 진행해 주세요.
+          </p>
+          <Button
+            content='로그인하러 가기'
+            handler={() => navigate('/login')}
+          ></Button>
+        </>
+      );
+    case 'join required':
+      return <p>챌린지 참여자만 댓글을 작성할 수 있습니다.</p>;
+    case 'network error':
+      return (
+        <p>
+          네트워크 에러가 발생하여 로그인이 실패하였습니다. <br />
+          다시 시도해 주세요.
+        </p>
+      );
+    default:
+      return (
+        <p>
+          에러가 발생하여 로그인이 실패하였습니다. <br />
+          다시 시도해 주세요.
+        </p>
+      );
+  }
+};
+
 const ChallengeComments = ({ comments, isJoined }) => {
+  const state = useSelector((state) => state.userReducer);
+  const isLogin = state.isLogin;
+
   const [content, setContent] = useState('');
   const challenge_id = useParams().id;
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [responseStatus, setResponseStatus] = useState('');
+  const [commentList, setCommentList] = useState(comments);
 
   const handleInput = (event) => {
     setContent(event.target.value);
@@ -126,12 +169,36 @@ const ChallengeComments = ({ comments, isJoined }) => {
   };
 
   const handleSubmit = () => {
-    if (isJoined) {
-      createComment(challenge_id, content);
-      setContent('');
-    } else {
+    if (!isLogin) {
+      setResponseStatus('login required');
       setIsModalOpen(true);
+      return;
     }
+    if (!isJoined) {
+      setResponseStatus('join required');
+      setIsModalOpen(true);
+      return;
+    }
+
+    createComment(challenge_id, content)
+      .then((result) => {
+        if (result.status === 500) {
+          setResponseStatus('network error');
+          setIsModalOpen(true);
+          return;
+        }
+        if (result.status === 201) {
+          setContent('');
+          return requestComments(challenge_id).then((result) =>
+            setCommentList(result.data.data.comments)
+          );
+        }
+      })
+      .catch((err) => {
+        setResponseStatus('');
+        setIsModalOpen(true);
+        return;
+      });
   };
 
   return (
@@ -153,7 +220,7 @@ const ChallengeComments = ({ comments, isJoined }) => {
         </SendCommentContainer>
         <CommentsListContainer>
           <CommentsList>
-            {comments.map((el) => (
+            {commentList.map((el) => (
               <Comment comment={el} key={el.comment_id} />
             ))}
           </CommentsList>
@@ -161,7 +228,7 @@ const ChallengeComments = ({ comments, isJoined }) => {
       </ChallengeCommentsContainer>
       {isModalOpen ? (
         <Modal closeModal={setIsModalOpen}>
-          <p>챌린지에 참여한 사람만 댓글을 작성할 수 있습니다.</p>
+          <ModalMessage status={responseStatus} />
         </Modal>
       ) : null}
     </>

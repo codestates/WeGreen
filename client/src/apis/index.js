@@ -179,6 +179,14 @@ export const createComment = (id, content) => {
       }
     )
     .then((result) => {
-      console.log(result.data);
+      return result;
+    });
+};
+
+export const requestComments = (challengeId) => {
+  return axios
+    .get(`${process.env.REACT_APP_API_URL}/challenges/${challengeId}/comments`)
+    .then((result) => {
+      return result;
     });
 };
