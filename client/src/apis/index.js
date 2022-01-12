@@ -146,13 +146,21 @@ export const createChallenge = (body) => {
     })
     .then((result) => result.data);
 };
-
+//카카오 로그인
 export const requestKakaoLogin = () => {
   window.location.assign(
     `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.REACT_APP_KAKAO_REST_API_KEY}&redirect_uri=${process.env.REACT_APP_KAKAO_REDIRECT_URI}&response_type=code`
-  );
+  )
     .then((result) => result.data);
 }
+//구글 로그인
+export const requestGoogleLogin = () => {
+  window.location.assign(
+    `https://accounts.google.com/o/oauth2/v2/auth?client_id=${process.env.REACT_APP_GOOGLE_REST_API_KEY}&redirect_uri=${process.env.REACT_APP_GOOGLE_REDIRECT_URI}&response_type=code&scope=https://www.googleapis.com/auth/userinfo.email`
+  )
+    .then((result) => result.data);
+}
+
 
 export const editChallenge = (body) => {
   return axios
