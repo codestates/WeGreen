@@ -29,14 +29,14 @@ export const dummyChallenges = [
 ];
 
 export const dummyChallenge = {
-  challenge_id: 3,
-  name: '텀블러 사용하기',
-  content: '일회용 컵대신 텀블러를 사용합시다. 외출시 텀블러를 챙겨주세요.',
-  started_at: '2022-01-10',
-  requirement: 5,
-  author: 1,
-  created_at: '2021-01-08',
-  join_count: 15,
+  challenge_id: -1,
+  name: '챌린지 불러오는 중',
+  content: '챌린지를 불러오고 있습니다. 잠시만 기다려주세요.',
+  started_at: '2022-01-01',
+  requirement: 7,
+  author: -99,
+  created_at: '2021-01-01',
+  join_count: 0,
   is_joined: false,
 };
 
