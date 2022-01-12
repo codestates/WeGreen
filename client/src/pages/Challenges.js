@@ -161,7 +161,7 @@ const Challenges = () => {
         </Sorting>
         <ChallengeList>
           {challenges.map((el) => (
-            <ChallengeCard challenge={el} key={el.challenge_id} />
+            <ChallengeCard challenge={el} key={el.id} />
           ))}
         </ChallengeList>
       </ChallengeListContainer>

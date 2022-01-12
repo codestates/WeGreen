@@ -163,7 +163,12 @@ const Challenge = () => {
         checkinInfo={checkinInfo}
       ></ChallengeCheckin>
     ),
-    comments: <ChallengeComments></ChallengeComments>,
+    comments: (
+      <ChallengeComments
+        comments={comments}
+        isJoined={challengeInfo.is_joined}
+      ></ChallengeComments>
+    ),
   };
   return (
     <OuterContainer>
@@ -200,7 +205,10 @@ const Challenge = () => {
               </div>
               <GridSpan>
                 <h3>댓글</h3>
-                <ChallengeComments comments={comments} />
+                <ChallengeComments
+                  comments={comments}
+                  isJoined={challengeInfo.is_joined}
+                />
               </GridSpan>
               <div>
                 <h3>체크인</h3>

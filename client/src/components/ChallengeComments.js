@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { color, device, radius } from '../styles';
 import { ReactComponent as SendIcon } from '../assets/images/icon_send.svg';
 import Comment from './Comment';
+import Modal from './Modal';
 import { createComment } from '../apis';
 
 const ChallengeCommentsContainer = styled.div`
@@ -109,50 +110,61 @@ const CommentsList = styled.ul`
   }
 `;
 
-const ChallengeComments = ({ comments }) => {
+const ChallengeComments = ({ comments, isJoined }) => {
   const [content, setContent] = useState('');
   const challenge_id = useParams().id;
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleInput = (event) => {
     setContent(event.target.value);
   };
 
   const handleKeyPress = (event) => {
-    console.log(event.key);
     if (event.key === 'Enter') {
       handleSubmit();
     }
   };
 
   const handleSubmit = () => {
-    createComment(challenge_id, content);
-    setContent('');
+    if (isJoined) {
+      createComment(challenge_id, content);
+      setContent('');
+    } else {
+      setIsModalOpen(true);
+    }
   };
 
   return (
-    <ChallengeCommentsContainer>
-      <SendCommentContainer>
-        <CommentInputContainer>
-          <CommentInput
-            placeholder='댓글을 입력해주세요'
-            value={content}
-            onChange={handleInput}
-            onKeyPress={handleKeyPress}
-          ></CommentInput>
-          <SendBtn onClick={handleSubmit}>
-            <SendIcon width='20' height='20' fill={color.white} />
-            <span>보내기</span>
-          </SendBtn>
-        </CommentInputContainer>
-      </SendCommentContainer>
-      <CommentsListContainer>
-        <CommentsList>
-          {comments.map((el) => (
-            <Comment comment={el} />
-          ))}
-        </CommentsList>
-      </CommentsListContainer>
-    </ChallengeCommentsContainer>
+    <>
+      <ChallengeCommentsContainer>
+        <SendCommentContainer>
+          <CommentInputContainer>
+            <CommentInput
+              placeholder='댓글을 입력해주세요'
+              value={content}
+              onChange={handleInput}
+              onKeyPress={handleKeyPress}
+            ></CommentInput>
+            <SendBtn onClick={handleSubmit}>
+              <SendIcon width='20' height='20' fill={color.white} />
+              <span>보내기</span>
+            </SendBtn>
+          </CommentInputContainer>
+        </SendCommentContainer>
+        <CommentsListContainer>
+          <CommentsList>
+            {comments.map((el) => (
+              <Comment comment={el} key={el.comment_id} />
+            ))}
+          </CommentsList>
+        </CommentsListContainer>
+      </ChallengeCommentsContainer>
+      {isModalOpen ? (
+        <Modal closeModal={setIsModalOpen}>
+          <p>챌린지에 참여한 사람만 댓글을 작성할 수 있습니다.</p>
+        </Modal>
+      ) : null}
+    </>
   );
 };
 
