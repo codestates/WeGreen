@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { color, radius } from '../styles';
 import { ReactComponent as EditIcon } from '../assets/images/icon_edit.svg';
@@ -131,10 +132,17 @@ const ModalMessage = ({ status }) => {
 const Comment = ({ comment, handleCommentEdit }) => {
   const textareaRef = useRef(null);
   const challenge_id = useParams().id;
+  const state = useSelector((state) => state.userReducer);
+  const myinfo = state.userInfo;
   const [isEditable, setIsEditable] = useState(false);
   const [content, setContent] = useState(comment.content);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [responseStatus, setResponseStatus] = useState('');
+  const [isAuthorized, setIsAuthorized] = useState(false);
+
+  useEffect(() => {
+    setIsAuthorized(myinfo.is_admin || myinfo.user_id === comment.user_id);
+  }, []);
 
   const handleTextarea = (event) => {
     setContent(event.target.value);
@@ -184,32 +192,39 @@ const Comment = ({ comment, handleCommentEdit }) => {
         )}
         <CaptionBtnContainer>
           <Caption>{comment.created_at}</Caption>
-          {isEditable ? (
-            <ButtonContainer>
-              <IconBtn color='grey' onClick={() => setIsEditable(!isEditable)}>
-                <CancelIcon width='20' height='20' fill={color.grey} />
-                <span>취소</span>
-              </IconBtn>
-              <SolidBtn color='secondary' onClick={handleSubmit}>
-                <ConfirmIcon width='20' height='20' fill={color.white} />
-                <span>등록</span>
-              </SolidBtn>
-            </ButtonContainer>
-          ) : (
-            <ButtonContainer>
-              <IconBtn
-                color='secondary'
-                onClick={() => setIsEditable(!isEditable)}
-              >
-                <EditIcon width='20' height='20' fill={color.grey} />
-                <span>수정</span>
-              </IconBtn>
-              <IconBtn color='warning'>
-                <DeleteIcon width='20' height='20' fill={color.grey} />
-                <span>삭제</span>
-              </IconBtn>
-            </ButtonContainer>
-          )}
+          {isAuthorized ? (
+            <>
+              {isEditable ? (
+                <ButtonContainer>
+                  <IconBtn
+                    color='grey'
+                    onClick={() => setIsEditable(!isEditable)}
+                  >
+                    <CancelIcon width='20' height='20' fill={color.grey} />
+                    <span>취소</span>
+                  </IconBtn>
+                  <SolidBtn color='secondary' onClick={handleSubmit}>
+                    <ConfirmIcon width='20' height='20' fill={color.white} />
+                    <span>등록</span>
+                  </SolidBtn>
+                </ButtonContainer>
+              ) : (
+                <ButtonContainer>
+                  <IconBtn
+                    color='secondary'
+                    onClick={() => setIsEditable(!isEditable)}
+                  >
+                    <EditIcon width='20' height='20' fill={color.grey} />
+                    <span>수정</span>
+                  </IconBtn>
+                  <IconBtn color='warning'>
+                    <DeleteIcon width='20' height='20' fill={color.grey} />
+                    <span>삭제</span>
+                  </IconBtn>
+                </ButtonContainer>
+              )}
+            </>
+          ) : null}
         </CaptionBtnContainer>
       </EditContainer>
       {isModalOpen ? (
