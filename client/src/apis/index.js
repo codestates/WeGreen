@@ -128,7 +128,11 @@ export const modifyPassword = (userId, body) => {
 export const signout = () => {
   console.log(`${process.env.REACT_APP_API_URL}/users/signout`);
   return axios
-    .post(`${process.env.REACT_APP_API_URL}/users/signout`, {}, { 'Content-Type': 'application/json', withCredentials: true })
+    .post(
+      `${process.env.REACT_APP_API_URL}/users/signout`,
+      {},
+      { 'Content-Type': 'application/json', withCredentials: true }
+    )
     .then((result) => result.data);
 };
 
@@ -136,7 +140,7 @@ export const requestChallenge = (challengeId) => {
   return axios
     .get(`${process.env.REACT_APP_API_URL}/challenges/${challengeId}`)
     .then((result) => result.data.data);
-}
+};
 
 export const createChallenge = (body) => {
   return axios
@@ -151,14 +155,14 @@ export const requestKakaoLogin = () => {
   window.location.assign(
     `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.REACT_APP_KAKAO_REST_API_KEY}&redirect_uri=${process.env.REACT_APP_KAKAO_REDIRECT_URI}&response_type=code`
   );
-    .then((result) => result.data);
-}
+};
 
 export const editChallenge = (body) => {
   return axios
-    .patch(`${process.env.REACT_APP_API_URL}/challenges/${body.challenge_id}`,
+    .patch(
+      `${process.env.REACT_APP_API_URL}/challenges/${body.challenge_id}`,
       body,
-      { 'Content-Type': 'application/json', withCredentials: true, }
+      { 'Content-Type': 'application/json', withCredentials: true }
     )
     .then((result) => result.data);
 };

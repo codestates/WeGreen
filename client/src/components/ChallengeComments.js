@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import { color, device, radius } from '../styles';
 import { ReactComponent as SendIcon } from '../assets/images/icon_send.svg';
 import Comment from './Comment';
-import { dummyComments } from '../data/dummyData';
 import { createComment } from '../apis';
 
 const ChallengeCommentsContainer = styled.div`
@@ -106,12 +105,11 @@ const CommentsListContainer = styled.div`
 
 const CommentsList = styled.ul`
   @media ${device.laptop} {
-    padding: 0 1rem;
+    padding: 0 1rem 1rem;
   }
 `;
 
-const ChallengeComments = () => {
-  const [comments, setComments] = useState(dummyComments);
+const ChallengeComments = ({ comments }) => {
   const [content, setContent] = useState('');
   const challenge_id = useParams().id;
 
