@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateUserinfo } from '../actions';
-import { updateMyinfo } from '../apis';
+import { updateMyBadges } from '../apis';
 import styled from 'styled-components';
 import { color, device, radius } from '../styles';
 
@@ -171,11 +171,11 @@ const BadgesModal = ({ closeModal }) => {
   useEffect(() => {
     return () => {
       const result = {
-        selected_badges: badgeInfo
+        badge_ids: badgeInfo
           .filter((el) => el.type === 'selected')
           .map((el) => el.id),
       };
-      updateMyinfo(`${state.userInfo.user_id}`, result).then(result => console.log(result))
+      updateMyBadges(`${state.userInfo.user_id}`, result).then(result => console.log(result))
     }
   // eslint-disable-next-line
   }, []);

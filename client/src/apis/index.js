@@ -106,7 +106,15 @@ export const updateMyinfo = (userId, body) => {
     .then((result) => result.data.data);
 };
 
-// 비밀번호 수정
+export const updateMyBadges = (body) => {
+  return axios
+    .patch(`${process.env.REACT_APP_API_URL}/users-badges`, body, {
+      'Content-Type': 'application/json',
+      withCredentials: true,
+    })
+    .then((result) => result.data.data);
+};
+
 export const modifyPassword = (userId, body) => {
   return axios
     .patch(`${process.env.REACT_APP_API_URL}/users/${userId}/password`, body, {
@@ -120,9 +128,7 @@ export const modifyPassword = (userId, body) => {
 export const signout = () => {
   console.log(`${process.env.REACT_APP_API_URL}/users/signout`);
   return axios
-    .delete(`${process.env.REACT_APP_API_URL}/users/signout`, {
-      headers: { 'Content-Type': 'application/json', withCredentials: true },
-    })
+    .post(`${process.env.REACT_APP_API_URL}/users/signout`, {}, { 'Content-Type': 'application/json', withCredentials: true })
     .then((result) => result.data);
 };
 
