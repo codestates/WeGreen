@@ -18,11 +18,13 @@ module.exports = {
             },
           }
         );
-        for (let badgeId of badgeArray) {
-          await UserBadgeModel.update(
-            { is_selected: true },
-            { where: { user_id: userId, badge_id: badgeId } }
-          );
+        if (badgeArray.length !== 0) {
+          for (let badgeId of badgeArray) {
+            await UserBadgeModel.update(
+              { is_selected: true },
+              { where: { user_id: userId, badge_id: badgeId } }
+            );
+          }
         }
         const selected = await UserBadgeModel.findAll({
           attributes: ['badge_id'],
@@ -33,8 +35,10 @@ module.exports = {
           raw: true,
         });
         const resultArray = [];
-        for (let badge of selected) {
-          resultArray.push(badge.badge_id);
+        if (selected.length !== 0) {
+          for (let badge of selected) {
+            resultArray.push(badge.badge_id);
+          }
         }
         res
           .status(200)

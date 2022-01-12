@@ -106,7 +106,7 @@ module.exports = {
         },
       });
       if (created) {
-        const { badge_id, id } = result;
+        const { id } = result;
         const randombadge = getRandomBadge(1, 20);
         const obtainBadge = await UserBadgeModel.create({
           user_id: id,

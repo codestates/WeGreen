@@ -11,23 +11,25 @@ import EditChallenge from './pages/EditChallenge';
 import ConfirmChallenge from './pages/ConfirmChallenge';
 import Mypage from './pages/Mypage';
 import EditMyinfo from './pages/EditMyinfo';
+import KakaoPage from './pages/KakaoPage';
 
 function App() {
   return (
-    <div className="App">
+    <div className='App'>
       <Navigation />
       <main>
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/challenges" element={<Challenges />} />
-          <Route path="/challenge/:id" element={<Challenge />} />
-          <Route path="/createchallenge" element={<CreateChallenge />} />
-          <Route path="/editchallenge/:id" element={<EditChallenge />} />
-          <Route path="/confirmchallenge" element={<ConfirmChallenge />} />
-          <Route path="/mypage" element={<Mypage />} />
-          <Route path="/editmyinfo" element={<EditMyinfo />} />
+          <Route path='/' element={<Home />} />
+          <Route path='/login' element={<Login />} />
+          <Route path='/signup' element={<Signup />} />
+          <Route path='/challenges' element={<Challenges />} />
+          <Route path='/challenge/:id' element={<Challenge />} />
+          <Route path='/createchallenge' element={<CreateChallenge />} />
+          <Route path='/editchallenge/:id' element={<EditChallenge />} />
+          <Route path='/confirmchallenge' element={<ConfirmChallenge />} />
+          <Route path='/mypage' element={<Mypage />} />
+          <Route path='/editmyinfo' element={<EditMyinfo />} />
+          <Route path='/oauth/callback/kakao' element={<KakaoPage />} />
         </Routes>
       </main>
     </div>
