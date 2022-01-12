@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateUserinfo } from '../actions';
-import { updateMyinfo } from '../apis';
+import { requestMyinfo, updateMyinfo } from '../apis';
 import styled from 'styled-components';
 import { color, device, radius } from '../styles';
+import Button from './Button';
+import Modal from '../components/Modal';
 
 const Backdrop = styled.div`
   position: fixed;
@@ -11,7 +13,7 @@ const Backdrop = styled.div`
   left: 0;
   bottom: 0;
   right: 0;
-  z-index: 9999;
+  z-index: 7999;
   background-color: ${color.backdrop};
 `;
 
@@ -20,11 +22,12 @@ const BadgeModalContainer = styled.div`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 99999;
+  z-index: 8999;
   width: 320px;
   height: 560px;
   display: flex;
   flex-direction: column;
+  align-items: center;
   padding: 1rem;
   background-color: white;
   border-radius: ${radius};
@@ -40,7 +43,7 @@ const CloseBtn = styled.button`
   align-self: flex-end;
   width: 20px;
   height: 20px;
-  z-index: 9999;
+  z-index: 8999;
   background-color: transparent;
   text-indent: -999px;
   overflow: hidden;
@@ -109,50 +112,42 @@ const Badge = styled.img`
   border-radius: 40px;
 `;
 
+const ButtonContainer = styled.div`
+  position: fixed;
+  bottom: 2rem;
+  z-index: 999;
+  width: 50%;
+  display: flex;
+`;
+
 const BadgeModal = ({ closeModal }) => {
   const state = useSelector((state) => state.userReducer);
-  const { badges, badge_id } = state.userInfo;
-
-  const TotalBadges = new Array(20).fill();
-  for (let i = 0; i < TotalBadges.length; i++)
-    TotalBadges[i] = { id: i + 1, src: 'src' };
-
-  TotalBadges.forEach((el, idx) => {
-    if (badges.includes(idx + 1)) {
-      if (idx + 1 === badge_id) {
-        el.type = 'selected';
-      } else {
-        el.type = 'unselected';
-      }
-    } else {
-      el.type = 'absent';
-    }
-  });
-
-  const [badgeInfo, setbadgeInfo] = useState(TotalBadges);
+  const { badges } = state.userInfo;
+  const [badgeInfo, setbadgeInfo] = useState([]);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const result = {
-      badge_id: badgeInfo
-        .filter((el) => el.type === 'selected')
-        .map((el) => el.id)[0],
-    };
-    dispatch(updateUserinfo(result));
-    // eslint-disable-next-line
-  }, [badgeInfo]);
-
-  useEffect(() => {
-    return () => {
-      const result = {
-        badge_id: badgeInfo
-          .filter((el) => el.type === 'selected')
-          .map((el) => el.id)[0],
-      };
-      updateMyinfo(`${state.userInfo.user_id}`, result).then((result) =>
-        console.log(result)
-      );
-    };
+    requestMyinfo(`${state.userInfo.user_id}`)
+      .then((result) => {
+        const { badges, badge_id } = result.user_info;
+        const data = result.user_info
+        dispatch(updateUserinfo(data))
+        const TotalBadges = new Array(20).fill();
+        for (let i = 0; i < TotalBadges.length; i++)
+          TotalBadges[i] = { id: i + 1, src: 'src' };
+          TotalBadges.forEach((el, idx) => {
+            if (badges.includes(idx + 1)) {
+              if (idx + 1 === badge_id) {
+                el.type = 'selected';
+              } else {
+                el.type = 'unselected';
+              }
+            } else {
+              el.type = 'absent';
+            }
+          });
+        setbadgeInfo(TotalBadges)
+      })
     // eslint-disable-next-line
   }, []);
 
@@ -180,6 +175,49 @@ const BadgeModal = ({ closeModal }) => {
     }
   };
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [responseStatus, setResponseStatus] = useState('no status');
+
+  const ModalMessage = ({ status, btnHandler = () => {} }) => {
+    switch (status) {
+      case 'success change badge':
+        return (
+          <>
+            <p>
+              뱃지를 변경하였습니다. <br />
+            </p>
+            <Button content='확인' handler={btnHandler} />
+          </>
+        );
+      default:
+        return (
+          <>
+            <p>
+              에러가 발생하였습니다. <br />
+              다시 시도해 주세요.
+            </p>
+            <Button content='확인' handler={btnHandler} />
+          </>
+        );
+    }
+  };
+
+  const requestChangeBadge = () => {
+    const result = {
+      badge_id: badgeInfo
+        .filter((el) => el.type === 'selected')
+        .map((el) => el.id)[0],
+    };
+    dispatch(updateUserinfo(result));
+    updateMyinfo(`${state.userInfo.user_id}`, result).then((result) => {
+      setResponseStatus('success change badge')
+      setIsModalOpen(true)
+    }).catch(err => {
+      setResponseStatus('no status')
+      setIsModalOpen(true)
+    });
+  };
+
   return (
     <>
       <Backdrop onClick={() => closeModal(false)}></Backdrop>
@@ -198,7 +236,18 @@ const BadgeModal = ({ closeModal }) => {
             );
           })}
         </BadgesViewer>
+        <ButtonContainer>
+          <Button content="저장" handler={requestChangeBadge}/>
+        </ButtonContainer>
       </BadgeModalContainer>
+      {isModalOpen ? (
+        <Modal closeModal={setIsModalOpen}>
+          <ModalMessage
+            status={responseStatus}
+            btnHandler={() => setIsModalOpen(false)}
+          />
+        </Modal>
+      ) : null}
     </>
   );
 };

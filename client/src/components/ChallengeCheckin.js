@@ -77,7 +77,11 @@ const ProgressBar = styled.div`
 
 const ChallengeCheckin = ({ challengeInfo, checkinInfo }) => {
   const now = new Date();
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const today = new Date(
+    `${now.getFullYear()}-${('0' + (now.getMonth() + 1)).slice(
+      -2
+    )}-${now.getDate()}`
+  );
 
   const checkin_log = checkinInfo.checkin_log.map((el) => {
     const log = new Date(el);
@@ -88,7 +92,7 @@ const ChallengeCheckin = ({ challengeInfo, checkinInfo }) => {
   const finishedAt = new Date(challengeInfo.started_at);
   finishedAt.setDate(startedAt.getDate() + 6);
 
-  const count = finishedAt.getDate() - startedAt.getDate() + 1;
+  const count = 7;
   const Boxes = new Array(count).fill([]).map((_, i) => {
     const date = new Date(startedAt);
     date.setDate(startedAt.getDate() + i);

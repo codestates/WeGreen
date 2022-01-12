@@ -38,6 +38,6 @@ router.post('/:challenge_id/comments/:comment_id', challenges.comments.delete);
 router.post('/:challenge_id/comments', challenges.comments.post);
 
 //챌린지 참가하기
-router.post('/:challenge_id', challenges.join);
+router.post('/:challenge_id/join', challenges.join);
 
 module.exports = router;

@@ -65,7 +65,11 @@ const CreateChallenge = () => {
   const { state } = useLocation();
   
   const now = new Date();
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const today = new Date(
+    `${now.getFullYear()}-${('0' + (now.getMonth() + 1)).slice(
+      -2
+    )}-${now.getDate()}`
+  );
   const requirementArr = new Array(7).fill().map((_, i) => i + 1);
 
   const navigate = useNavigate();
@@ -101,7 +105,7 @@ const CreateChallenge = () => {
     return false;
   };
 
-  const moveToConfirm = () => {
+  const moveConfirm = () => {
     if (isValidChallenge()) {
       navigate('/confirmchallenge', { state: challengeInfo });
     } else {
@@ -184,7 +188,7 @@ const CreateChallenge = () => {
           requirement={challengeInfo.requirement}
           setRequirement={onChangeChallengeInfo('requirement')}
         />
-        <Button content='확인' handler={moveToConfirm} />
+        <Button content='확인' handler={moveConfirm} />
       </CreateChallengeContainer>
       {isModalOpen ? (
         <Modal closeModal={setIsModalOpen}>

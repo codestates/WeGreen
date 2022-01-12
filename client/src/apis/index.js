@@ -103,6 +103,7 @@ export const updateMyinfo = (userId, body) => {
     .then((result) => result.data.data);
 };
 
+// 뱃지 수정
 export const updateMyBadges = (body) => {
   return axios
     .patch(`${process.env.REACT_APP_API_URL}/users-badges`, body, {
@@ -123,7 +124,6 @@ export const modifyPassword = (userId, body) => {
 
 // 회원탈퇴
 export const signout = () => {
-  console.log(`${process.env.REACT_APP_API_URL}/users/signout`);
   return axios
     .post(
       `${process.env.REACT_APP_API_URL}/users/signout`,
@@ -147,13 +147,21 @@ export const createChallenge = (body) => {
     })
     .then((result) => result.data);
 };
-
+//카카오 로그인
 export const requestKakaoLogin = () => {
   window.location.assign(
     `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.REACT_APP_KAKAO_REST_API_KEY}&redirect_uri=${process.env.REACT_APP_KAKAO_REDIRECT_URI}&response_type=code`
   );
 };
 
+//구글 로그인
+export const requestGoogleLogin = () => {
+  window.location.assign(
+    `https://accounts.google.com/o/oauth2/v2/auth?client_id=${process.env.REACT_APP_GOOGLE_REST_API_KEY}&redirect_uri=${process.env.REACT_APP_GOOGLE_REDIRECT_URI}&response_type=code&scope=https://www.googleapis.com/auth/userinfo.email`
+  );
+};
+
+// 챌린지 수정
 export const editChallenge = (body) => {
   return axios
     .patch(
@@ -163,6 +171,51 @@ export const editChallenge = (body) => {
     )
     .then((result) => result.data);
 };
+
+// 챌린지 삭제
+export const deleteChallenge = (challengeId) => {
+  return axios
+    .post(`${process.env.REACT_APP_API_URL}/challenges/${challengeId}`,
+      {},
+      { 'Content-Type': 'application/json', withCredentials: true, }
+    )
+    .then((result) => result.data);
+};
+
+// 챌린지 참가
+export const joinChallenge = (challengeId) => {
+  console.log(`${process.env.REACT_APP_API_URL}/challenges/${challengeId}/join`)
+  return axios
+    .post(
+      `${process.env.REACT_APP_API_URL}/challenges/${challengeId}/join`,
+      {},
+      {
+        'Content-Type': 'application/json',
+        withCredentials: true,
+      }
+    )
+    .then((result) => {
+      console.log(result.data);
+    });
+};
+
+// 챌린지 체크인
+export const checkin = (challengeId) => {
+  console.log(`${process.env.REACT_APP_API_URL}/challenges/${challengeId}`)
+  return axios
+    .post(
+      `${process.env.REACT_APP_API_URL}/challenges/${challengeId}/checkins`,
+      {},
+      {
+        'Content-Type': 'application/json',
+        withCredentials: true,
+      }
+    )
+    .then((result) => {
+      console.log(result.data);
+    });
+};
+
 
 // 댓글 생성
 export const createComment = (id, content) => {
@@ -198,4 +251,10 @@ export const editComment = (challengeId, commentId, content) => {
       { 'Content-Type': 'application/json', withCredentials: true }
     )
     .then((result) => result);
+};
+
+export const requestNaverLogin = () => {
+  window.location.assign(
+    `https://nid.naver.com/oauth2.0/authorize?client_id=${process.env.REACT_APP_NAVER_CLIENT_ID}&redirect_uri=${process.env.REACT_APP_NAVER_REDIRECT_URI}&state='wegreen'&response_type=code`
+  );
 };
