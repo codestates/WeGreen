@@ -9,6 +9,7 @@ import Illust from "../components/Illust";
 import UserProfile from "../components/UserProfile";
 import Tab from "../components/Tab";
 import ChallengeCard from "../components/ChallengeCard";
+import { ReactComponent as Wave } from '../assets/images/wave.svg';
 
 
 const Container = styled.div`
@@ -38,8 +39,29 @@ const MyChallengesContainer = styled.section`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 1rem;
   gap: 1rem;
+
+  @media ${device.laptop} {
+    width: 100%;
+    overflow-y: scroll;
+  }
+`;
+
+const TitleContainer = styled.div`
+  display: none;
+
+  @media ${device.laptop} {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100%;
+    padding-top: 2rem;
+    h1 {
+      color: ${color.white};
+      text-align: center;
+    }
+  background-color: ${color.primary};
+  }
 `;
 
 const ChallengeListContainer = styled.div`
@@ -143,6 +165,10 @@ const Mypage = () => {
       <MypageContainer>
         <Illust />
         <MyChallengesContainer>
+          <TitleContainer>
+            <h1>마이페이지</h1>
+            <Wave width='100%' height='100' fill={color.white} />
+          </TitleContainer>
           <UserProfile
             successCounts={successCounts}
           />

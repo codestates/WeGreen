@@ -27,9 +27,6 @@ const Container = styled.div`
 const EditMyinfoContainer = styled.div`
   background-color: ${color.white};
 
-  & > div:first-child {
-    display: none;
-  }
   & h4 {
     margin-bottom: 0.5rem;
   }
@@ -40,10 +37,6 @@ const EditMyinfoContainer = styled.div`
     width: ${contentWidth};
     height: 100%;
     box-shadow: ${boxShadow};
-
-    & > div:first-child {
-      display: block;
-    }
   }
 `;
 
@@ -55,20 +48,24 @@ const EditMyinfoSection = styled.section`
 
   @media ${device.laptop} {
     width: 100%;
+    overflow-y: scroll;
   }
 `;
 
 const TitleContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  width: 100%;
-  padding-top: 2rem;
-  h1 {
-    color: ${color.white};
-    text-align: center;
+  display: none;
+  @media ${device.laptop} {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100%;
+    padding-top: 2rem;
+    h1 {
+      color: ${color.white};
+      text-align: center;
+    }
+    background-color: ${color.primary};
   }
-  background-color: ${color.primary};
 `;
 
 const EditMyinfoBioContainer = styled.div`
@@ -114,6 +111,12 @@ const SignoutContainer = styled.div`
   width: 100%;
   max-width: 460px;
   padding: 1rem;
+`;
+
+const BackContainer = styled.div`
+  width: 100%;
+  max-width: 460px;
+  padding: 2rem 1rem;
 `;
 
 const Divider = styled.div`
@@ -245,10 +248,8 @@ const EditMyinfo = () => {
   };
 
   const handleSignout = () => {
-    console.log('check');
     signout()
       .then((result) => {
-        console.log(result);
         setResponseStatus('success signout');
         setIsModalOpen(true);
         dispatch(logout());
@@ -397,6 +398,14 @@ const EditMyinfo = () => {
               handler={handleSignoutModal}
             />
           </SignoutContainer>
+          <Divider />
+          <BackContainer>
+            <Button
+              content='마이페이지'
+              color='secondary'
+              handler={() => navigate('/mypage')}
+            />
+          </BackContainer>
         </EditMyinfoSection>
         {isModalOpen ? (
           <Modal closeModal={setIsModalOpen}>

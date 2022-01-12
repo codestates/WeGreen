@@ -56,7 +56,11 @@ const Box = styled.div`
 
 const ChallengeInfo = ({ challengeInfo }) => {
   const now = new Date();
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const today = new Date(
+    `${now.getFullYear()}-${('0' + (now.getMonth() + 1)).slice(
+      -2
+    )}-${now.getDate()}`
+  );
 
   const startedAt = new Date(challengeInfo.started_at);
   const finishedAt = new Date(challengeInfo.started_at);

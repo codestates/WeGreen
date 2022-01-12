@@ -1,15 +1,17 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { requestChallenge, joinChallenge, checkin } from '../apis';
+import { requestChallenge, deleteChallenge, joinChallenge, checkin } from '../apis';
 import styled from 'styled-components';
 import { color, contentWidth, device } from '../styles';
 import Tab from '../components/Tab';
 import Button from '../components/Button';
+import Modal from '../components/Modal';
 import ChallengeInfo from '../components/ChallengeInfo';
 import ChallengeCheckin from '../components/ChallengeCheckin';
 import ChallengeComments from '../components/ChallengeComments';
 import { ReactComponent as EditIcon } from '../assets/images/icon_edit.svg';
+import { ReactComponent as DeleteIcon } from '../assets/images/icon_delete.svg';
 import { ReactComponent as PersonIcon } from '../assets/images/icon_person.svg';
 import { dummyChallenge } from '../data/dummyData';
 
@@ -38,6 +40,18 @@ const CommonContainer = styled.div`
 `;
 
 const EditBtn = styled.button`
+  float: right;
+  cursor: pointer;
+
+  @media ${device.laptop} {
+    float: none;
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+  }
+`;
+
+const DeleteBtn = styled.button`
   float: right;
   cursor: pointer;
 
@@ -102,6 +116,9 @@ const Challenge = () => {
     is_accomplished: false,
   });
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [responseStatus, setResponseStatus] = useState('no status');
+
   const now = new Date();
   const today = new Date(
     `${now.getFullYear()}-${('0' + (now.getMonth() + 1)).slice(
@@ -124,26 +141,35 @@ const Challenge = () => {
         return result;
       })
       .then((result) => {
-        // setCheckinInfo(result.checkin_info);
+        setCheckinInfo(result.checkin_info);
       });
     // eslint-disable-next-line
   }, []);
 
   const moveEditChallenge = () => {
-    if (isAuthor) {
-      navigate(`/editchallenge/${challengeInfo.challenge_id}`, {
-        state: challengeInfo,
-      });
-    }
+    navigate(`/editchallenge/${challengeInfo.challenge_id}`, {
+      state: challengeInfo,
+    });
+  };
+
+  const handleDeleteChallengeModal = () => {
+    setResponseStatus('confirm delete challenge')
+    setIsModalOpen(true)
+  };
+
+  const handleDeleteChallenge = () => {
+    deleteChallenge(`${challengeInfo.challenge_id}`).then(result => {
+      navigate('/challenges')
+    })
   };
 
   const handleJoinChallenge = () => {
-    joinChallenge(challengeInfo.challenge_id)
-  }
+    joinChallenge(challengeInfo.challenge_id);
+  };
 
   const handleCheckin = () => {
-    checkin(challengeInfo.challenge_id)
-  }
+    checkin(challengeInfo.challenge_id);
+  };
 
   const getWindowWidth = () => {
     const { innerWidth: width } = window;
@@ -181,6 +207,48 @@ const Challenge = () => {
       window.removeEventListener('resize', throttle(handleResize, 500));
   }, []);
 
+  const ModalMessage = ({ status, btnHandler = () => {} }) => {
+    switch (status) {
+      case 'unauthorized':
+        return (
+          <>
+            <p>
+              현재 비밀번호가 일치하지 않거나 <br />
+              로그인이 만료되었습니다. <br />
+              다시 시도해주세요.
+            </p>
+            <Button content='확인' handler={btnHandler} />
+          </>
+        );
+      case 'confirm delete challenge':
+        return (
+          <>
+            <p>
+              이 챌린지를 삭제하시겠습니까?
+            </p>
+            <Button content='네, 삭제하겠습니다' handler={handleDeleteChallenge} />
+          </>
+        );
+      case 'success delete challenge':
+        return (
+          <>
+            <p>챌린지 삭제가 완료되었습니다.</p>
+            <Button content='확인' handler={() => navigate('/')} />
+          </>
+        );
+      default:
+        return (
+          <>
+            <p>
+              에러가 발생하였습니다. <br />
+              다시 시도해 주세요.
+            </p>
+            <Button content='확인' handler={btnHandler} />
+          </>
+        );
+    }
+  };
+
   const tabContent = {
     info: <ChallengeInfo challengeInfo={challengeInfo}></ChallengeInfo>,
     checkin: (
@@ -196,10 +264,30 @@ const Challenge = () => {
     <OuterContainer>
       <ChallengeContainer>
         <CommonContainer>
-          {isAuthor && challengeInfo.join_count < 2 ? (
-            <EditBtn onClick={moveEditChallenge}>
-              <EditIcon width='20' height='20' fill={color.secondaryDark} />
-            </EditBtn>
+          {isAuthor ? (
+            challengeInfo.join_count < 2 ? (
+              <>
+                <EditBtn onClick={moveEditChallenge}>
+                  <EditIcon width='20' height='20' fill={color.secondaryDark} />
+                </EditBtn>
+                <DeleteBtn onClick={handleDeleteChallengeModal}>
+                  <DeleteIcon
+                    width='20'
+                    height='20'
+                    fill={color.secondaryDark}
+                  />
+                </DeleteBtn>
+              </>
+            ) : (
+              <>
+                <EditBtn>
+                  <EditIcon width='20' height='20' fill={color.grey} />
+                </EditBtn>
+                <DeleteBtn>
+                  <DeleteIcon width='20' height='20' fill={color.grey} />
+                </DeleteBtn>
+              </>
+            )
           ) : null}
           <Title>{challengeInfo.name}</Title>
           <Caption>
@@ -254,6 +342,14 @@ const Challenge = () => {
           )}
         </ContentContainer>
       </ChallengeContainer>
+      {isModalOpen ? (
+          <Modal closeModal={setIsModalOpen}>
+            <ModalMessage
+              status={responseStatus}
+              btnHandler={() => setIsModalOpen(false)}
+            />
+          </Modal>
+        ) : null}
     </OuterContainer>
   );
 };

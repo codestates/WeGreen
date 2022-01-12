@@ -65,7 +65,11 @@ const EditChallenge = () => {
   const { state } = useLocation();
 
   const now = new Date();
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const today = new Date(
+    `${now.getFullYear()}-${('0' + (now.getMonth() + 1)).slice(
+      -2
+    )}-${now.getDate()}`
+  );
   const requirementArr = new Array(7).fill().map((_, i) => i + 1);
 
   const navigate = useNavigate();
