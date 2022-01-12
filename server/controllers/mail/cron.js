@@ -8,7 +8,7 @@ const {
 } = require('../../models');
 
 const scheduler = () => {
-  cron.schedule('* 0 * * * *', async function () {
+  cron.schedule('0 0 * * * *', async function () {
     //매시 0분마다 메일 발송
 
     const allUsers = await UserModel.findAll({
