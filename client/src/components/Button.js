@@ -29,6 +29,12 @@ const ButtonTemplate = styled.button`
       opacity: 0.1;
     }
   }
+
+  &:disabled:hover {
+    &::after {
+      opacity: 0;
+    }
+  }
 `;
 
 const Button = ({
@@ -36,6 +42,7 @@ const Button = ({
   height = '40px',
   color = 'secondary',
   content = 'BUTTON',
+  disabled = false,
   handler = () => {},
 }) => {
   return (
@@ -43,6 +50,7 @@ const Button = ({
       width={width}
       height={height}
       color={color}
+      disabled={disabled}
       onClick={handler}
     >
       {content}

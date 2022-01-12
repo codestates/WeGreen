@@ -56,13 +56,17 @@ const Box = styled.div`
 
 const ChallengeInfo = ({ challengeInfo }) => {
   const now = new Date();
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const today = new Date(
+    `${now.getFullYear()}-${('0' + (now.getMonth() + 1)).slice(
+      -2
+    )}-${now.getDate()}`
+  );
 
   const startedAt = new Date(challengeInfo.started_at);
   const finishedAt = new Date(challengeInfo.started_at);
   finishedAt.setDate(startedAt.getDate() + 6);
 
-  const count = finishedAt.getDate() - startedAt.getDate() + 1;
+  const count = 7;
   const Boxes = new Array(count).fill([]).map((_, i) => {
     const date = new Date(startedAt);
     date.setDate(startedAt.getDate() + i);
@@ -93,7 +97,7 @@ const ChallengeInfo = ({ challengeInfo }) => {
       setStatus('done');
     }
     // eslint-disable-next-line
-  }, []);
+  }, [challengeInfo]);
 
   return (
     <Container>
