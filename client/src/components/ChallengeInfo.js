@@ -62,7 +62,7 @@ const ChallengeInfo = ({ challengeInfo }) => {
   const finishedAt = new Date(challengeInfo.started_at);
   finishedAt.setDate(startedAt.getDate() + 6);
 
-  const count = finishedAt.getDate() - startedAt.getDate() + 1;
+  const count = 7;
   const Boxes = new Array(count).fill([]).map((_, i) => {
     const date = new Date(startedAt);
     date.setDate(startedAt.getDate() + i);

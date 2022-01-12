@@ -106,6 +106,7 @@ export const updateMyinfo = (userId, body) => {
     .then((result) => result.data.data);
 };
 
+// 뱃지 수정
 export const updateMyBadges = (body) => {
   return axios
     .patch(`${process.env.REACT_APP_API_URL}/users-badges`, body, {
@@ -126,7 +127,6 @@ export const modifyPassword = (userId, body) => {
 
 // 회원탈퇴
 export const signout = () => {
-  console.log(`${process.env.REACT_APP_API_URL}/users/signout`);
   return axios
     .post(`${process.env.REACT_APP_API_URL}/users/signout`, {}, { 'Content-Type': 'application/json', withCredentials: true })
     .then((result) => result.data);
@@ -151,7 +151,6 @@ export const requestKakaoLogin = () => {
   window.location.assign(
     `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.REACT_APP_KAKAO_REST_API_KEY}&redirect_uri=${process.env.REACT_APP_KAKAO_REDIRECT_URI}&response_type=code`
   );
-    .then((result) => result.data);
 }
 
 export const editChallenge = (body) => {
@@ -162,6 +161,41 @@ export const editChallenge = (body) => {
     )
     .then((result) => result.data);
 };
+
+// 챌린지 참가
+export const joinChallenge = (challengeId) => {
+  console.log(`${process.env.REACT_APP_API_URL}/challenges/${challengeId}/join`)
+  return axios
+    .post(
+      `${process.env.REACT_APP_API_URL}/challenges/${challengeId}/join`,
+      {},
+      {
+        'Content-Type': 'application/json',
+        withCredentials: true,
+      }
+    )
+    .then((result) => {
+      console.log(result.data);
+    });
+};
+
+// 챌린지 체크인
+export const checkin = (challengeId) => {
+  console.log(`${process.env.REACT_APP_API_URL}/challenges/${challengeId}`)
+  return axios
+    .post(
+      `${process.env.REACT_APP_API_URL}/challenges/${challengeId}/checkins`,
+      {},
+      {
+        'Content-Type': 'application/json',
+        withCredentials: true,
+      }
+    )
+    .then((result) => {
+      console.log(result.data);
+    });
+};
+
 
 // 댓글 생성
 export const createComment = (id, content) => {

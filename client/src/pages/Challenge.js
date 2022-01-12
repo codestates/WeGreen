@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { requestChallenge, requestMyinfo } from "../apis";
+import { requestChallenge, joinChallenge, checkin } from '../apis';
 import styled from 'styled-components';
 import { color, contentWidth, device } from '../styles';
 import Tab from '../components/Tab';
@@ -90,24 +90,60 @@ const GridSpan = styled.div`
 `;
 
 const Challenge = () => {
-  const params = useParams()
+  const params = useParams();
   const loginState = useSelector((state) => state.userReducer);
-  const navigate = useNavigate()
-  
+  const navigate = useNavigate();
+
   const [view, setView] = useState('info');
   const [challengeInfo, setChallengeInfo] = useState(dummyChallenge);
   const [checkinInfo, setCheckinInfo] = useState({
-    checkin_count: 2,
-    checkin_log: ["2022-01-13", "2022-01-16"],
+    checkin_count: 0,
+    checkin_log: [],
     is_accomplished: false,
   });
 
+  const now = new Date();
+  const today = new Date(
+    `${now.getFullYear()}-${('0' + (now.getMonth() + 1)).slice(
+      -2
+    )}-${now.getDate()}`
+  );
+
+  const checkin_log = checkinInfo.checkin_log.map((el) => {
+    const log = new Date(el);
+    return log.toString();
+  });
+
+  const isAuthor = loginState.userInfo.user_id === challengeInfo.author;
+  const isCheckined = checkin_log.includes(today.toString());
+
   useEffect(() => {
-    requestChallenge(params.id).then(result => {
-      setChallengeInfo(result.challenge_info)
-      // setCheckinInfo(result.checkin_info)
-    })
+    requestChallenge(params.id)
+      .then((result) => {
+        setChallengeInfo(result.challenge_info);
+        return result;
+      })
+      .then((result) => {
+        // setCheckinInfo(result.checkin_info);
+      });
+    // eslint-disable-next-line
   }, []);
+
+  const moveEditChallenge = () => {
+    if (isAuthor) {
+      navigate(`/editchallenge/${challengeInfo.challenge_id}`, {
+        state: challengeInfo,
+      });
+    }
+  };
+
+  const handleJoinChallenge = () => {
+    joinChallenge(challengeInfo.challenge_id)
+  }
+
+  const handleCheckin = () => {
+    checkin(challengeInfo.challenge_id)
+  }
 
   const getWindowWidth = () => {
     const { innerWidth: width } = window;
@@ -136,12 +172,6 @@ const Challenge = () => {
     };
   };
 
-  const moveToEditChallenge = () => {
-    if (loginState.userInfo.user_id === challengeInfo.author) {
-      navigate(`/editchallenge/${challengeInfo.challenge_id}`, { state: challengeInfo })
-    }
-  }
-
   useEffect(() => {
     function handleResize() {
       setWindowWidth(getWindowWidth());
@@ -153,22 +183,42 @@ const Challenge = () => {
 
   const tabContent = {
     info: <ChallengeInfo challengeInfo={challengeInfo}></ChallengeInfo>,
-    checkin: <ChallengeCheckin challengeInfo={challengeInfo} checkinInfo={checkinInfo}></ChallengeCheckin>,
+    checkin: (
+      <ChallengeCheckin
+        challengeInfo={challengeInfo}
+        checkinInfo={checkinInfo}
+      ></ChallengeCheckin>
+    ),
     comments: <ChallengeComments></ChallengeComments>,
   };
+
   return (
     <OuterContainer>
       <ChallengeContainer>
         <CommonContainer>
-          <EditBtn onClick={moveToEditChallenge}>
-            <EditIcon width='20' height='20' fill={color.secondaryDark} />
-          </EditBtn>
+          {isAuthor && challengeInfo.join_count < 2 ? (
+            <EditBtn onClick={moveEditChallenge}>
+              <EditIcon width='20' height='20' fill={color.secondaryDark} />
+            </EditBtn>
+          ) : null}
           <Title>{challengeInfo.name}</Title>
           <Caption>
             <PersonIcon width='20' height='20' fill={color.secondaryDark} />
             {challengeInfo.join_count}명 참여중
           </Caption>
-          <Button href='/editchallenge' content='챌린지 참여하기' />
+          {challengeInfo.is_joined ? (
+            isCheckined ? (
+              <Button content='챌린지 체크인' handler={handleCheckin} />
+            ) : (
+              <Button
+                color={color.secondaryDark}
+                disabled={true}
+                content='챌린지 체크인'
+              />
+            )
+          ) : (
+            <Button content='챌린지 참여하기' handler={handleJoinChallenge} />
+          )}
           {windowWidth < 1024 ? (
             <Tab
               tabInfo={[
@@ -187,7 +237,7 @@ const Challenge = () => {
             <>
               <div>
                 <h3>정보</h3>
-                <ChallengeInfo challengeInfo={challengeInfo}/>
+                <ChallengeInfo challengeInfo={challengeInfo} />
               </div>
               <GridSpan>
                 <h3>댓글</h3>
@@ -195,7 +245,10 @@ const Challenge = () => {
               </GridSpan>
               <div>
                 <h3>체크인</h3>
-                <ChallengeCheckin challengeInfo={challengeInfo} checkinInfo={checkinInfo} />
+                <ChallengeCheckin
+                  challengeInfo={challengeInfo}
+                  checkinInfo={checkinInfo}
+                />
               </div>
             </>
           )}

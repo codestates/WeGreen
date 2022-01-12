@@ -101,7 +101,7 @@ const CreateChallenge = () => {
     return false;
   };
 
-  const moveToConfirm = () => {
+  const moveConfirm = () => {
     if (isValidChallenge()) {
       navigate('/confirmchallenge', { state: challengeInfo });
     } else {
@@ -184,7 +184,7 @@ const CreateChallenge = () => {
           requirement={challengeInfo.requirement}
           setRequirement={onChangeChallengeInfo('requirement')}
         />
-        <Button content='확인' handler={moveToConfirm} />
+        <Button content='확인' handler={moveConfirm} />
       </CreateChallengeContainer>
       {isModalOpen ? (
         <Modal closeModal={setIsModalOpen}>

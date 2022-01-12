@@ -50,7 +50,7 @@ const ChallengeCard = ({ challenge }) => {
           {startedAt.toLocaleDateString('ko-KR', { timezone: 'UTC' })} ~{' '}
           {finishedAt.toLocaleDateString('ko-KR', { timezone: 'UTC' })}
         </p>
-        <p>주{challenge.requirement}회</p>
+        <p>주 {challenge.requirement}회</p>
         <ChallengeCardStatusContainer>
           <Highlighted>{message}</Highlighted>
           <p>참여인원: {challenge.join_count}명</p>
