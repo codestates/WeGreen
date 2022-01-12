@@ -1,7 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { requestChallenge, deleteChallenge, joinChallenge, checkin } from '../apis';
+import {
+  requestChallenge,
+  deleteChallenge,
+  joinChallenge,
+  checkin,
+} from '../apis';
 import styled from 'styled-components';
 import { color, contentWidth, device } from '../styles';
 import Tab from '../components/Tab';
@@ -133,6 +138,7 @@ const Challenge = () => {
 
   const isAuthor = loginState.userInfo.user_id === challengeInfo.author;
   const isCheckined = checkin_log.includes(today.toString());
+  const isStarted = new Date(challengeInfo.started_at) <= today;
 
   useEffect(() => {
     requestChallenge(params.id)
@@ -153,18 +159,34 @@ const Challenge = () => {
   };
 
   const handleDeleteChallengeModal = () => {
-    setResponseStatus('confirm delete challenge')
-    setIsModalOpen(true)
+    setResponseStatus('confirm delete challenge');
+    setIsModalOpen(true);
   };
 
   const handleDeleteChallenge = () => {
-    deleteChallenge(`${challengeInfo.challenge_id}`).then(result => {
-      navigate('/challenges')
-    })
+    deleteChallenge(`${challengeInfo.challenge_id}`)
+      .then((result) => {
+        setTimeout(() => navigate('/challenges'), 3000);
+        setResponseStatus('success delete challenge');
+      })
+      .catch((err) => {
+        setResponseStatus('no status');
+      });
+  };
+
+  const handleJoinChallengeModal = () => {
+    setResponseStatus('confirm join challenge');
+    setIsModalOpen(true);
   };
 
   const handleJoinChallenge = () => {
-    joinChallenge(challengeInfo.challenge_id);
+    joinChallenge(challengeInfo.challenge_id)
+      .then((result) => {
+        setResponseStatus('success join challenge');
+      })
+      .catch((err) => {
+        setResponseStatus('no status');
+      });
   };
 
   const handleCheckin = () => {
@@ -223,17 +245,39 @@ const Challenge = () => {
       case 'confirm delete challenge':
         return (
           <>
-            <p>
-              이 챌린지를 삭제하시겠습니까?
-            </p>
-            <Button content='네, 삭제하겠습니다' handler={handleDeleteChallenge} />
+            <p>이 챌린지를 삭제하시겠습니까?</p>
+            <Button
+              content='네, 삭제하겠습니다'
+              handler={handleDeleteChallenge}
+            />
           </>
         );
       case 'success delete challenge':
         return (
           <>
-            <p>챌린지 삭제가 완료되었습니다.</p>
-            <Button content='확인' handler={() => navigate('/')} />
+            <p>
+              챌린지 삭제가 완료되었습니다.
+              <br />
+              잠시 후 이동됩니다.
+            </p>
+            <Button content='확인' handler={() => navigate('/challenges')} />
+          </>
+        );
+      case 'confirm join challenge':
+        return (
+          <>
+            <p>챌린지에 참가하시겠습니까?</p>
+            <Button
+              content='네, 참가하겠습니다'
+              handler={handleJoinChallenge}
+            />
+          </>
+        );
+      case 'success join challenge':
+        return (
+          <>
+            <p>챌린지에 참가하셨습니다.</p>
+            <Button content='확인' handler={btnHandler} />
           </>
         );
       default:
@@ -265,18 +309,18 @@ const Challenge = () => {
       <ChallengeContainer>
         <CommonContainer>
           {isAuthor ? (
-            challengeInfo.join_count < 2 ? (
+            !isStarted && challengeInfo.join_count < 2 ? (
               <>
-                <EditBtn onClick={moveEditChallenge}>
-                  <EditIcon width='20' height='20' fill={color.secondaryDark} />
-                </EditBtn>
                 <DeleteBtn onClick={handleDeleteChallengeModal}>
                   <DeleteIcon
                     width='20'
                     height='20'
-                    fill={color.secondaryDark}
+                    fill={color.secondary}
                   />
                 </DeleteBtn>
+                <EditBtn onClick={moveEditChallenge}>
+                  <EditIcon width='20' height='20' fill={color.secondary} />
+                </EditBtn>
               </>
             ) : (
               <>
@@ -299,13 +343,22 @@ const Challenge = () => {
               <Button content='챌린지 체크인' handler={handleCheckin} />
             ) : (
               <Button
-                color={color.secondaryDark}
+                color={color.grey}
                 disabled={true}
                 content='챌린지 체크인'
               />
             )
+          ) : isStarted ? (
+            <Button
+              color={color.grey}
+              disabled={true}
+              content='챌린지 참여하기'
+            />
           ) : (
-            <Button content='챌린지 참여하기' handler={handleJoinChallenge} />
+            <Button
+              content='챌린지 참여하기'
+              handler={handleJoinChallengeModal}
+            />
           )}
           {windowWidth < 1024 ? (
             <Tab
@@ -343,13 +396,13 @@ const Challenge = () => {
         </ContentContainer>
       </ChallengeContainer>
       {isModalOpen ? (
-          <Modal closeModal={setIsModalOpen}>
-            <ModalMessage
-              status={responseStatus}
-              btnHandler={() => setIsModalOpen(false)}
-            />
-          </Modal>
-        ) : null}
+        <Modal closeModal={setIsModalOpen}>
+          <ModalMessage
+            status={responseStatus}
+            btnHandler={() => setIsModalOpen(false)}
+          />
+        </Modal>
+      ) : null}
     </OuterContainer>
   );
 };

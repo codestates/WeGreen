@@ -97,7 +97,7 @@ const ChallengeInfo = ({ challengeInfo }) => {
       setStatus('done');
     }
     // eslint-disable-next-line
-  }, []);
+  }, [challengeInfo]);
 
   return (
     <Container>
