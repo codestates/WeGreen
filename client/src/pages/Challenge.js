@@ -235,6 +235,12 @@ const Challenge = () => {
     ]);
   };
 
+  const handleCommentDelete = (commentId) => {
+    const newComments = comments.filter((el) => el.comment_id !== commentId);
+    setComments(newComments);
+    console.log('deleted comment', newComments);
+  };
+
   useEffect(() => {
     function handleResize() {
       setWindowWidth(getWindowWidth());
@@ -321,6 +327,7 @@ const Challenge = () => {
         comments={comments}
         handleCommentsUpdate={setComments}
         handleCommentEdit={handleCommentEdit}
+        handleCommentDelete={handleCommentDelete}
         isJoined={challengeInfo.is_joined}
       ></ChallengeComments>
     ),
@@ -334,11 +341,7 @@ const Challenge = () => {
             !isStarted && challengeInfo.join_count < 2 ? (
               <>
                 <DeleteBtn onClick={handleDeleteChallengeModal}>
-                  <DeleteIcon
-                    width='20'
-                    height='20'
-                    fill={color.secondary}
-                  />
+                  <DeleteIcon width='20' height='20' fill={color.secondary} />
                 </DeleteBtn>
                 <EditBtn onClick={moveEditChallenge}>
                   <EditIcon width='20' height='20' fill={color.secondary} />
@@ -408,6 +411,7 @@ const Challenge = () => {
                   comments={comments}
                   handleCommentsUpdate={setComments}
                   handleCommentEdit={handleCommentEdit}
+                  handleCommentDelete={handleCommentDelete}
                   isJoined={challengeInfo.is_joined}
                 />
               </GridSpan>

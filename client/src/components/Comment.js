@@ -7,8 +7,9 @@ import { ReactComponent as EditIcon } from '../assets/images/icon_edit.svg';
 import { ReactComponent as DeleteIcon } from '../assets/images/icon_delete.svg';
 import { ReactComponent as CancelIcon } from '../assets/images/icon_cancel.svg';
 import { ReactComponent as ConfirmIcon } from '../assets/images/icon_confirm.svg';
-import { editComment } from '../apis';
+import { editComment, deleteComment } from '../apis';
 import Modal from './Modal';
+import Button from './Button';
 
 const CommentContainer = styled.div`
   border-bottom: 1px solid ${color.primaryBorder};
@@ -115,21 +116,21 @@ const ModalMessage = ({ status }) => {
     case 'network error':
       return (
         <p>
-          서버에서 에러가 발생하여 댓글을 수정할 수 없습니다. <br />
+          서버에서 에러가 발생하여 댓글을 수정/삭제할 수 없습니다. <br />
           다시 시도해 주세요.
         </p>
       );
     default:
       return (
         <p>
-          에러가 발생하여 댓글을 수정할 수 없습니다. <br />
+          에러가 발생하여 댓글을 수정/삭제할 수 없습니다. <br />
           다시 시도해 주세요.
         </p>
       );
   }
 };
 
-const Comment = ({ comment, handleCommentEdit }) => {
+const Comment = ({ comment, handleCommentEdit, handleCommentDelete }) => {
   const textareaRef = useRef(null);
   const challenge_id = useParams().id;
   const state = useSelector((state) => state.userReducer);
@@ -137,6 +138,7 @@ const Comment = ({ comment, handleCommentEdit }) => {
   const [isEditable, setIsEditable] = useState(false);
   const [content, setContent] = useState(comment.content);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [responseStatus, setResponseStatus] = useState('');
   const [isAuthorized, setIsAuthorized] = useState(false);
 
@@ -167,6 +169,30 @@ const Comment = ({ comment, handleCommentEdit }) => {
         setIsModalOpen(true);
         return;
       });
+  };
+
+  const handleDelete = () => {
+    setIsDeleteModalOpen(false);
+    deleteComment(challenge_id, comment.comment_id)
+      .then((result) => {
+        if (result.status === 500) {
+          setResponseStatus('server error');
+          setIsModalOpen(true);
+          return;
+        }
+        if (result.status === 200) {
+          handleCommentDelete(comment.comment_id);
+        }
+      })
+      .catch((err) => {
+        setResponseStatus('');
+        setIsModalOpen(true);
+        return;
+      });
+  };
+
+  const handleDeleteModal = () => {
+    setIsDeleteModalOpen(true);
   };
 
   useEffect(() => {
@@ -217,7 +243,7 @@ const Comment = ({ comment, handleCommentEdit }) => {
                     <EditIcon width='20' height='20' fill={color.grey} />
                     <span>수정</span>
                   </IconBtn>
-                  <IconBtn color='warning'>
+                  <IconBtn color='warning' onClick={handleDeleteModal}>
                     <DeleteIcon width='20' height='20' fill={color.grey} />
                     <span>삭제</span>
                   </IconBtn>
@@ -230,6 +256,14 @@ const Comment = ({ comment, handleCommentEdit }) => {
       {isModalOpen ? (
         <Modal closeModal={setIsModalOpen}>
           <ModalMessage status={responseStatus} />
+        </Modal>
+      ) : null}
+      {isDeleteModalOpen ? (
+        <Modal closeModal={setIsModalOpen}>
+          <>
+            <p>정말로 댓글을 삭제하시겠습니까?</p>
+            <Button content='삭제' handler={handleDelete} />
+          </>
         </Modal>
       ) : null}
     </CommentContainer>
