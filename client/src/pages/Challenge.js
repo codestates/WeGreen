@@ -146,6 +146,7 @@ const Challenge = () => {
       .then((result) => {
         setChallengeInfo(result.challenge_info);
         setComments(result.comments);
+        console.log(result.comments);
         return result;
       })
       .then((result) => {

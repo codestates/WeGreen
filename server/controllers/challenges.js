@@ -551,7 +551,7 @@ module.exports = {
       try {
         const commentList = await CommentModel.findAll({
           attributes: [
-            'id',
+            ['id', 'comment_id'],
             'user_id',
             'challenge_id',
             'username',
@@ -576,11 +576,10 @@ module.exports = {
         res.status(200).json({
           message: 'OK',
           data: {
-            comments: result,
+            comments: commentList,
           },
         });
       } catch (err) {
-        console.log('ERROR IN GET COMMENTS', err);
         res.status(500).json({ message: 'Internal server error' });
       }
     },
