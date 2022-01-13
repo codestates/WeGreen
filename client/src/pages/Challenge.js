@@ -18,7 +18,7 @@ import ChallengeComments from '../components/ChallengeComments';
 import { ReactComponent as EditIcon } from '../assets/images/icon_edit.svg';
 import { ReactComponent as DeleteIcon } from '../assets/images/icon_delete.svg';
 import { ReactComponent as PersonIcon } from '../assets/images/icon_person.svg';
-import { dummyChallenge, dummyComments } from '../data/dummyData';
+import { dummyChallenge, dummyComments, TODAY } from '../data/dummyData';
 
 const OuterContainer = styled.div`
   @media ${device.laptop} {
@@ -125,31 +125,27 @@ const Challenge = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [responseStatus, setResponseStatus] = useState('no status');
 
-  const now = new Date();
-  const today = new Date(
-    `${now.getFullYear()}-${('0' + (now.getMonth() + 1)).slice(
-      -2
-    )}-${now.getDate()}`
-  );
-
   const checkin_log = checkinInfo.checkin_log.map((el) => {
     const log = new Date(el);
     return log.toString();
   });
 
   const isAuthor = loginState.userInfo.user_id === challengeInfo.author;
-  const isCheckined = checkin_log.includes(today.toString());
-  const isStarted = new Date(challengeInfo.started_at) <= today;
+  const isCheckined = checkin_log.includes(TODAY.toString());
+  const isStarted = new Date(challengeInfo.started_at) <= TODAY;
 
   useEffect(() => {
     requestChallenge(params.id)
       .then((result) => {
         setChallengeInfo(result.challenge_info);
-        setComments(result.comments);
         return result;
       })
       .then((result) => {
         setCheckinInfo(result.checkin_info);
+        return result;
+      })
+      .then(result => {
+        setComments(result.comments);
       });
     // eslint-disable-next-line
   }, []);
@@ -185,14 +181,27 @@ const Challenge = () => {
     joinChallenge(challengeInfo.challenge_id)
       .then((result) => {
         setResponseStatus('success join challenge');
+        setTimeout(() => window.location.reload(), 3000);        
       })
       .catch((err) => {
         setResponseStatus('no status');
       });
   };
 
+  const handleCheckinModal = () => {
+    setResponseStatus('confirm checkin');
+    setIsModalOpen(true);
+  };
+
   const handleCheckin = () => {
-    checkin(challengeInfo.challenge_id);
+    checkin(challengeInfo.challenge_id)
+      .then((result) => {
+        setResponseStatus('success checkin');
+        setTimeout(() => window.location.reload(), 3000);        
+      })
+      .catch((err) => {
+        setResponseStatus('duplicate checkin');
+      });
   };
 
   const getWindowWidth = () => {
@@ -298,6 +307,30 @@ const Challenge = () => {
         return (
           <>
             <p>챌린지에 참가하셨습니다.</p>
+            <Button content='확인' handler={() => window.location.reload()} />
+          </>
+        );
+      case 'confirm checkin':
+        return (
+          <>
+            <p>체크인하시겠습니까?</p>
+            <Button
+              content='네, 체크인하겠습니다'
+              handler={handleCheckin}
+            />
+          </>
+        );
+      case 'success checkin':
+        return (
+          <>
+            <p>체크인에 성공하셨습니다.</p>
+            <Button content='확인' handler={() => window.location.reload()} />
+          </>
+        );
+      case 'duplicate checkin':
+        return (
+          <>
+            <p>이미 체크인 하셨습니다.</p>
             <Button content='확인' handler={btnHandler} />
           </>
         );
@@ -364,18 +397,18 @@ const Challenge = () => {
             {challengeInfo.join_count}명 참여중
           </Caption>
           {challengeInfo.is_joined ? (
-            isCheckined ? (
-              <Button content='챌린지 체크인' handler={handleCheckin} />
+            isStarted && !isCheckined ? (
+              <Button content='챌린지 체크인' handler={handleCheckinModal} />
             ) : (
               <Button
-                color={color.grey}
+                color={color.black}
                 disabled={true}
                 content='챌린지 체크인'
               />
             )
           ) : isStarted ? (
             <Button
-              color={color.grey}
+              color={color.black}
               disabled={true}
               content='챌린지 참여하기'
             />
@@ -392,6 +425,7 @@ const Challenge = () => {
                 ['checkin', '체크인'],
                 ['comments', '댓글'],
               ]}
+              view={view}
               handleView={setView}
             />
           ) : null}

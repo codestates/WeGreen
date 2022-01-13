@@ -69,3 +69,10 @@ export const dummyComments = [
     created_at: '2021-12-28',
   },
 ];
+
+const now = new Date();
+export const TODAY = new Date(
+  `${now.getFullYear()}-${('0' + (now.getMonth() + 1)).slice(
+    -2
+  )}-${now.getDate()}`
+);

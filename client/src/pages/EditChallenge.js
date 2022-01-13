@@ -10,6 +10,7 @@ import SelectForm from '../components/SelectForm';
 import Button from '../components/Button';
 import Modal from '../components/Modal';
 import { ReactComponent as Wave } from '../assets/images/wave.svg';
+import { TODAY } from '../data/dummyData';
 
 const Container = styled.div`
   padding-top: 1rem;
@@ -64,12 +65,6 @@ const EditChallenge = () => {
   const loginState = useSelector((state) => state.userReducer);
   const { state } = useLocation();
 
-  const now = new Date();
-  const today = new Date(
-    `${now.getFullYear()}-${('0' + (now.getMonth() + 1)).slice(
-      -2
-    )}-${now.getDate()}`
-  );
   const requirementArr = new Array(7).fill().map((_, i) => i + 1);
 
   const navigate = useNavigate();
@@ -99,7 +94,7 @@ const EditChallenge = () => {
         challenge_id: -1,
         name: '',
         content: '',
-        started_at: today,
+        started_at: TODAY,
         requirement: '챌린지 성공 조건',
       };
 
@@ -195,7 +190,6 @@ const EditChallenge = () => {
           </InvalidMessage>
         )}
         <Calendar
-          today={today}
           pickedDate={challengeInfo.started_at}
           setPickedDate={onChangeChallengeInfo('started_at')}
         />

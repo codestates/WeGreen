@@ -1,32 +1,35 @@
 import styled from "styled-components";
-import { color, contentWidth } from "../styles";
+import { color, contentWidth, device } from "../styles";
 
 const TabContainer = styled.div`
   width: 100%;
   max-width: ${contentWidth};
-  margin: 0 auto;
   display: flex;
   justify-content: space-evenly;
-  background-color: ${color.white};
+  margin-top: 1rem;
   word-break: keep-all;
-
-  & * {
-    font-size: 1.5rem;
-  }
 `;
 
-const Tab = ({ tabInfo, handleView }) => {
+const TabButton = styled.button`
+  background-color: transparent;
+  font-size: 1.25rem;
+  font-weight: ${props => props.current};
+  color: ${color.primary};
+`
+
+const Tab = ({ tabInfo, view, handleView }) => {
   return (
     <TabContainer>
       {tabInfo.map((tab) => (
-        <button
+        <TabButton
           onClick={() => {
             handleView(tab[0]);
           }}
           key={tab[1]}
+          current={tab[0] === view ? "bolder" : null}
         >
           {tab[1]}
-        </button>
+        </TabButton>
       ))}
     </TabContainer>
   );
