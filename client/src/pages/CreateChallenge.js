@@ -75,10 +75,16 @@ const CreateChallenge = () => {
     }
   });
 
+  const startDate = new Date(TODAY)
+  startDate.setDate(startDate.getDate()+1)
+  if (startDate.getDate() === 0) {
+    startDate.setMonth(startDate.getMonth() + 1)
+  }
+
   const info = state ? state : {
     name: "",
     content: "",
-    started_at: TODAY,
+    started_at: startDate,
     requirement: '챌린지 성공 조건',
   }
 
