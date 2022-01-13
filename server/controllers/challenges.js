@@ -289,9 +289,10 @@ module.exports = {
           attributes: ['id'],
           where: { user_id: userId, challenge_id: req.params.challenge_id },
         });
-        if (findIsJoined) {
+        if (findIsJoined || newChallenge.author === userId) {
           is_joined = true;
         }
+        console.log('!!!!THIS IS IS_JOINED', is_joined);
       }
       if (newChallenge) {
         res.status(200).json({
@@ -550,6 +551,7 @@ module.exports = {
             'created_at',
           ],
           where: { challenge_id: req.params.challenge_id },
+          order: [['created_at'], 'DESC'],
           raw: true,
         });
         const result = [];
