@@ -21,12 +21,12 @@ module.exports = {
   //인기 챌린지 목록 불러오기 GET /challenges/popular/?query=검색어&limit=3
   popular: async (req, res) => {
     try {
-      var searchModel = ChallengeModel;
+      var searchModel;
       const search = req.query.query;
       if (search) {
-        var searchModel = await ChallengeModel.findAll({
+        searchModel = await ChallengeModel.findAll({
           attributes: [
-            'id',
+            ['id', 'challenge_id'],
             'name',
             'content',
             'started_at',
@@ -59,13 +59,14 @@ module.exports = {
         order: [[sequelize.col('join_count'), 'DESC']],
         raw: true,
       });
-
-      for (let i = 0; i < joinCountArray.length; i++) {
-        for (let j = 0; j < searchModel.length; j++) {
-          if (searchModel[j].id === joinCountArray[i].challenge_id) {
-            searchModel[j].join_count = joinCountArray[i].join_count;
-          } else {
-            continue;
+      if (searchModel) {
+        for (let i = 0; i < joinCountArray.length; i++) {
+          for (let j = 0; j < searchModel.length; j++) {
+            if (searchModel[j].id === joinCountArray[i].challenge_id) {
+              searchModel[j].join_count = joinCountArray[i].join_count;
+            } else {
+              continue;
+            }
           }
         }
       }
@@ -75,7 +76,7 @@ module.exports = {
       for (let i = 0; i < slicedJoinCount.length; i++) {
         await ChallengeModel.findOne({
           attributes: [
-            'id',
+            ['id', 'challenge_id'],
             'name',
             'content',
             'started_at',
@@ -105,13 +106,12 @@ module.exports = {
   //최신 챌린지 목록 불러오기 GET /latest
   latest: async (req, res) => {
     try {
-      var searchModel = ChallengeModel;
+      var searchModel;
       const search = req.query.query;
       if (search) {
-        //!query search 아직 미완성
-        var searchModel = await ChallengeModel.findAll({
+        searchModel = await ChallengeModel.findAll({
           attributes: [
-            'id',
+            ['id', 'challenge_id'],
             'name',
             'content',
             'started_at',
@@ -145,12 +145,14 @@ module.exports = {
         order: [['challenge_id', 'ASC']], //별건 아닌데 DESC로 내림차순으로 정리해서 드릴까요?
         raw: true,
       });
-      for (let i = 0; i < joinCountArray.length; i++) {
-        for (let j = 0; j < searchModel.length; j++) {
-          if (searchModel[j].id === joinCountArray[i].challenge_id) {
-            searchModel[j].join_count = joinCountArray[i].join_count;
-          } else {
-            continue;
+      if (searchModel) {
+        for (let i = 0; i < joinCountArray.length; i++) {
+          for (let j = 0; j < searchModel.length; j++) {
+            if (searchModel[j].id === joinCountArray[i].challenge_id) {
+              searchModel[j].join_count = joinCountArray[i].join_count;
+            } else {
+              continue;
+            }
           }
         }
       }
@@ -162,7 +164,7 @@ module.exports = {
         await ChallengeModel.findOne({
           where: { id: slicedJoinCount[i].challenge_id },
           attributes: [
-            'id',
+            ['id', 'challenge_id'],
             'name',
             'content',
             'started_at',
@@ -213,7 +215,7 @@ module.exports = {
             res.status(200).json({
               message: 'OK',
               data: {
-                id: newChallenge.id,
+                challenge_id: newChallenge.id,
                 name: newChallenge.name,
                 author: userId,
               },
@@ -231,9 +233,6 @@ module.exports = {
   //[완료] 챌린지 목록 불러오기 GET /:challenge_id
   list: async (req, res) => {
     try {
-      var is_joined = false;
-      var total_checkin_count = 0;
-      var is_success = false;
       const joinCountArray = await UserChallengeModel.findAll({
         attributes: ['user_id'],
         where: { challenge_id: req.params.challenge_id },
@@ -253,6 +252,7 @@ module.exports = {
           id: req.params.challenge_id,
         },
       });
+      var total_checkin_count = 0;
       const checkinTimes = await CheckInModel.findAll({
         attributes: ['created_at'],
         where: { challenge_id: req.params.challenge_id },
@@ -268,6 +268,7 @@ module.exports = {
         where: { id: req.params.challenge_id },
         raw: true,
       });
+      var is_success = false;
       if (Number(findRequirement.requirement) <= checkin_log.length) {
         is_success = true;
       }
@@ -275,12 +276,17 @@ module.exports = {
         attributes: [
           ['id', 'comment_id'],
           'user_id',
+          'username',
           'challenge_id',
           'content',
           'created_at',
         ],
         where: { challenge_id: req.params.challenge_id },
+        order: [[sequelize.col('created_at'), 'DESC']],
+        raw: true,
       });
+      var is_joined = false;
+
       if (isAuthorized(req)) {
         const authorization = isAuthorized(req);
         const userInfo = JSON.parse(authorization.data);
@@ -315,6 +321,7 @@ module.exports = {
         res.status(404).json({ message: 'Not found' });
       }
     } catch (err) {
+      console.log('ERROR in GET CHALLENGE', err);
       res.status(500).send({
         message: 'Internal server error',
       });
@@ -349,19 +356,19 @@ module.exports = {
             { where: { id: req.params.challenge_id } }
           );
           const updatedResult = await ChallengeModel.findOne({
-            attributes: ['id', 'name', 'content', 'started_at', 'requirement'],
+            attributes: [
+              ['id', 'challenge_id'],
+              'name',
+              'content',
+              'started_at',
+              'requirement',
+            ],
             where: { id: req.params.challenge_id },
             raw: true,
           });
           res.status(200).json({
             message: 'OK',
-            data: {
-              id: updatedResult.id,
-              name: updatedResult.name,
-              content: updatedResult.content,
-              started_at: updatedResult.started_at,
-              requirement: updatedResult.requirement,
-            },
+            data: updatedResult,
           });
         }
       } else {
@@ -544,14 +551,15 @@ module.exports = {
       try {
         const commentList = await CommentModel.findAll({
           attributes: [
-            'id',
+            ['id', 'comment_id'],
             'user_id',
             'challenge_id',
+            'username',
             'content',
             'created_at',
           ],
           where: { challenge_id: req.params.challenge_id },
-          order: [['created_at'], 'DESC'],
+          order: [[sequelize.col('created_at'), 'DESC']],
           raw: true,
         });
         const result = [];
@@ -559,6 +567,7 @@ module.exports = {
           result.push({
             comment_id: element.id,
             user_id: element.user_id,
+            username: element.username,
             challenge_id: element.challenge_id,
             content: element.content,
             created_at: element.created_at,
@@ -567,10 +576,10 @@ module.exports = {
         res.status(200).json({
           message: 'OK',
           data: {
-            comments: result,
+            comments: commentList,
           },
         });
-      } catch {
+      } catch (err) {
         res.status(500).json({ message: 'Internal server error' });
       }
     },
@@ -601,13 +610,14 @@ module.exports = {
             const changedResult = await CommentModel.findOne({
               attributes: ['content'],
               where: { id: req.params.comment_id },
+              raw: true,
             });
             res.status(200).json({ message: 'OK', data: changedResult });
           } else {
             res.status(401).json({ message: 'Invalid token' });
           }
         }
-      } catch {
+      } catch (err) {
         res.status(500).json({ message: 'Internal server error' });
       }
     },
@@ -639,7 +649,7 @@ module.exports = {
             res.status(401).json({ message: 'Invalid token' });
           }
         }
-      } catch {
+      } catch (err) {
         res.status(500).json({ message: 'Internal server error' });
       }
     },
@@ -651,9 +661,11 @@ module.exports = {
         } else {
           const authorization = isAuthorized(req);
           const userInfo = JSON.parse(authorization.data);
+          console.log('THIS IS USERINFO'.userInfo);
           const userId = userInfo.id;
           const postComment = await CommentModel.create({
             user_id: userId,
+            username: userInfo.username,
             challenge_id: req.params.challenge_id,
             content: req.body.content,
           });
@@ -661,7 +673,8 @@ module.exports = {
             .status(201)
             .json({ message: 'OK', data: { content: postComment.content } });
         }
-      } catch {
+      } catch (err) {
+        console.log('ERROR in POST COMMENT', err);
         res.status(500).json({ message: 'Internal server error' });
       }
     },
@@ -679,7 +692,13 @@ module.exports = {
           challenge_id: req.params.challenge_id,
         });
         const findJoinedChallenge = await ChallengeModel.findOne({
-          attributes: ['id', 'name', 'content', 'started_at', 'requirement'],
+          attributes: [
+            ['id', 'challenge_id'],
+            'name',
+            'content',
+            'started_at',
+            'requirement',
+          ],
           where: {
             id: req.params.challenge_id,
           },
@@ -687,7 +706,7 @@ module.exports = {
         });
         res.status(200).json({ message: 'OK', data: findJoinedChallenge });
       }
-    } catch {
+    } catch (err) {
       res.status(500).json({ message: 'Internal server error' });
     }
   },

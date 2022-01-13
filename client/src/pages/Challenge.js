@@ -138,15 +138,13 @@ const Challenge = () => {
     requestChallenge(params.id)
       .then((result) => {
         setChallengeInfo(result.challenge_info);
+        setComments(result.comments);
         return result;
       })
       .then((result) => {
         setCheckinInfo(result.checkin_info);
         return result;
       })
-      .then(result => {
-        setComments(result.comments);
-      });
     // eslint-disable-next-line
   }, []);
 

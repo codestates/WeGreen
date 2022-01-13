@@ -225,14 +225,18 @@ const ChallengeComments = ({
         </SendCommentContainer>
         <CommentsListContainer>
           <CommentsList>
-            {comments.map((el) => (
-              <Comment
-                comment={el}
-                key={el.comment_id}
-                handleCommentEdit={handleCommentEdit}
-                handleCommentDelete={handleCommentDelete}
-              />
-            ))}
+            {comments.length !== 0 ? (
+              comments.map((el) => (
+                <Comment
+                  comment={el}
+                  key={el.comment_id}
+                  handleCommentEdit={handleCommentEdit}
+                  handleCommentDelete={handleCommentDelete}
+                />
+              ))
+            ) : (
+              <p>작성된 댓글이 없습니다.</p>
+            )}
           </CommentsList>
         </CommentsListContainer>
       </ChallengeCommentsContainer>
