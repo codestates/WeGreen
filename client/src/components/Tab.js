@@ -1,13 +1,12 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 import { color, device, contentWidth } from '../styles';
-
 const TabContainer = styled.div`
   width: 100%;
   max-width: ${contentWidth};
-  margin: 0 auto;
   display: flex;
   justify-content: space-evenly;
+  margin-top: 1rem;
   word-break: keep-all;
 `;
 
@@ -33,8 +32,7 @@ const TabBtn = styled.button`
   }
 `;
 
-const Tab = ({ tabInfo, handleView }) => {
-  const [currentTab, setCurrentTab] = useState(tabInfo[0][0]);
+const Tab = ({ tabInfo, view, handleView }) => {
   return (
     <TabContainer>
       {tabInfo.map((tab) => (

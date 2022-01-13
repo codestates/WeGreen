@@ -18,6 +18,7 @@ module.exports = (sequelize, DataTypes) => {
       user_id: DataTypes.INTEGER,
       challenge_id: DataTypes.INTEGER,
       content: DataTypes.STRING,
+      username: DataTypes.STRING,
       created_at: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,

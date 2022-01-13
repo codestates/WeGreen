@@ -156,6 +156,8 @@ const EditMyinfo = () => {
     re: '',
   });
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isValidUsername, setIsValidUsername] = useState(true);
+  const [isValidBio, setIsValidBio] = useState(true);
   const [isValidPassword, setIsValidPassword] = useState(true);
   const [isValidPasswordConfirm, setIsValidPasswordConfirm] = useState(true);
 
@@ -170,6 +172,24 @@ const EditMyinfo = () => {
     }
     // eslint-disable-next-line
   }, []);
+
+  const onChangeUsername = (val) => {
+    handleMyinfo('username')(val);
+    if (val.length >= 2 && val.length <= 15) {
+      setIsValidUsername(true);
+    } else {
+      setIsValidUsername(false);
+    }
+  };
+
+  const onChangeBio = (val) => {
+    handleMyinfo('bio')(val);
+    if (val.length >= 3 && val.length <= 80) {
+      setIsValidBio(true);
+    } else {
+      setIsValidBio(false);
+    }
+  };
 
   const onChangePassword = (val) => {
     handleInputPassword('new')(val);
@@ -194,6 +214,7 @@ const EditMyinfo = () => {
   const handleInputPassword = (key) => (value) => {
     setModify({ ...modify, [key]: value });
   };
+  
   const handleMyinfo = (key) => (value) => {
     setMyinfo({ ...myinfo, [key]: value });
   };
@@ -201,27 +222,33 @@ const EditMyinfo = () => {
   const handleIsExpanded = () => setIsExpanded(true);
 
   const handleUpdateMyinfo = () => {
-    if (
-      !(
-        myinfo.username === state.userInfo.username &&
-        myinfo.bio === state.userInfo.bio &&
-        myinfo.badge_id === state.userInfo.badge_id
-      )
-    ) {
-      updateMyinfo(`${myinfo.user_id}`, {
-        username: myinfo.username,
-        bio: myinfo.bio,
-        badge_id: myinfo.badge_id,
-      })
-        .then((result) => {
-          setResponseStatus('success modify profile');
-          setIsModalOpen(true);
-          dispatch(updateUserinfo(result));
+    if (isValidUsername && isValidBio) {
+      if (
+        !(
+          myinfo.username === state.userInfo.username &&
+          myinfo.bio === state.userInfo.bio
+        )
+      ) {
+        updateMyinfo(`${myinfo.user_id}`, {
+          username: myinfo.username,
+          bio: myinfo.bio,
         })
-        .catch((err) => {
-          setResponseStatus('no status');
-          setIsModalOpen(true);
-        });
+          .then((result) => {
+            setResponseStatus('success modify profile');
+            setIsModalOpen(true);
+            dispatch(updateUserinfo(result));
+          })
+          .catch((err) => {
+            setResponseStatus('no status');
+            setIsModalOpen(true);
+          });
+      } else {
+        setResponseStatus('not changed');
+        setIsModalOpen(true);
+      }
+    } else {
+      setResponseStatus('invalid info');
+      setIsModalOpen(true);
     }
   };
 
@@ -267,6 +294,23 @@ const EditMyinfo = () => {
 
   const ModalMessage = ({ status, btnHandler = () => {} }) => {
     switch (status) {
+      case 'not changed':
+        return (
+          <>
+            <p>변경된 정보가 없습니다.</p>
+            <Button content='확인' handler={btnHandler} />
+          </>
+        );
+      case 'invalid info':
+        return (
+          <>
+            <p>
+              사용자 이름은 최소 2자 이상, 최대 15자 이하, <br />
+              소개는 최소 3자 이상, 최대 80자 이하여야 합니다.
+            </p>
+            <Button content='확인' handler={btnHandler} />
+          </>
+        );
       case 'success modify profile':
         return (
           <>
@@ -342,13 +386,14 @@ const EditMyinfo = () => {
               <InputForm
                 defaultValue={myinfo.username}
                 placeholder='사용자 이름'
-                handleValue={handleMyinfo('username')}
+                handleValue={onChangeUsername}
               />
             </BadgeNameContainer>
             <TextareaForm
               defaultValue={myinfo.bio}
               placeholder='사용자 소개'
-              handleValue={handleMyinfo('bio')}
+              handleValue={onChangeBio}
+              limit={80}
             />
             <Button content='저장하기' handler={handleUpdateMyinfo} />
           </EditMyinfoBioContainer>

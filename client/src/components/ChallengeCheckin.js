@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { color, contentWidth, device, radius } from '../styles';
+import { TODAY } from '../data/dummyData';
 
 const Container = styled.div`
   width: 100%;
@@ -76,13 +77,6 @@ const ProgressBar = styled.div`
 `
 
 const ChallengeCheckin = ({ challengeInfo, checkinInfo }) => {
-  const now = new Date();
-  const today = new Date(
-    `${now.getFullYear()}-${('0' + (now.getMonth() + 1)).slice(
-      -2
-    )}-${now.getDate()}`
-  );
-
   const checkin_log = checkinInfo.checkin_log.map((el) => {
     const log = new Date(el);
     return log.toString();
@@ -99,7 +93,7 @@ const ChallengeCheckin = ({ challengeInfo, checkinInfo }) => {
     return (
       <Box
         key={i}
-        status={date < today ? 'before' : 'active'}
+        status={date < TODAY ? 'before' : 'active'}
         checked={checkin_log.includes(date.toString()) ? 'checked' : 'none'}
       >
         {date.toString().split(' ')[0]}
