@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 import { color, radius } from '../styles';
+import { TODAY } from '../data/dummyData';
 
 const CalendarContainer = styled.div`
   width: 100%;
@@ -72,8 +73,8 @@ const Divider = styled.div`
   }
 `;
 
-const Calendar = ({ today, pickedDate, setPickedDate }) => {
-  const [viewDate, setViewDate] = useState(today);
+const Calendar = ({ pickedDate, setPickedDate }) => {
+  const [viewDate, setViewDate] = useState(TODAY);
 
   const getDates = () => {
     const prevLast = new Date(viewDate.getFullYear(), viewDate.getMonth(), 0);
@@ -116,13 +117,13 @@ const Calendar = ({ today, pickedDate, setPickedDate }) => {
   const handlePickedDate = (e) => {
     const picked = new Date(viewDate);
     picked.setDate(Number(e.target.textContent));
-    if (today <= picked) {
+    // if (TODAY <= picked) {
       setPickedDate(picked);
-    }
+    // }
   };
 
   const handleTodayButton = () => {
-    setViewDate(today)
+    setViewDate(TODAY)
   }
 
   return (
@@ -154,9 +155,9 @@ const Calendar = ({ today, pickedDate, setPickedDate }) => {
                   : '1'
               }
               today={
-                today.getFullYear() === viewDate.getFullYear() &&
-                today.getMonth() === viewDate.getMonth() &&
-                i === dates[0].length + today.getDate() - 1
+                TODAY.getFullYear() === viewDate.getFullYear() &&
+                TODAY.getMonth() === viewDate.getMonth() &&
+                i === dates[0].length + TODAY.getDate() - 1
                   ? 'bold'
                   : null
               }

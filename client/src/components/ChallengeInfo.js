@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { color, contentWidth, device, radius } from '../styles';
+import { TODAY } from '../data/dummyData'
 
 const Container = styled.div`
   width: 100%;
@@ -55,13 +56,6 @@ const Box = styled.div`
 `;
 
 const ChallengeInfo = ({ challengeInfo }) => {
-  const now = new Date();
-  const today = new Date(
-    `${now.getFullYear()}-${('0' + (now.getMonth() + 1)).slice(
-      -2
-    )}-${now.getDate()}`
-  );
-
   const startedAt = new Date(challengeInfo.started_at);
   const finishedAt = new Date(challengeInfo.started_at);
   finishedAt.setDate(startedAt.getDate() + 6);
@@ -71,7 +65,7 @@ const ChallengeInfo = ({ challengeInfo }) => {
     const date = new Date(startedAt);
     date.setDate(startedAt.getDate() + i);
     return (
-      <Box key={i} status={date < today ? 'before' : 'active'}>
+      <Box key={i} status={date < TODAY ? 'before' : 'active'}>
         {date.toString().split(' ')[0]}
         <br />
         {date.getDate()}
@@ -89,9 +83,9 @@ const ChallengeInfo = ({ challengeInfo }) => {
   };
 
   useEffect(() => {
-    if (today < startedAt) {
+    if (TODAY < startedAt) {
       setStatus('before');
-    } else if (today < finishedAt) {
+    } else if (TODAY < finishedAt) {
       setStatus('now');
     } else {
       setStatus('done');

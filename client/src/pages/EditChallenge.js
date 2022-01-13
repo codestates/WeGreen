@@ -10,6 +10,7 @@ import SelectForm from '../components/SelectForm';
 import Button from '../components/Button';
 import Modal from '../components/Modal';
 import { ReactComponent as Wave } from '../assets/images/wave.svg';
+import { TODAY } from '../data/dummyData';
 
 const Container = styled.div`
   padding-top: 1rem;
@@ -64,12 +65,6 @@ const EditChallenge = () => {
   const loginState = useSelector((state) => state.userReducer);
   const { state } = useLocation();
 
-  const now = new Date();
-  const today = new Date(
-    `${now.getFullYear()}-${('0' + (now.getMonth() + 1)).slice(
-      -2
-    )}-${now.getDate()}`
-  );
   const requirementArr = new Array(7).fill().map((_, i) => i + 1);
 
   const navigate = useNavigate();
@@ -99,7 +94,7 @@ const EditChallenge = () => {
         challenge_id: -1,
         name: '',
         content: '',
-        started_at: today,
+        started_at: TODAY,
         requirement: '챌린지 성공 조건',
       };
 
@@ -133,10 +128,14 @@ const EditChallenge = () => {
   const onChangeChallengeInfo = (key) => (val) => {
     setChallengeInfo({ ...challengeInfo, [key]: val });
     if (key === 'name') {
-      setIsValidChallengeTitle(val.length === 0 || val.length >= 3);
+      setIsValidChallengeTitle(
+        val.length === 0 || val.length >= 3 || val.length <= 80
+      );
     }
     if (key === 'content') {
-      setIsValidChallengeContent(val.length === 0 || val.length >= 10);
+      setIsValidChallengeContent(
+        val.length === 0 || val.length >= 10 || val.length >= 80
+      );
     }
   };
 
@@ -179,7 +178,7 @@ const EditChallenge = () => {
         />
         {isValidChallengeTitle ? null : (
           <InvalidMessage>
-            *챌린지 제목은 최소 3글자 이상이어야 합니다
+            *챌린지 제목은 최소 3글자 이상, <br /> 최대 80글자 이하여야 합니다.
           </InvalidMessage>
         )}
         <TextareaForm
@@ -191,11 +190,10 @@ const EditChallenge = () => {
         />
         {isValidChallengeContent ? null : (
           <InvalidMessage>
-            *챌린지 소개는 최소 10글자 이상이어야 합니다
+            *챌린지 소개는 최소 10글자 이상, <br /> 최대 80글자 이하여야 합니다.
           </InvalidMessage>
         )}
         <Calendar
-          today={today}
           pickedDate={challengeInfo.started_at}
           setPickedDate={onChangeChallengeInfo('started_at')}
         />

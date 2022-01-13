@@ -1,11 +1,13 @@
 import styled from 'styled-components';
-import { color, radius } from '../styles';
+import { boxShadow, color, radius } from '../styles';
 import { Link } from 'react-router-dom';
+import { TODAY } from '../data/dummyData';
 
 const ChallengeCardList = styled.li`
   padding: 1rem;
   background-color: ${color.white};
   border-radius: ${radius};
+  box-shadow: ${boxShadow};
 `;
 
 const Highlighted = styled.p`
@@ -39,7 +41,13 @@ const ChallengeCard = ({ challenge }) => {
   } else if (challenge.is_finished === false) {
     message = `${progress * 100}% 완료`;
   } else {
-    message = '진행예정';
+    if (TODAY < startedAt) {
+      message = '진행예정';
+    } else if (TODAY < finishedAt) {
+      message = '진행중';
+    } else {
+      message = '종료';
+    }
   }
 
   return (

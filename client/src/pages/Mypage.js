@@ -69,17 +69,23 @@ const TitleContainer = styled.div`
   }
 `;
 
+const ContentSection = styled.section`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+  gap: .5rem;
+`
+
 const ChallengeListContainer = styled.div`
   width: 100%;
-  padding: 1rem;
 `;
 
 const ChallengeList = styled.ul`
   display: grid;
   grid-template-columns: 1fr;
   gap: 1rem;
-  text-align: center;
-  font-weight: bold;
 
   @media ${device.mobileLandscape} {
     grid-template-columns: repeat(2, 1fr);
@@ -174,19 +180,22 @@ const Mypage = () => {
             <h1>마이페이지</h1>
             <Wave width='100%' height='100' fill={color.white} />
           </TitleContainer>
-          <UserProfile
-            successCounts={successCounts}
-          />
-          <Tab
-            tabInfo={[
-              ["ongoing", "참여중인 챌린지"],
-              ["finished", "완료된 챌린지"],
-            ]}
-            handleView={setView}
-          />
-          <ChallengeListContainer>
-            {tabContent[view]}    
-          </ChallengeListContainer>
+          <ContentSection>
+            <UserProfile
+              successCounts={successCounts}
+            />
+            <Tab
+              tabInfo={[
+                ["ongoing", "참여중인 챌린지"],
+                ["finished", "완료된 챌린지"],
+              ]}
+              view={view}
+              handleView={setView}
+            />
+            <ChallengeListContainer>
+              {tabContent[view]}    
+            </ChallengeListContainer>
+          </ContentSection>
         </MyChallengesContainer>
       </MypageContainer>
     </Container>
