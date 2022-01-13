@@ -259,7 +259,7 @@ const Comment = ({ comment, handleCommentEdit, handleCommentDelete }) => {
         </Modal>
       ) : null}
       {isDeleteModalOpen ? (
-        <Modal closeModal={setIsModalOpen}>
+        <Modal closeModal={setIsDeleteModalOpen}>
           <>
             <p>정말로 댓글을 삭제하시겠습니까?</p>
             <Button content='삭제' handler={handleDelete} />
