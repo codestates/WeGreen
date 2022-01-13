@@ -179,11 +179,11 @@ const ChallengeComments = ({
       setIsModalOpen(true);
       return;
     }
-    if (!isJoined) {
-      setResponseStatus('join required');
-      setIsModalOpen(true);
-      return;
-    }
+    // if (!isJoined) {
+    //   setResponseStatus('join required');
+    //   setIsModalOpen(true);
+    //   return;
+    // }
 
     createComment(challenge_id, content)
       .then((result) => {
@@ -194,9 +194,10 @@ const ChallengeComments = ({
         }
         if (result.status === 201) {
           setContent('');
-          return requestComments(challenge_id).then((result) =>
-            handleCommentsUpdate(result.data.data.comments)
-          );
+          return requestComments(challenge_id).then((result) => {
+            console.log(result);
+            return handleCommentsUpdate(result.data.data.comments);
+          });
         }
       })
       .catch((err) => {
@@ -225,14 +226,18 @@ const ChallengeComments = ({
         </SendCommentContainer>
         <CommentsListContainer>
           <CommentsList>
-            {comments.map((el) => (
-              <Comment
-                comment={el}
-                key={el.comment_id}
-                handleCommentEdit={handleCommentEdit}
-                handleCommentDelete={handleCommentDelete}
-              />
-            ))}
+            {comments.length !== 0 ? (
+              comments.map((el) => (
+                <Comment
+                  comment={el}
+                  key={el.comment_id}
+                  handleCommentEdit={handleCommentEdit}
+                  handleCommentDelete={handleCommentDelete}
+                />
+              ))
+            ) : (
+              <p>작성된 댓글이 없습니다.</p>
+            )}
           </CommentsList>
         </CommentsListContainer>
       </ChallengeCommentsContainer>

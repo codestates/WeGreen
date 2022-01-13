@@ -544,14 +544,14 @@ module.exports = {
       try {
         const commentList = await CommentModel.findAll({
           attributes: [
-            'id',
+            ['id', 'comment_id'],
             'user_id',
             'challenge_id',
             'content',
             'created_at',
           ],
           where: { challenge_id: req.params.challenge_id },
-          order: [['created_at'], 'DESC'],
+          // order: [['created_at', 'DESC']],
           raw: true,
         });
         const result = [];
@@ -567,10 +567,10 @@ module.exports = {
         res.status(200).json({
           message: 'OK',
           data: {
-            comments: result,
+            comments: commentList,
           },
         });
-      } catch {
+      } catch (err) {
         res.status(500).json({ message: 'Internal server error' });
       }
     },
