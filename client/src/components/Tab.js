@@ -1,6 +1,6 @@
-import styled from "styled-components";
-import { color, contentWidth, device } from "../styles";
-
+import { useState } from 'react';
+import styled from 'styled-components';
+import { color, device, contentWidth } from '../styles';
 const TabContainer = styled.div`
   width: 100%;
   max-width: ${contentWidth};
@@ -10,26 +10,42 @@ const TabContainer = styled.div`
   word-break: keep-all;
 `;
 
-const TabButton = styled.button`
-  background-color: transparent;
-  font-size: 1.25rem;
-  font-weight: ${props => props.current};
+const TabBtn = styled.button`
+  padding: 0.25rem;
+  background: none;
+  border-bottom: ${(props) =>
+    props.active ? `2px solid ${color.primary}` : 'none'};
   color: ${color.primary};
-`
+  font-size: 1rem;
+  font-weight: bold;
+  opacity: ${(props) => (props.active ? 1 : 0.5)};
+  cursor: pointer;
+
+  @media ${device.tablet} {
+    padding: 0.5rem;
+    font-size: 1.25rem;
+  }
+
+  @media ${device.laptop} {
+    padding: 0.25rem;
+    font-size: 1rem;
+  }
+`;
 
 const Tab = ({ tabInfo, view, handleView }) => {
   return (
     <TabContainer>
       {tabInfo.map((tab) => (
-        <TabButton
+        <TabBtn
           onClick={() => {
             handleView(tab[0]);
+            setCurrentTab(tab[0]);
           }}
           key={tab[1]}
-          current={tab[0] === view ? "bolder" : null}
+          active={currentTab === tab[0]}
         >
           {tab[1]}
-        </TabButton>
+        </TabBtn>
       ))}
     </TabContainer>
   );
