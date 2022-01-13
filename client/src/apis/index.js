@@ -175,16 +175,19 @@ export const editChallenge = (body) => {
 // 챌린지 삭제
 export const deleteChallenge = (challengeId) => {
   return axios
-    .post(`${process.env.REACT_APP_API_URL}/challenges/${challengeId}`,
+    .post(
+      `${process.env.REACT_APP_API_URL}/challenges/${challengeId}`,
       {},
-      { 'Content-Type': 'application/json', withCredentials: true, }
+      { 'Content-Type': 'application/json', withCredentials: true }
     )
     .then((result) => result.data);
 };
 
 // 챌린지 참가
 export const joinChallenge = (challengeId) => {
-  console.log(`${process.env.REACT_APP_API_URL}/challenges/${challengeId}/join`)
+  console.log(
+    `${process.env.REACT_APP_API_URL}/challenges/${challengeId}/join`
+  );
   return axios
     .post(
       `${process.env.REACT_APP_API_URL}/challenges/${challengeId}/join`,
@@ -201,7 +204,7 @@ export const joinChallenge = (challengeId) => {
 
 // 챌린지 체크인
 export const checkin = (challengeId) => {
-  console.log(`${process.env.REACT_APP_API_URL}/challenges/${challengeId}`)
+  console.log(`${process.env.REACT_APP_API_URL}/challenges/${challengeId}`);
   return axios
     .post(
       `${process.env.REACT_APP_API_URL}/challenges/${challengeId}/checkins`,
@@ -215,7 +218,6 @@ export const checkin = (challengeId) => {
       console.log(result.data);
     });
 };
-
 
 // 댓글 생성
 export const createComment = (id, content) => {
@@ -248,6 +250,16 @@ export const editComment = (challengeId, commentId, content) => {
       {
         content,
       },
+      { 'Content-Type': 'application/json', withCredentials: true }
+    )
+    .then((result) => result);
+};
+
+export const deleteComment = (challengeId, commentId) => {
+  return axios
+    .post(
+      `${process.env.REACT_APP_API_URL}/challenges/${challengeId}/comments/${commentId}`,
+      {},
       { 'Content-Type': 'application/json', withCredentials: true }
     )
     .then((result) => result);

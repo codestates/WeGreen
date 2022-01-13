@@ -152,6 +152,7 @@ const ChallengeComments = ({
   comments,
   handleCommentsUpdate,
   handleCommentEdit,
+  handleCommentDelete,
   isJoined,
 }) => {
   const state = useSelector((state) => state.userReducer);
@@ -229,6 +230,7 @@ const ChallengeComments = ({
                 comment={el}
                 key={el.comment_id}
                 handleCommentEdit={handleCommentEdit}
+                handleCommentDelete={handleCommentDelete}
               />
             ))}
           </CommentsList>
