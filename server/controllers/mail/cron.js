@@ -6,87 +6,58 @@ const {
   users_challenge: UserChallengeModel,
   sequelize,
 } = require('../../models');
+const { Op } = require('sequelize');
 
 const scheduler = () => {
-  cron.schedule('0 0 * * * *', async function () {
-    //매시 0분마다 메일 발송
-
+  cron.schedule('0 8 1 * *', async function () {
+    //매월 1일 오전 8시 메일 발송
+    const oneMonthAgo = new Date(
+      new Date().getFullYear(),
+      new Date().getMonth() - 1,
+      new Date().getDate()
+    );
     const allUsers = await UserModel.findAll({
-      attributes: ['email', 'id', 'username'],
+      attributes: ['id', 'email', 'username'],
       raw: true,
     });
-
-    const joinCountArray = await UserChallengeModel.findAll({
-      attributes: [
-        [sequelize.fn('COUNT', sequelize.col('user_id')), 'join_count'],
-        'challenge_id',
-      ],
-      group: ['challenge_id'],
-      order: [[sequelize.col('join_count'), 'DESC']],
-      raw: true,
-    });
-
-    const slicedJoinCount = joinCountArray.slice(0, 3);
-    const popularResult = [];
-    for (let i = 0; i < slicedJoinCount.length; i++) {
-      await ChallengeModel.findOne({
-        attributes: [
-          'name',
-          'content',
-          'started_at',
-          'requirement',
-          'created_at',
-        ],
-        where: { id: slicedJoinCount[i].challenge_id },
-        raw: true,
-      }).then((result) =>
-        popularResult.push(
-          Object.assign(result, {
-            join_count: slicedJoinCount[i]['join_count'],
-          })
-        )
-      );
-    }
-    let popular = `<h2 style="color:rgb(3,129,117)"> 🏆 WeGreen 인기 챌린지 🏆 </h2>`;
-    let rank = 0;
-    for (let chall of popularResult) {
-      rank++;
-      popular += `<div style="border:1px solid; width:20rem; border-color:rgb(3,129,117); padding:1rem;">
-      <h3 style="color:rgb(3,129,117)"> 🏅 ${rank}위 챌린지: ${chall.name}</h3> 
-      <div>챌린지 내용: ${chall.content}</div> 
-      <div>챌린지 시작일: ${chall.started_at}</div> 
-      <div>참여자수: ${chall.join_count} / 인증횟수: ${chall.requirement}</div>
-      </div>`;
-    }
-
+    const userAndChallenge = [];
     for (let user of allUsers) {
-      let html = `<h2 style="color:rgb(3,129,117)"> 🎖 내가 참여한 챌린지 🎖 </h2>`;
-      const allChallenges = await UserChallengeModel.findAll({
+      const challenges = await UserChallengeModel.findAll({
         attributes: ['challenge_id'],
         where: { user_id: user.id },
-        order: [['created_at', 'DESC']],
+        group: ['challenge_id'],
         raw: true,
       });
-
-      for (let id of allChallenges) {
-        const { name, content, started_at, requirement } =
-          await ChallengeModel.findOne({
-            attributes: ['name', 'content', 'started_at', 'requirement'],
-            where: { id: id.challenge_id },
-            raw: true,
-          });
-        html += `<div style="border:1px solid; width:20rem; border-color:rgb(3,129,117); padding:1rem;"> <h3 style="color:rgb(3,129,117)"> 🌳 챌린지: ${name}</h3> 
-        <div>챌린지 내용: ${content}</div> 
-        <div>챌린지 시작일: ${started_at}</div> 
-        <div>인증횟수: ${requirement}</div> </div>`;
+      let challengeIdArray = [];
+      for (let idx of challenges) {
+        challengeIdArray.push(idx.challenge_id);
       }
-      html =
-        html +
-        `<div style= height:1rem></div><hr><div style= height:1rem>` +
-        popular;
-      mailSender.sendGmail(user.email, user.username, html);
+      userAndChallenge.push(
+        Object.assign(user, { challenge_id: challengeIdArray })
+      );
+    }
+    for (let person of userAndChallenge) {
+      let email = person.email;
+      let username = person.username;
+      let html = `<h2 style="color:rgb(3,129,117)"> 🎖 ${username}님이 지난달에 참여한 챌린지 🎖 </h2>`;
+      let challengeArray = person.challenge_id;
+      for (let idx of challengeArray) {
+        const eachContent = await ChallengeModel.findAll({
+          attributes: ['name', 'content', 'started_at', 'requirement'],
+          where: { id: idx, started_at: { [Op.gt]: oneMonthAgo } },
+          order: ['started_at'],
+          raw: true,
+        });
+        for (let each of eachContent) {
+          html += `<div style="border:1px solid; width:20rem; border-color:rgb(3,129,117); padding:1rem;"> 
+        <h3 style="color:rgb(3,129,117)"> 🌳 챌린지: ${each.name}</h3> 
+        <div>챌린지 내용: ${each.content}</div> 
+        <div>챌린지 시작일: ${each.started_at}</div> 
+        <div>인증횟수: ${each.requirement}</div> </div>`;
+        }
+      }
+      mailSender.sendGmail(email, username, html);
     }
   });
 };
-
 module.exports = scheduler;
