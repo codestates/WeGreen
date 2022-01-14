@@ -244,11 +244,12 @@ const Login = () => {
             <Wave width='100%' height='100' fill={color.white} />
           </TitleContainer>
           <LoginForm>
-            <InputForm placeholder='이메일' handleValue={onChangeEmail} />
+            <InputForm value={email} placeholder='이메일' handleValue={onChangeEmail} />
             {isEmptyEmail ? (
               <InvalidMessage>*이메일을 입력해 주세요.</InvalidMessage>
             ) : null}
             <InputForm
+              value={password}
               placeholder='비밀번호'
               handleValue={onChangePassword}
               type='password'

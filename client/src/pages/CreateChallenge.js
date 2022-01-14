@@ -158,8 +158,8 @@ const CreateChallenge = () => {
       </TitleContainer>
       <CreateChallengeContainer>
         <InputForm
+          value={challengeInfo.name}
           placeholder='챌린지 제목'
-          defaultValue={challengeInfo.name}
           handleValue={onChangeChallengeInfo('name')}
         />
         {isValidChallengeTitle ? null : (
@@ -169,8 +169,8 @@ const CreateChallenge = () => {
         )}
         <TextareaForm
           height='160px'
+          value={challengeInfo.content}
           placeholder='챌린지 소개'
-          defaultValue={challengeInfo.content}
           handleValue={onChangeChallengeInfo('content')}
           limit={300}
         />

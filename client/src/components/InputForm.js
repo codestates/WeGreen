@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import styled from 'styled-components';
 import { color, radius } from '../styles';
 
@@ -12,26 +11,25 @@ const Input = styled.input`
 `;
 
 const InputForm = ({
-  defaultValue = '',
+  value = '',
   type = 'text',
   placeholder,
   handleValue,
 }) => {
-  const [input, setInput] = useState(defaultValue);
 
   const handleOnChange = (event) => {
     handleValue(event.target.value);
-    setInput(event.target.value);
   };
 
   return (
     <Input
-      value={input}
+      value={value}
       type={type}
       placeholder={placeholder}
       onChange={handleOnChange}
     />
   );
-};
+}
+
 
 export default InputForm;

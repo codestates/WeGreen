@@ -132,8 +132,6 @@ const BadgesModal = ({ closeModal }) => {
     requestMyinfo(`${state.userInfo.user_id}`)
       .then((result) => {
         const { badges, selected_badges } = result.user_info;
-        const data = result.user_info
-        dispatch(updateUserinfo(data))
         const TotalBadges = new Array(20).fill();
         for (let i = 0; i < TotalBadges.length; i++)
           TotalBadges[i] = { id: i + 1, src: 'src' };
@@ -211,10 +209,14 @@ const BadgesModal = ({ closeModal }) => {
         .filter((el) => el.type === 'selected')
         .map((el) => el.id),
     };
-    dispatch(updateUserinfo(result));
     updateMyBadges(result).then((result) => {
       setResponseStatus('success change badges')
       setIsModalOpen(true)
+    }).then(() => {
+      const toDispatch = Object.assign({}, result, { selected_badges: result.badge_ids })
+      delete toDispatch.badge_ids
+      console.log(toDispatch)
+      dispatch(updateUserinfo(toDispatch));
     }).catch(err => {
       setResponseStatus('no status')
       setIsModalOpen(true)
