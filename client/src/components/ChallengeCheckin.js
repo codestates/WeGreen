@@ -113,11 +113,19 @@ const ChallengeCheckin = ({ challengeInfo, checkinInfo }) => {
   return (
     <Container>
       <ChallengeCheckinContainer>
-        <p>
-          오늘은 {challengeInfo.join_count}명 중 {checkinInfo.checkin_count}명이{' '}
-          <br />
-          체크인 하였습니다.
-        </p>
+        {TODAY < startedAt ? (
+          <p>챌린지 진행 예정입니다</p>
+        ) : TODAY < finishedAt ? (
+          <p>
+            오늘은 {challengeInfo.join_count}명 중 {checkinInfo.checkin_count}
+            명이 <br />
+            체크인 하였습니다.
+          </p>
+        ) : (
+          <p>
+            {checkinInfo.checkin_count}번 체크인 하셨습니다.
+          </p>
+        )}
         {challengeInfo.is_joined ? (
           <>
             <Highlighted>나의 체크인 현황</Highlighted>

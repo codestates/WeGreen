@@ -130,8 +130,6 @@ const BadgeModal = ({ closeModal }) => {
     requestMyinfo(`${state.userInfo.user_id}`)
       .then((result) => {
         const { badges, badge_id } = result.user_info;
-        const data = result.user_info
-        dispatch(updateUserinfo(data))
         const TotalBadges = new Array(20).fill();
         for (let i = 0; i < TotalBadges.length; i++)
           TotalBadges[i] = { id: i + 1, src: 'src' };

@@ -83,7 +83,7 @@ const UserProfile = ({ userInfo, successCounts }) => {
   const [isBadgesModalOpen, setIsBadgesModalOpen] = useState(false);
 
   useEffect(() => {
-    setIsMine(userId === state.userInfo.user_id)
+    setIsMine(userId === Number(state.userInfo.user_id))
   // eslint-disable-next-line
   }, [state])
 

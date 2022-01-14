@@ -115,7 +115,7 @@ const Mypage = () => {
   }, []);
 
   useEffect(() => {
-    setIsMine(userId === state.userInfo.user_id);
+    setIsMine(userId === Number(state.userInfo.user_id));
     if (isMine) {
       dispatch(updateUserinfo(userInfo));
     }
