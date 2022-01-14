@@ -117,7 +117,7 @@ const ConfirmChallenge = () => {
         .then((result) => {
           setResponseStatus('success create challenge');
           setIsModalOpen(true);
-          setTimeout(() => navigate(`/challenge/${result.data.challenge_id}`), 3000);          
+          setTimeout(() => navigate(`/challenge/${result.data.challenge_id}`), 1000);          
         })
         .catch((err) => {
           if (err.response.status === 401) {
@@ -133,7 +133,7 @@ const ConfirmChallenge = () => {
         .then((result) => {
           setResponseStatus('success edit challenge');
           setIsModalOpen(true);
-          setTimeout(() => navigate(`/challenge/${result.data.challenge_id}`), 3000);     
+          setTimeout(() => navigate(`/challenge/${result.data.challenge_id}`), 1000);     
         })
         .catch((err) => {
           if (err.response.status === 401) {

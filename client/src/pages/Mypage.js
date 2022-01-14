@@ -1,21 +1,20 @@
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { updateUserinfo } from "../actions";
-import { requestMyinfo } from "../apis";
-import styled from "styled-components";
-import { color, device, contentWidth, boxShadow } from "../styles";
-import Illust from "../components/Illust";
-import UserProfile from "../components/UserProfile";
-import Tab from "../components/Tab";
-import ChallengeCard from "../components/ChallengeCard";
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
+import { updateUserinfo } from '../actions';
+import { requestMyinfo } from '../apis';
+import styled from 'styled-components';
+import { color, device, contentWidth, boxShadow } from '../styles';
+import Illust from '../components/Illust';
+import UserProfile from '../components/UserProfile';
+import Tab from '../components/Tab';
+import ChallengeCard from '../components/ChallengeCard';
 import { ReactComponent as Wave } from '../assets/images/wave.svg';
-
 
 const Container = styled.div`
   @media ${device.laptop} {
     width: 100%;
-    height: calc(100vh - 60px);
+    height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -36,20 +35,11 @@ const MypageContainer = styled.div`
 `;
 
 const MyChallengesContainer = styled.section`
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 1rem;
-
-  @media ${device.laptop} {
-    width: 100%;
-    overflow-y: scroll;
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
-    &::-webkit-scrollbar {
-      display: none; /* Chrome, Safari, Opera*/
-    }
-  }
 `;
 
 const TitleContainer = styled.div`
@@ -65,7 +55,7 @@ const TitleContainer = styled.div`
       color: ${color.white};
       text-align: center;
     }
-  background-color: ${color.primary};
+    background-color: ${color.primary};
   }
 `;
 
@@ -75,8 +65,8 @@ const ContentSection = styled.section`
   flex-direction: column;
   align-items: center;
   padding: 1rem;
-  gap: .5rem;
-`
+  gap: 0.5rem;
+`;
 
 const ChallengeListContainer = styled.div`
   width: 100%;
@@ -103,70 +93,79 @@ const EmptyMessage = styled.p`
 `;
 
 const Mypage = () => {
-  const [view, setView] = useState("ongoing");
-
-  const [challenges, setChallenges] = useState([{}])
-
   const state = useSelector((state) => state.userReducer);
-  const myinfo = state.userInfo
+
+  const [view, setView] = useState('ongoing');
+  const [userInfo, setUserInfo] = useState(state.userInfo);
+  const [challenges, setChallenges] = useState([{}]);
+
+  const params = useParams();
+  const userId = Number(params.id);
+
+  const [isMine, setIsMine] = useState(false);
 
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   useEffect(() => {
-    if (!state.isLogin) {
-      navigate('/login')
-    } else {
-      requestMyinfo(`${myinfo.user_id}`).then(result => {
-        setChallenges(result.challenge_info.challenges)
-        const data = result.user_info
-        dispatch(updateUserinfo(data))
-      })
+    requestMyinfo(`${userId}`).then((result) => {
+      setUserInfo(result.user_info);
+      setChallenges(result.challenge_info.challenges);
+    });
+    // eslint-disable-next-line
+  }, []);
+
+  useEffect(() => {
+    setIsMine(userId === Number(state.userInfo.user_id));
+    if (isMine) {
+      dispatch(updateUserinfo(userInfo));
     }
-  // eslint-disable-next-line
-  }, [])
+    // eslint-disable-next-line
+  }, [state]);
 
-  const ongoingChallenges = challenges.filter(el => el.is_finished === false)
-  const finishedChallenges = challenges.filter(el => el.is_finished === true)
+  const ongoingChallenges = challenges.filter((el) => el.is_finished === false);
+  const finishedChallenges = challenges.filter((el) => el.is_finished === true);
 
-  const successCounts = challenges
-                          .filter(el => el.is_finished === true && el.is_accomplished === true).length
+  const successCounts = challenges.filter(
+    (el) => el.is_finished === true && el.is_accomplished === true
+  ).length;
 
   const tabContent = {
     ongoing: (
       <>
-        {ongoingChallenges.length === 0 ?
+        {ongoingChallenges.length === 0 ? (
           <EmptyMessage>
-            참여중인<br />챌린지가<br />없습니다
+            참여중인
+            <br />
+            챌린지가
+            <br />
+            없습니다
           </EmptyMessage>
-          :
-          <ChallengeList> 
+        ) : (
+          <ChallengeList>
             {ongoingChallenges.map((el) => (
-              <ChallengeCard 
-                challenge={el}
-                key={el.challenge_id}  
-              />              
+              <ChallengeCard challenge={el} key={el.challenge_id} />
             ))}
           </ChallengeList>
-        }
+        )}
       </>
     ),
     finished: (
       <>
-        {finishedChallenges.length === 0 ?
+        {finishedChallenges.length === 0 ? (
           <EmptyMessage>
-            완료된<br />챌린지가<br />없습니다
+            완료된
+            <br />
+            챌린지가
+            <br />
+            없습니다
           </EmptyMessage>
-          :
-          <ChallengeList> 
+        ) : (
+          <ChallengeList>
             {finishedChallenges.map((el) => (
-              <ChallengeCard 
-                challenge={el}
-                key={el.challenge_id}  
-              />              
+              <ChallengeCard challenge={el} key={el.challenge_id} />
             ))}
           </ChallengeList>
-        }
+        )}
       </>
     ),
   };
@@ -177,24 +176,20 @@ const Mypage = () => {
         <Illust />
         <MyChallengesContainer>
           <TitleContainer>
-            <h1>마이페이지</h1>
+            <h1>{isMine ? '마이' : '사용자'}페이지</h1>
             <Wave width='100%' height='100' fill={color.white} />
           </TitleContainer>
           <ContentSection>
-            <UserProfile
-              successCounts={successCounts}
-            />
+            <UserProfile userInfo={userInfo} successCounts={successCounts} />
             <Tab
               tabInfo={[
-                ["ongoing", "참여중인 챌린지"],
-                ["finished", "완료된 챌린지"],
+                ['ongoing', '참여중인 챌린지'],
+                ['finished', '완료된 챌린지'],
               ]}
               view={view}
               handleView={setView}
             />
-            <ChallengeListContainer>
-              {tabContent[view]}    
-            </ChallengeListContainer>
+            <ChallengeListContainer>{tabContent[view]}</ChallengeListContainer>
           </ContentSection>
         </MyChallengesContainer>
       </MypageContainer>

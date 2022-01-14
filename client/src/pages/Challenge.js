@@ -199,8 +199,13 @@ const Challenge = () => {
   const handleCheckin = () => {
     checkin(challengeInfo.challenge_id)
       .then((result) => {
-        setResponseStatus('success checkin');
-        setTimeout(() => window.location.reload(), 3000);
+        if (checkinInfo.is_accomplished === result.data.is_accomplished ) {
+          setResponseStatus('success checkin');
+          setTimeout(() => window.location.reload(), 1000);
+        } else {
+          setResponseStatus('success challenge');
+          setTimeout(() => window.location.reload(), 10000);
+        }
       })
       .catch((err) => {
         setResponseStatus('duplicate checkin');
@@ -333,6 +338,13 @@ const Challenge = () => {
             <p>이미 체크인 하셨습니다.</p>
             <Button content='확인' handler={btnHandler} />
           </>
+        );
+      case 'success challenge':
+          return (
+            <>
+              <p>축하합니다! <br /> 챌린지에 성공하셨습니다. <br /> 뱃지를 획득하셨습니다.</p>
+              <Button content='뱃지 보러가기' handler={() => navigate(`/mypage/${loginState.userInfo.user_id}`)} />
+            </>
         );
       default:
         return (

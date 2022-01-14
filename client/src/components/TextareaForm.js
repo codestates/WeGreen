@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import styled from 'styled-components';
 import { color, radius } from '../styles';
 
@@ -29,17 +28,15 @@ const Counter = styled.div`
 const TextareaForm = ({
   width = '100%',
   height = '120px',
-  defaultValue = '',
+  value = '',
   placeholder,
   handleValue,
   limit = 300,
 }) => {
-  const [input, setInput] = useState(defaultValue);
 
   const handleOnChange = (event) => {
     if (event.target.value.length <= limit) {
       handleValue(event.target.value);
-      setInput(event.target.value);
     }
   };
 
@@ -48,12 +45,12 @@ const TextareaForm = ({
       <Textarea
         width={width}
         height={height}
-        value={input}
+        value={value}
         placeholder={placeholder}
         onChange={handleOnChange}
       ></Textarea>
-      <Counter count={input.length}>
-        {input.length} / {limit}
+      <Counter count={value.length}>
+        {value.length} / {limit}
       </Counter>
     </TextareaContainer>
   );
