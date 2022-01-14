@@ -10,6 +10,7 @@ var express = require('express');
 var router = express.Router();
 const { Op } = require('sequelize'); //sequelize or 쓸때 필요합니다.
 const { isAuthorized } = require('./tokenFunctions');
+const moment = require('moment');
 
 function getRandomBadge(min, max) {
   min = Math.ceil(min);
@@ -119,6 +120,7 @@ module.exports = {
             'created_at',
           ],
           raw: true,
+          order: [['created_at', 'DESC']],
           where: {
             [Op.or]: [
               {
@@ -135,14 +137,13 @@ module.exports = {
           },
         });
       }
-
       const joinCountArray = await UserChallengeModel.findAll({
         attributes: [
           [sequelize.fn('COUNT', sequelize.col('user_id')), 'join_count'],
           'challenge_id',
         ],
         group: ['challenge_id'],
-        order: [['challenge_id', 'ASC']], //별건 아닌데 DESC로 내림차순으로 정리해서 드릴까요?
+        order: [['challenge_id', 'DESC']], //최신순
         raw: true,
       });
       if (searchModel) {
@@ -233,11 +234,6 @@ module.exports = {
   //[완료] 챌린지 목록 불러오기 GET /:challenge_id
   list: async (req, res) => {
     try {
-      const joinCountArray = await UserChallengeModel.findAll({
-        attributes: ['user_id'],
-        where: { challenge_id: req.params.challenge_id },
-      });
-      const join_count = joinCountArray.length;
       const newChallenge = await ChallengeModel.findOne({
         attributes: [
           ['id', 'challenge_id'],
@@ -252,55 +248,68 @@ module.exports = {
           id: req.params.challenge_id,
         },
       });
-      var total_checkin_count = 0;
-      const checkinTimes = await CheckInModel.findAll({
-        attributes: ['created_at'],
-        where: { challenge_id: req.params.challenge_id },
-        raw: true,
-      });
-      total_checkin_count = checkinTimes.length;
-      const checkin_log = [];
-      for (let element of checkinTimes) {
-        checkin_log.push(element.created_at);
-      }
-      const findRequirement = await ChallengeModel.findOne({
-        attributes: ['requirement'],
-        where: { id: req.params.challenge_id },
-        raw: true,
-      });
-      var is_success = false;
-      if (Number(findRequirement.requirement) <= checkin_log.length) {
-        is_success = true;
-      }
-      const allComments = await CommentModel.findAll({
-        attributes: [
-          ['id', 'comment_id'],
-          'user_id',
-          'username',
-          'challenge_id',
-          'content',
-          'created_at',
-        ],
-        where: { challenge_id: req.params.challenge_id },
-        order: [[sequelize.col('created_at'), 'DESC']],
-        raw: true,
-      });
-      var is_joined = false;
-
-      if (isAuthorized(req)) {
-        const authorization = isAuthorized(req);
-        const userInfo = JSON.parse(authorization.data);
-        const userId = userInfo.id;
-        const findIsJoined = await UserChallengeModel.findOne({
-          attributes: ['id'],
-          where: { user_id: userId, challenge_id: req.params.challenge_id },
+      if (!newChallenge) {
+        res.status(404).json({ message: 'Not found' });
+      } else {
+        const joinCountArray = await UserChallengeModel.findAll({
+          attributes: ['user_id'],
+          where: { challenge_id: req.params.challenge_id },
         });
-        if (findIsJoined || newChallenge.author === userId) {
-          is_joined = true;
+        const join_count = joinCountArray.length;
+        var total_checkin_count = 0;
+        const today = moment().format().slice(0, 10);
+        const checkinTimes = await CheckInModel.findAll({
+          attributes: ['created_at'],
+          where: { challenge_id: req.params.challenge_id, created_at: today },
+          raw: true,
+        });
+        total_checkin_count = checkinTimes.length;
+        const checkin_log = [];
+        for (let element of checkinTimes) {
+          checkin_log.push(element.created_at);
         }
-        console.log('!!!!THIS IS IS_JOINED', is_joined);
-      }
-      if (newChallenge) {
+        const findRequirement = await ChallengeModel.findOne({
+          attributes: ['requirement'],
+          where: { id: req.params.challenge_id },
+          raw: true,
+        });
+        var is_success = false;
+        if (
+          findRequirement &&
+          Number(findRequirement.requirement) <= checkin_log.length
+        ) {
+          is_success = true;
+        }
+        const allComments = await CommentModel.findAll({
+          attributes: [
+            ['id', 'comment_id'],
+            'user_id',
+            'username',
+            'challenge_id',
+            'content',
+            'created_at',
+          ],
+          where: { challenge_id: req.params.challenge_id },
+          order: [[sequelize.col('created_at'), 'DESC']],
+          raw: true,
+        });
+        var is_joined = false;
+
+        if (isAuthorized(req)) {
+          const authorization = isAuthorized(req);
+          const userInfo = JSON.parse(authorization.data);
+          const userId = userInfo.id;
+          const findIsJoined = await UserChallengeModel.findOne({
+            attributes: ['id'],
+            where: { user_id: userId, challenge_id: req.params.challenge_id },
+          });
+          if (
+            (newChallenge && findIsJoined) ||
+            newChallenge.author === userId
+          ) {
+            is_joined = true;
+          }
+        }
         res.status(200).json({
           message: 'OK',
           data: {
@@ -317,8 +326,6 @@ module.exports = {
             comments: allComments,
           },
         });
-      } else {
-        res.status(404).json({ message: 'Not found' });
       }
     } catch (err) {
       console.log('ERROR in GET CHALLENGE', err);
@@ -423,49 +430,51 @@ module.exports = {
   checkins: {
     get: async (req, res) => {
       try {
-        var join_count = 0;
-        var total_checkin_count = 0;
-        var is_success = false;
-        //토큰 확인 불필요
-        const joinCount = await UserChallengeModel.findOne({
-          attributes: [
-            [sequelize.fn('COUNT', sequelize.col('user_id')), 'join_count'],
-            'challenge_id',
-          ],
-          group: ['challenge_id'],
-          order: [[sequelize.col('join_count'), 'DESC']],
-          raw: true,
-          where: { challenge_id: req.params.challenge_id },
-        });
-
-        join_count = joinCount['join_count'];
-        const checkinTimes = await CheckInModel.findAll({
-          attributes: ['created_at'],
-          where: { challenge_id: req.params.challenge_id },
-          raw: true,
-        });
-        total_checkin_count = checkinTimes.length;
-        const checkin_log = [];
-        for (let element of checkinTimes) {
-          checkin_log.push(element.created_at);
-        }
-        const findRequirement = await ChallengeModel.findOne({
-          attributes: ['requirement'],
-          where: { id: req.params.challenge_id },
-          raw: true,
-        });
-        if (Number(findRequirement.requirement) <= checkin_log.length) {
-          is_success = true;
-        }
-        return res.status(200).json({
-          message: 'OK',
-          data: {
-            join_count: join_count,
-            checkin_count: total_checkin_count,
-            checkin_log: checkin_log,
-            is_accomplished: is_success,
-          },
-        });
+        // var join_count = 0;
+        // var today_checkin_count = 0;
+        // var is_success = false;
+        // const today = new Date();
+        // console.log('!!TODAY', today);
+        // //토큰 확인 불필요
+        // const joinCount = await UserChallengeModel.findOne({
+        //   attributes: [
+        //     [sequelize.fn('COUNT', sequelize.col('user_id')), 'join_count'],
+        //     'challenge_id',
+        //   ],
+        //   group: ['challenge_id'],
+        //   order: [[sequelize.col('join_count'), 'DESC']],
+        //   raw: true,
+        //   where: { challenge_id: req.params.challenge_id },
+        // });
+        // join_count = joinCount['join_count'];
+        // const checkinTimes = await CheckInModel.findAll({
+        //   attributes: ['created_at'],
+        //   where: { challenge_id: req.params.challenge_id },
+        //   raw: true,
+        // });
+        // console.log('!!THIS IS CHECK IN TIMES', checkinTimes);
+        // today_checkin_count = checkinTimes.length;
+        // const checkin_log = [];
+        // for (let element of checkinTimes) {
+        //   checkin_log.push(element.created_at);
+        // }
+        // const findRequirement = await ChallengeModel.findOne({
+        //   attributes: ['requirement'],
+        //   where: { id: req.params.challenge_id },
+        //   raw: true,
+        // });
+        // if (Number(findRequirement.requirement) <= checkin_log.length) {
+        //   is_success = true;
+        // }
+        // return res.status(200).json({
+        //   message: 'OK',
+        //   data: {
+        //     join_count: join_count,
+        //     checkin_count: today_checkin_count,
+        //     checkin_log: checkin_log,
+        //     is_accomplished: is_success,
+        //   },
+        // });
       } catch (err) {
         console.log('ERROR', err);
         res.status(500).send({
@@ -528,14 +537,24 @@ module.exports = {
               badge_id: randombadge,
               is_selected: false,
             });
+            res.status(201).json({
+              message: 'OK',
+              data: {
+                checkin_log: checkin_log,
+                is_accomplished: is_success,
+                obtained_badge: obtainBadge.badge_id,
+              },
+            });
+          } else {
+            res.status(201).json({
+              message: 'OK',
+              data: {
+                checkin_log: checkin_log,
+                is_accomplished: is_success,
+                obtained_badge: null,
+              },
+            });
           }
-          res.status(201).json({
-            message: 'OK',
-            data: {
-              checkin_log: checkin_log,
-              is_accomplished: is_success,
-            },
-          });
         }
       } catch (err) {
         console.log('ERROR', err);

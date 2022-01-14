@@ -9,13 +9,12 @@ module.exports = {
         type: Sequelize.INTEGER,
       },
       user_id: {
-        allowNull: false,
+        allowNull: true,
         references: {
           model: 'users',
           key: 'id',
         },
-        onDelete: 'cascade',
-        onUpdate: 'cascade',
+        onDelete: 'SET NULL',
         type: Sequelize.INTEGER,
       },
       challenge_id: {

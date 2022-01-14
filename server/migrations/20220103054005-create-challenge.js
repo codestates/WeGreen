@@ -18,16 +18,16 @@ module.exports = {
         type: Sequelize.DATEONLY,
       },
       requirement: {
-        type: Sequelize.STRING,
+        type: Sequelize.INTEGER,
       },
       author: {
+        allowNull: true,
         type: Sequelize.INTEGER,
         references: {
           model: 'users',
           key: 'id',
         },
-        onDelete: 'cascade',
-        onUpdate: 'cascade',
+        onDelete: 'SET NULL',
       },
       created_at: {
         allowNull: false,

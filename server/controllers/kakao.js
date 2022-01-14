@@ -41,25 +41,27 @@ module.exports = {
 
         const { email } = kakaoUserInfo.data.kakao_account;
 
-        const { id } = kakaoUserInfo.data;
         const [newUserInfo, created] = await UserModel.findOrCreate({
           where: {
             email: email,
           },
           defaults: {
-            id: String(id),
-            username: '카톡' + id,
+            username: email.split('@')[0],
             is_social: true,
             is_admin: false,
           },
         });
-
+        const userId = await UserModel.findOne({
+          where: { email: email },
+          attributes: ['id'],
+          raw: true,
+        });
         delete newUserInfo.dataValues.password;
 
         if (created) {
           const randombadge = getRandomBadge(1, 20);
           const obtainBadge = await UserBadgeModel.create({
-            user_id: id,
+            user_id: userId.id,
             badge_id: randombadge,
             is_selected: true,
           });
@@ -67,7 +69,7 @@ module.exports = {
             {
               badge_id: randombadge,
             },
-            { where: { id: id } }
+            { where: { email: email } }
           );
         }
         const userInfoInToken = await UserModel.findOne({
@@ -84,7 +86,7 @@ module.exports = {
             email: email,
           },
         });
-        const { username, is_social, is_admin, bio, badge_id } =
+        const { id, username, is_social, is_admin, bio, badge_id } =
           userInfoInToken;
         const accessToken = generateAccessToken(
           JSON.stringify({

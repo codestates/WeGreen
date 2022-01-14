@@ -13,6 +13,7 @@ const {
   sendAccessToken,
   isAuthorized,
 } = require('./tokenFunctions');
+const moment = require('moment');
 require('dotenv').config();
 
 function getRandomBadge(min, max) {
@@ -311,14 +312,19 @@ module.exports = {
           const finishedDate = new Date(
             sevenDaysLater.setDate(sevenDaysLater.getDate() + 7)
           );
+          console.log('!!THIS IS USER ID', req.params.user_id);
+          const today = moment().format().slice(0, 10);
+
           const checkinLog = await CheckInModel.findAll({
-            attributes: ['id', 'challenge_id'],
+            attributes: ['id', 'challenge_id', 'created_at'],
             where: {
-              user_id: req.params.user_id,
               challenge_id: challengeIdx.challenge_id,
+              created_at: today,
             },
             raw: true,
           });
+
+          console.log('!!THIS IS CHECK IN LOG', checkinLog.length);
           const is_accomplished =
             checkinLog.length >= Number(toCalculate.requirement);
           const joinCountArray = await UserChallengeModel.findOne({

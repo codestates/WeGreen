@@ -24,9 +24,9 @@ module.exports = {
         const response = await axios({
           method: 'POST',
           url: `https://oauth2.googleapis.com/token?code=${code}&client_id=${GOOGLE_REST_API_KEY}&client_secret=${GOOGLE_CLIENT_SECRET}&redirect_uri=${GOOGLE_REDIRECT_URI}&grant_type=authorization_code`,
-         headers: {
+          headers: {
             'Content-type': 'application/x-www-form-urlencoded',
-            Accept:"application/json"
+            Accept: 'application/json',
           },
         });
 
@@ -41,26 +41,28 @@ module.exports = {
           },
         });
 
-        const {id, email} = googleUserInfo.data;
-        const newId = id.slice(0,8)
+        const { email } = googleUserInfo.data;
         const [newUserInfo, created] = await UserModel.findOrCreate({
           where: {
             email: email,
           },
           defaults: {
-            id: String(newId),
-            username: '구글' + newId,
+            username: email.split('@')[0],
             is_social: true,
             is_admin: false,
           },
         });
-
+        const userId = await UserModel.findOne({
+          where: { email: email },
+          attributes: ['id'],
+          raw: true,
+        });
         delete newUserInfo.dataValues.password;
 
         if (created) {
           const randombadge = getRandomBadge(1, 20);
           const obtainBadge = await UserBadgeModel.create({
-            user_id: newId,
+            user_id: userId.id,
             badge_id: randombadge,
             is_selected: true,
           });
@@ -68,7 +70,7 @@ module.exports = {
             {
               badge_id: randombadge,
             },
-            { where: { id: newId } }
+            { where: { email: email } }
           );
         }
         const userInfoInToken = await UserModel.findOne({
@@ -85,11 +87,11 @@ module.exports = {
             email: email,
           },
         });
-        const { username, is_social, is_admin, bio, badge_id } =
+        const { id, username, is_social, is_admin, bio, badge_id } =
           userInfoInToken;
         const accessToken = generateAccessToken(
           JSON.stringify({
-            newId,
+            id,
             email,
             username,
             is_social,
@@ -100,7 +102,7 @@ module.exports = {
         );
         sendAccessToken(
           res,
-          { user_id: newId, username: username, is_admin: is_admin },
+          { user_id: id, username: username, is_admin: is_admin },
           accessToken
         );
       }
