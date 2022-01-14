@@ -37,22 +37,25 @@ const NaverPage = () => {
       }, 1000);
     }
   }, [loginState.isLogin]);
+  var check = false;
+  if (!check) {
+    check = true;
+    axios
+      .post(
+        `${process.env.REACT_APP_API_URL}/oauth/naver/login`,
+        {
+          authorizationCode,
+        },
+        { 'Content-Type': 'application/json', withCredentials: true }
+      )
+      .then((result) => {
+        dispatch(login(result.data.data));
+      })
+      .catch((err) => {
+        return err.response ? err.response : 'network error';
+      });
+  }
 
-  axios
-    .post(
-      `${process.env.REACT_APP_API_URL}/oauth/naver/login`,
-      {
-        authorizationCode,
-      },
-      { 'Content-Type': 'application/json', withCredentials: true }
-    )
-    .then((result) => {
-      console.log('THIS IS CLIENT SIDE RESULT DATA!!', result.data);
-      dispatch(login(result.data.data));
-    })
-    .catch((err) => {
-      return err.response ? err.response : 'network error';
-    });
   return (
     <NaverLoginInfo>
       <img src={naverIcon}></img> 네이버로 로그인 중...

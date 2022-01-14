@@ -293,21 +293,15 @@ module.exports = {
             selected_badges.push(badge.badge_id);
           }
         }
-        const checkinLog = await CheckInModel.findAll({
-          attributes: [
-            [
-              sequelize.fn('COUNT', sequelize.col('created_at')),
-              'checkin_count',
-            ],
-            'challenge_id',
-          ],
-          where: { user_id: req.params.user_id },
+        const joinedChallenges = await UserChallengeModel.findAll({
+          attributes: ['challenge_id'],
           group: ['challenge_id'],
-          order: [['challenge_id', 'ASC']],
+          where: { user_id: req.params.user_id },
+          order: [[sequelize.col('challenge_id'), 'ASC']],
           raw: true,
         });
         const result = [];
-        for (let challengeIdx of checkinLog) {
+        for (let challengeIdx of joinedChallenges) {
           const toCalculate = await ChallengeModel.findOne({
             attributes: ['started_at', 'requirement'],
             where: { id: challengeIdx.challenge_id },
@@ -315,21 +309,45 @@ module.exports = {
           });
           const sevenDaysLater = new Date(toCalculate.started_at);
           const finishedDate = new Date(
-            sevenDaysLater.setDate(sevenDaysLater.getDate() + 8) //00시 기준이라 8일 더했음
+            sevenDaysLater.setDate(sevenDaysLater.getDate() + 7)
           );
+          const checkinLog = await CheckInModel.findAll({
+            attributes: ['id', 'challenge_id'],
+            where: {
+              user_id: req.params.user_id,
+              challenge_id: challengeIdx.challenge_id,
+            },
+            raw: true,
+          });
           const is_accomplished =
-            challengeIdx.checkin_count >= Number(toCalculate.requirement);
+            checkinLog.length >= Number(toCalculate.requirement);
+          const joinCountArray = await UserChallengeModel.findOne({
+            attributes: [
+              [sequelize.fn('COUNT', sequelize.col('user_id')), 'join_count'],
+              'challenge_id',
+            ],
+            group: ['challenge_id'],
+            order: [[sequelize.col('join_count'), 'DESC']],
+            where: { challenge_id: challengeIdx.challenge_id },
+            raw: true,
+          });
           result.push(
             Object.assign(
               await ChallengeModel.findOne({
-                attributes: ['id', 'name', 'started_at', 'requirement'],
+                attributes: [
+                  ['id', 'challenge_id'],
+                  'name',
+                  'started_at',
+                  'requirement',
+                ],
                 where: { id: challengeIdx.challenge_id },
                 raw: true,
               }),
               {
-                checkin_count: challengeIdx.checkin_count,
-                is_finished: finishedDate < new Date(), //8일 더해서 같거나 작은게 아니라 작은걸로..
+                checkin_count: checkinLog.length,
+                is_finished: finishedDate < new Date(),
                 is_accomplished: is_accomplished,
+                join_count: joinCountArray.join_count,
               }
             )
           );
@@ -350,6 +368,7 @@ module.exports = {
           },
         });
       } catch (err) {
+        console.log('ERROR IN GET USER INFO', err);
         res.status(500).send({
           message: 'Internal server error',
         });

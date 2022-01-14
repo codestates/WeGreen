@@ -9,9 +9,6 @@ function getRandomBadge(min, max) {
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min + 1)) + min; //최댓값도 포함, 최솟값도 포함
 }
-function getRandomId() {
-  return Math.floor(Math.random() * (1000000000 - 10000)) + 10000;
-}
 
 module.exports = {
   //로그인 및 회원가입
@@ -40,29 +37,33 @@ module.exports = {
           },
         });
         const { email, nickname } = naverUserInfo.data.response;
-        const id = getRandomId(); //네이버는 네이버 자체 id에 문자열도 섞여있어 10,000이상의 랜덤 숫자
 
-        const findUser = await UserModel.findOne({
-          attributes: ['id', 'email'],
-          where: { email: email },
-          raw: true,
-        });
-
-        if (!findUser) {
-          const randombadge = getRandomBadge(1, 20);
-          UserModel.create({
+        const [newUserInfo, created] = await UserModel.findOrCreate({
+          where: {
             email: email,
+            username: nickname,
+          },
+          defaults: {
             username: nickname,
             is_social: true,
             is_admin: false,
+          },
+        });
+        delete newUserInfo.dataValues.password;
+        console.log('!!!NEW USER INFO', newUserInfo.id);
+        if (created) {
+          const randombadge = getRandomBadge(1, 20);
+          const obtainBadge = await UserBadgeModel.create({
+            user_id: newUserInfo.id,
             badge_id: randombadge,
-          }).then((result) => {
-            UserBadgeModel.create({
-              user_id: id,
-              badge_id: randombadge,
-              is_selected: true,
-            });
+            is_selected: true,
           });
+          const updateBadge = await UserModel.update(
+            {
+              badge_id: randombadge,
+            },
+            { where: { email: email } }
+          );
         }
 
         const userInfoInToken = await UserModel.findOne({
@@ -79,7 +80,7 @@ module.exports = {
             email: email,
           },
         });
-        const { username, is_social, is_admin, bio, badge_id } =
+        const { id, username, is_social, is_admin, bio, badge_id } =
           userInfoInToken;
         const accessToken = generateAccessToken(
           JSON.stringify({
