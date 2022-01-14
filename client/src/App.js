@@ -29,7 +29,7 @@ function App() {
           <Route path='/createchallenge' element={<CreateChallenge />} />
           <Route path='/editchallenge/:id' element={<EditChallenge />} />
           <Route path='/confirmchallenge' element={<ConfirmChallenge />} />
-          <Route path='/mypage' element={<Mypage />} />
+          <Route path='/mypage/:id' element={<Mypage />} />
           <Route path='/editmyinfo' element={<EditMyinfo />} />
           <Route path='/oauth/callback/kakao' element={<KakaoPage />} />
           <Route path='/oauth/callback/naver' element={<NaverPage />} />

@@ -298,17 +298,18 @@ const Signup = () => {
             <Wave width='100%' height='100' fill={color.white} />
           </TitleContainer>
           <SignupForm>
-            <InputForm placeholder='이메일' handleValue={onChangeEmail} />
+            <InputForm value={email} placeholder='이메일' handleValue={onChangeEmail} />
             {isValidEmail ? null : (
               <InvalidMessage>*이메일 형식이 유효하지 않습니다.</InvalidMessage>
             )}
-            <InputForm placeholder='닉네임' handleValue={onChangeUsername} />
+            <InputForm value={username} placeholder='닉네임' handleValue={onChangeUsername} />
             {isValidUsername ? null : (
               <InvalidMessage>
                 *닉네임은 한글 또는 영문 대소문자 2~15자리만 사용 가능합니다.
               </InvalidMessage>
             )}
             <InputForm
+              value={password}
               placeholder='비밀번호'
               handleValue={onChangePassword}
               type='password'
@@ -320,6 +321,7 @@ const Signup = () => {
               </InvalidMessage>
             )}
             <InputForm
+              value={passwordConfirm}
               placeholder='비밀번호 확인'
               handleValue={onChangePasswordConfirm}
               type='password'

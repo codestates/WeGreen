@@ -195,6 +195,7 @@ const Navigation = () => {
       navigate('/');
     });
   };
+
   return (
     <NavigationContainer>
       <MainNav>
@@ -214,7 +215,7 @@ const Navigation = () => {
           {isLogin ? (
             <>
               <button onClick={handleLogout}>로그아웃</button>
-              <Link to='/mypage'>마이페이지</Link>
+              <Link to={`/mypage/${state.userInfo.user_id}`}>마이페이지</Link>
             </>
           ) : (
             <>

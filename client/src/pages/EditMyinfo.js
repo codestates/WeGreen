@@ -16,7 +16,7 @@ import { ReactComponent as Wave } from '../assets/images/wave.svg';
 const Container = styled.div`
   @media ${device.laptop} {
     width: 100%;
-    height: calc(100vh - 60px);
+    height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -41,20 +41,11 @@ const EditMyinfoContainer = styled.div`
 `;
 
 const EditMyinfoSection = styled.section`
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 0.5rem;
-
-  @media ${device.laptop} {
-    width: 100%;
-    overflow-y: scroll;
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
-    &::-webkit-scrollbar {
-      display: none; /* Chrome, Safari, Opera*/
-    }
-  }
 `;
 
 const TitleContainer = styled.div`
@@ -166,6 +157,7 @@ const EditMyinfo = () => {
       navigate('/');
     } else {
       requestMyinfo(`${myinfo.user_id}`).then((result) => {
+        setMyinfo(result.user_info);
         const data = result.user_info;
         dispatch(updateUserinfo(data));
       });
@@ -211,12 +203,12 @@ const EditMyinfo = () => {
     }
   };
 
-  const handleInputPassword = (key) => (value) => {
-    setModify({ ...modify, [key]: value });
-  };
-  
   const handleMyinfo = (key) => (value) => {
     setMyinfo({ ...myinfo, [key]: value });
+  };
+
+  const handleInputPassword = (key) => (value) => {
+    setModify({ ...modify, [key]: value });
   };
 
   const handleIsExpanded = () => setIsExpanded(true);
@@ -259,12 +251,21 @@ const EditMyinfo = () => {
         newPWD: modify.new,
       })
         .then((result) => {
+          setModify({
+            now: '',
+            new: '',
+            re: '',
+          });
           setResponseStatus('success modify password');
           setIsModalOpen(true);
         })
         .catch((err) => {
           if (err.response.status === 401) {
             setResponseStatus('unauthorized');
+            setIsModalOpen(true);
+          } 
+          else if (err.response.status === 409) {
+            setResponseStatus('password conflict');
             setIsModalOpen(true);
           } else {
             setResponseStatus('no status');
@@ -336,6 +337,16 @@ const EditMyinfo = () => {
             <Button content='확인' handler={btnHandler} />
           </>
         );
+      case 'password conflict':
+        return (
+          <>
+            <p>
+              기존 비밀번호와 같습니다. <br />
+              다시 시도해주세요.
+            </p>
+            <Button content='확인' handler={btnHandler} />
+          </>
+        );
       case 'confirm signout':
         return (
           <>
@@ -384,13 +395,13 @@ const EditMyinfo = () => {
                 onClick={() => setIsBadgeModalOpen(true)}
               />
               <InputForm
-                defaultValue={myinfo.username}
+                value={myinfo.username}
                 placeholder='사용자 이름'
                 handleValue={onChangeUsername}
               />
             </BadgeNameContainer>
             <TextareaForm
-              defaultValue={myinfo.bio}
+              value={myinfo.bio}
               placeholder='사용자 소개'
               handleValue={onChangeBio}
               limit={80}
@@ -403,11 +414,13 @@ const EditMyinfo = () => {
             {isExpanded ? (
               <>
                 <InputForm
+                  value={modify.now}
                   type='password'
                   placeholder='현재 비밀번호'
                   handleValue={handleInputPassword('now')}
                 />
                 <InputForm
+                  value={modify.new}
                   type='password'
                   placeholder='새로운 비밀번호'
                   handleValue={onChangePassword}
@@ -419,6 +432,7 @@ const EditMyinfo = () => {
                   </InvalidMessage>
                 )}
                 <InputForm
+                  value={modify.re}
                   type='password'
                   placeholder='새로운 비밀번호 확인'
                   handleValue={onChangePasswordConfirm}
@@ -453,7 +467,7 @@ const EditMyinfo = () => {
             <Button
               content='마이페이지'
               color='secondary'
-              handler={() => navigate('/mypage')}
+              handler={() => navigate(`/mypage/${state.userInfo.user_id}`)}
             />
           </BackContainer>
         </EditMyinfoSection>
