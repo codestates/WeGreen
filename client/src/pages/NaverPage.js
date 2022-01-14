@@ -21,7 +21,7 @@ const NaverLoginInfo = styled.div`
     /* background-color: ${color.primaryLight}; */
   }
 `;
-
+var check = false;
 const NaverPage = () => {
   //인가코드;
   const authorizationCode = new URL(window.location.href).searchParams.get(
@@ -37,7 +37,6 @@ const NaverPage = () => {
       }, 1000);
     }
   }, [loginState.isLogin]);
-  var check = false;
   if (!check) {
     check = true;
     axios

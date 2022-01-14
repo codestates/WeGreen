@@ -12,7 +12,7 @@ import kakaoIcon from '../assets/images/login_icon_kakao.svg';
 import googleIcon from '../assets/images/login_icon_google.svg';
 import naverIcon from '../assets/images/login_icon_naver.svg';
 import { requestSignup } from '../apis';
-import { requestKakaoLogin,requestGoogleLogin} from '../apis';
+import { requestKakaoLogin,requestGoogleLogin,requestNaverLogin} from '../apis';
 
 const Container = styled.div`
   @media ${device.laptop} {
@@ -334,7 +334,7 @@ const Signup = () => {
           </Divider>
           <SocialContainer>
             <SocialBtn image={kakaoIcon} onClick={requestKakaoLogin} />
-            <SocialBtn image={naverIcon} />
+            <SocialBtn image={naverIcon} onClick={requestNaverLogin} />
             <SocialBtn image={googleIcon} onClick={requestGoogleLogin} hasBorder={true} />
           </SocialContainer>
           <Link to='/login'>
