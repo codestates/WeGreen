@@ -13,7 +13,8 @@ import Mypage from './pages/Mypage';
 import EditMyinfo from './pages/EditMyinfo';
 import KakaoPage from './pages/KakaoPage';
 import NaverPage from './pages/NaverPage';
-import GooglePage from './pages/GooglePage'
+import GooglePage from './pages/GooglePage';
+import NotFound from './pages/NotFound';
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
           <Route path='/oauth/callback/kakao' element={<KakaoPage />} />
           <Route path='/oauth/callback/naver' element={<NaverPage />} />
           <Route path='/oauth/callback/google' element={<GooglePage />} />
+          <Route path='*' element={<NotFound />} />
         </Routes>
       </main>
     </div>
