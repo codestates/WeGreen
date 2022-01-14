@@ -55,7 +55,8 @@ const SendBtn = styled.button`
   right: 3px;
   width: 34px;
   height: 34px;
-  background-color: ${color.primary};
+  background-color: ${(props) =>
+    props.content === '' ? color.greyLight : color.primary};
   border-radius: 17px;
   cursor: pointer;
 
@@ -93,7 +94,7 @@ const SendBtn = styled.button`
 
   &:hover {
     &::after {
-      opacity: 0.1;
+      ${(props) => (props.content === '' ? 0 : 0.1)};
     }
   }
 `;
@@ -131,7 +132,7 @@ const ModalMessage = ({ status }) => {
       );
     case 'join required':
       return <p>챌린지 참여자만 댓글을 작성할 수 있습니다.</p>;
-    case 'network error':
+    case 'server error':
       return (
         <p>
           서버에서 에러가 발생하여 댓글을 작성할 수 없습니다. <br />
@@ -174,6 +175,9 @@ const ChallengeComments = ({
   };
 
   const handleSubmit = () => {
+    console.log('login', isLogin);
+    console.log('isJoinged', isJoined);
+    console.log('state', state);
     if (!isLogin) {
       setResponseStatus('login required');
       setIsModalOpen(true);
@@ -182,6 +186,9 @@ const ChallengeComments = ({
     if (!isJoined) {
       setResponseStatus('join required');
       setIsModalOpen(true);
+      return;
+    }
+    if (content === '') {
       return;
     }
 
@@ -217,7 +224,7 @@ const ChallengeComments = ({
               onChange={handleInput}
               onKeyPress={handleKeyPress}
             ></CommentInput>
-            <SendBtn onClick={handleSubmit}>
+            <SendBtn onClick={handleSubmit} content={content}>
               <SendIcon width='20' height='20' fill={color.white} />
               <span>보내기</span>
             </SendBtn>

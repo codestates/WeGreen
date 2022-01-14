@@ -32,8 +32,8 @@ const TabBtn = styled.button`
   }
 `;
 
-const Tab = ({ tabInfo, handleView }) => {
-  const [currentTab, setCurrentTab] = useState(tabInfo[0][0]);
+const Tab = ({ tabInfo, view, handleView }) => {
+  const [currentTab, setCurrentTab] = useState(view);
   return (
     <TabContainer>
       {tabInfo.map((tab) => (

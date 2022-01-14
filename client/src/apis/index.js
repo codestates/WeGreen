@@ -1,7 +1,7 @@
 import axios from 'axios';
-axios.defaults.withCredentials = true;
 
 axios.defaults.withCredentials = true;
+
 // 로그인
 export const requestLogin = (email, password) => {
   return axios
