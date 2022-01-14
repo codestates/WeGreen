@@ -1,6 +1,7 @@
 import axios from 'axios';
 axios.defaults.withCredentials = true;
 
+axios.defaults.withCredentials = true;
 // 로그인
 export const requestLogin = (email, password) => {
   return axios
@@ -10,7 +11,7 @@ export const requestLogin = (email, password) => {
         email,
         password,
       },
-      { 'Content-Type': 'application/json', withCredentials: true }
+      { 'Content-Type': 'application/json' }
     )
     .then((result) => {
       return result;
@@ -30,7 +31,7 @@ export const requestSignup = (email, username, password) => {
         username,
         password,
       },
-      { 'Content-Type': 'application/json', withCredentials: true }
+      { 'Content-Type': 'application/json' }
     )
     .then((result) => {
       return result;
@@ -46,7 +47,7 @@ export const requestLogout = () => {
     .post(
       `${process.env.REACT_APP_API_URL}/users/logout`,
       {},
-      { 'Content-Type': 'application/json', withCredentials: true }
+      { 'Content-Type': 'application/json' }
     )
     .then((result) => console.log(result));
 };
@@ -62,7 +63,6 @@ export const requestPopularChallenges = (limit, query) => {
       {},
       {
         'Content-Type': 'application/json',
-        withCredentials: true,
       }
     )
     .then((result) => result.data.data);
@@ -78,7 +78,6 @@ export const requestLatestChallenges = (limit, query) => {
       {},
       {
         'Content-Type': 'application/json',
-        withCredentials: true,
       }
     )
     .then((result) => {
@@ -99,7 +98,6 @@ export const updateMyinfo = (userId, body) => {
   return axios
     .patch(`${process.env.REACT_APP_API_URL}/users/${userId}`, body, {
       'Content-Type': 'application/json',
-      withCredentials: true,
     })
     .then((result) => result.data.data);
 };
@@ -109,7 +107,6 @@ export const updateMyBadges = (body) => {
   return axios
     .patch(`${process.env.REACT_APP_API_URL}/users-badges`, body, {
       'Content-Type': 'application/json',
-      withCredentials: true,
     })
     .then((result) => result.data.data);
 };
@@ -118,7 +115,6 @@ export const modifyPassword = (userId, body) => {
   return axios
     .patch(`${process.env.REACT_APP_API_URL}/users/${userId}/password`, body, {
       'Content-Type': 'application/json',
-      withCredentials: true,
     })
     .then((result) => result.data);
 };
@@ -129,7 +125,7 @@ export const signout = () => {
     .post(
       `${process.env.REACT_APP_API_URL}/users/signout`,
       {},
-      { 'Content-Type': 'application/json', withCredentials: true }
+      { 'Content-Type': 'application/json' }
     )
     .then((result) => result.data);
 };
@@ -144,7 +140,6 @@ export const createChallenge = (body) => {
   return axios
     .post(`${process.env.REACT_APP_API_URL}/challenges`, body, {
       'Content-Type': 'application/json',
-      withCredentials: true,
     })
     .then((result) => result.data);
 };
@@ -168,7 +163,7 @@ export const editChallenge = (body) => {
     .patch(
       `${process.env.REACT_APP_API_URL}/challenges/${body.challenge_id}`,
       body,
-      { 'Content-Type': 'application/json', withCredentials: true }
+      { 'Content-Type': 'application/json' }
     )
     .then((result) => result.data);
 };
@@ -179,7 +174,7 @@ export const deleteChallenge = (challengeId) => {
     .post(
       `${process.env.REACT_APP_API_URL}/challenges/${challengeId}`,
       {},
-      { 'Content-Type': 'application/json', withCredentials: true }
+      { 'Content-Type': 'application/json' }
     )
     .then((result) => result.data);
 };
@@ -195,12 +190,9 @@ export const joinChallenge = (challengeId) => {
       {},
       {
         'Content-Type': 'application/json',
-        withCredentials: true,
       }
     )
-    .then((result) => {
-      console.log(result.data);
-    });
+    .then((result) => result.data);
 };
 
 // 챌린지 체크인
@@ -212,12 +204,9 @@ export const checkin = (challengeId) => {
       {},
       {
         'Content-Type': 'application/json',
-        withCredentials: true,
       }
     )
-    .then((result) => {
-      console.log(result.data);
-    });
+    .then((result) => result.data);
 };
 
 // 댓글 생성
@@ -228,7 +217,6 @@ export const createComment = (id, content) => {
       { content },
       {
         'Content-Type': 'application/json',
-        withCredentials: true,
       }
     )
     .then((result) => {
@@ -251,7 +239,7 @@ export const editComment = (challengeId, commentId, content) => {
       {
         content,
       },
-      { 'Content-Type': 'application/json', withCredentials: true }
+      { 'Content-Type': 'application/json' }
     )
     .then((result) => result);
 };
@@ -261,7 +249,7 @@ export const deleteComment = (challengeId, commentId) => {
     .post(
       `${process.env.REACT_APP_API_URL}/challenges/${challengeId}/comments/${commentId}`,
       {},
-      { 'Content-Type': 'application/json', withCredentials: true }
+      { 'Content-Type': 'application/json' }
     )
     .then((result) => result);
 };

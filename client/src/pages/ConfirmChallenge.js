@@ -117,7 +117,7 @@ const ConfirmChallenge = () => {
         .then((result) => {
           setResponseStatus('success create challenge');
           setIsModalOpen(true);
-          navigate(`/challenge/${result.data.id}`)
+          setTimeout(() => navigate(`/challenge/${result.data.challenge_id}`), 3000);          
         })
         .catch((err) => {
           if (err.response.status === 401) {
@@ -133,7 +133,7 @@ const ConfirmChallenge = () => {
         .then((result) => {
           setResponseStatus('success edit challenge');
           setIsModalOpen(true);
-          navigate(`/challenge/${result.data.id}`)
+          setTimeout(() => navigate(`/challenge/${result.data.challenge_id}`), 3000);     
         })
         .catch((err) => {
           if (err.response.status === 401) {
@@ -215,7 +215,7 @@ const ConfirmChallenge = () => {
         <MessageContainer>
           다른 참가자가 챌린지에 참여한 후에는 <br />
           내용을 수정할 수 없습니다. <br />
-          이대로 챌린지를 생성할까요?
+          이대로 챌린지를 {!info.challenge_id ? "생성" : "수정"}할까요?
         </MessageContainer>
         <ButtonContainer>
           <Button
