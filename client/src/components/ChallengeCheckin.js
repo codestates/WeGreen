@@ -17,7 +17,7 @@ const ChallengeCheckinContainer = styled.div`
   padding: 2rem;
   gap: 1rem;
   background-color: ${color.white};
-  
+
   & p {
     margin: 0;
   }
@@ -29,7 +29,7 @@ const ChallengeCheckinContainer = styled.div`
   & p:first-child {
     margin-top: 0;
   }
-  
+
   @media ${device.laptop} {
     border-radius: ${radius};
   }
@@ -61,26 +61,26 @@ const ProgressContainer = styled.div`
   display: flex;
   align-items: center;
   gap: 2rem;
-`
+`;
 const ProgressBarContainer = styled.div`
   width: 100%;
   height: 100%;
   display: flex;
   background-color: ${color.secondaryLight};
   border-radius: ${radius};
-`
+`;
 
 const ProgressBar = styled.div`
-  width: ${props => props.width};
+  width: ${(props) => props.width};
   background-color: ${color.secondary};
   border-radius: ${radius};
-`
+`;
 
 const ChallengeCheckin = ({ challengeInfo, checkinInfo }) => {
   const checkin_log = checkinInfo.checkin_log.map((el) => {
     const log = new Date(el);
     return log.toString();
-  }); 
+  });
 
   const startedAt = new Date(challengeInfo.started_at);
   const finishedAt = new Date(challengeInfo.started_at);
@@ -103,8 +103,12 @@ const ChallengeCheckin = ({ challengeInfo, checkinInfo }) => {
     );
   });
 
-  const progress = (checkinInfo.checkin_log.length / Number(challengeInfo.requirement)) >= 1 ?
-    1 : (checkinInfo.checkin_log.length / Number(challengeInfo.requirement)).toFixed(2)
+  const progress =
+    checkinInfo.checkin_log.length / Number(challengeInfo.requirement) >= 1
+      ? 1
+      : (
+          checkinInfo.checkin_log.length / Number(challengeInfo.requirement)
+        ).toFixed(2);
 
   return (
     <Container>
@@ -114,15 +118,19 @@ const ChallengeCheckin = ({ challengeInfo, checkinInfo }) => {
           <br />
           체크인 하였습니다.
         </p>
-        <Highlighted>나의 체크인 현황</Highlighted>
-        <BoxContainer>{Boxes.map((box) => box)}</BoxContainer>
-        <Highlighted>나의 목표 달성률</Highlighted>
-        <ProgressContainer>
-          <p>{progress * 100}%</p>
-          <ProgressBarContainer>
-            <ProgressBar width={`${progress * 100}%`} />
-          </ProgressBarContainer>
-        </ProgressContainer>
+        {challengeInfo.is_joined ? (
+          <>
+            <Highlighted>나의 체크인 현황</Highlighted>
+            <BoxContainer>{Boxes.map((box) => box)}</BoxContainer>
+            <Highlighted>나의 목표 달성률</Highlighted>
+            <ProgressContainer>
+              <p>{progress * 100}%</p>
+              <ProgressBarContainer>
+                <ProgressBar width={`${progress * 100}%`} />
+              </ProgressBarContainer>
+            </ProgressContainer>
+          </>
+        ) : null}
       </ChallengeCheckinContainer>
     </Container>
   );

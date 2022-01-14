@@ -130,9 +130,14 @@ const Challenge = () => {
     return log.toString();
   });
 
+  const startedAt = new Date(challengeInfo.started_at)
+  const finishedAt = new Date(challengeInfo.started_at)
+  finishedAt.setDate(startedAt.getDate() + 6)
+
   const isAuthor = loginState.userInfo.user_id === challengeInfo.author;
   const isCheckined = checkin_log.includes(TODAY.toString());
-  const isStarted = new Date(challengeInfo.started_at) <= TODAY;
+  const isStarted = startedAt <= TODAY;
+  const isFinished = finishedAt <= TODAY;
 
   useEffect(() => {
     requestChallenge(params.id)
@@ -144,7 +149,7 @@ const Challenge = () => {
       .then((result) => {
         setCheckinInfo(result.checkin_info);
         return result;
-      })
+      });
     // eslint-disable-next-line
   }, []);
 
@@ -179,7 +184,7 @@ const Challenge = () => {
     joinChallenge(challengeInfo.challenge_id)
       .then((result) => {
         setResponseStatus('success join challenge');
-        setTimeout(() => window.location.reload(), 3000);        
+        setTimeout(() => window.location.reload(), 3000);
       })
       .catch((err) => {
         setResponseStatus('no status');
@@ -195,7 +200,7 @@ const Challenge = () => {
     checkin(challengeInfo.challenge_id)
       .then((result) => {
         setResponseStatus('success checkin');
-        setTimeout(() => window.location.reload(), 3000);        
+        setTimeout(() => window.location.reload(), 3000);
       })
       .catch((err) => {
         setResponseStatus('duplicate checkin');
@@ -312,10 +317,7 @@ const Challenge = () => {
         return (
           <>
             <p>체크인하시겠습니까?</p>
-            <Button
-              content='네, 체크인하겠습니다'
-              handler={handleCheckin}
-            />
+            <Button content='네, 체크인하겠습니다' handler={handleCheckin} />
           </>
         );
       case 'success checkin':
@@ -378,7 +380,7 @@ const Challenge = () => {
                   <EditIcon width='20' height='20' fill={color.secondary} />
                 </EditBtn>
               </>
-            ) : (
+             ) : (
               <>
                 <EditBtn>
                   <EditIcon width='20' height='20' fill={color.grey} />
@@ -395,7 +397,7 @@ const Challenge = () => {
             {challengeInfo.join_count}명 참여중
           </Caption>
           {challengeInfo.is_joined ? (
-            isStarted && !isCheckined ? (
+            isStarted && !isCheckined && !isFinished ? (
               <Button content='챌린지 체크인' handler={handleCheckinModal} />
             ) : (
               <Button
