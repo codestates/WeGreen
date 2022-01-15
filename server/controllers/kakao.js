@@ -27,7 +27,6 @@ module.exports = {
             'Content-type': 'application/x-www-form-urlencoded',
           },
         });
-        console.log('!!THIS IS RESPONSE!', response);
         const { access_token } = response.data;
 
         const kakaoUserInfo = await axios({

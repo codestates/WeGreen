@@ -21,10 +21,12 @@ const GoogleLoginInfo = styled.div`
     background-color: ${color.primaryLight};
   }
 `;
-
+var check = false;
 const GooglePage = () => {
   // 인가코드
-  const authorizationCode = new URL(window.location.href).search.split("=")[1].split("&")[0];
+  const authorizationCode = new URL(window.location.href).search
+    .split('=')[1]
+    .split('&')[0];
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const loginState = useSelector((state) => state.userReducer);
@@ -35,22 +37,25 @@ const GooglePage = () => {
       }, 1000);
     }
   }, [loginState.isLogin]);
+  if (!check) {
+    check = true;
+    axios
+      .post(
+        `${process.env.REACT_APP_API_URL}/oauth/google/login`,
+        {
+          authorizationCode,
+        }
+        // { 'Content-Type': 'application/json', withCredentials: true }
+      )
+      .then((result) => {
+        console.log('THIS IS CLIENT SIDE RESULT DATA!!', result.data);
+        dispatch(login(result.data.data));
+      })
+      .catch((err) => {
+        return err.response ? err.response : 'network error';
+      });
+  }
 
-  axios
-    .post(
-      `${process.env.REACT_APP_API_URL}/oauth/google/login`,
-      {
-        authorizationCode,
-      },
-      // { 'Content-Type': 'application/json', withCredentials: true }
-    )
-    .then((result) => {
-      console.log('THIS IS CLIENT SIDE RESULT DATA!!', result.data);
-      dispatch(login(result.data.data));
-    })
-    .catch((err) => {
-      return err.response ? err.response : 'network error';
-    });
   return (
     <GoogleLoginInfo>
       <img src={googleIcon}></img> 구글로 로그인 중...
