@@ -157,7 +157,7 @@ const EditMyinfo = () => {
       navigate('/');
     } else {
       requestMyinfo(`${myinfo.user_id}`).then((result) => {
-        setMyinfo(result.user_info);
+        setMyinfo({ ...myinfo, ...result.user_info });
         const data = result.user_info;
         dispatch(updateUserinfo(data));
       });
@@ -263,8 +263,7 @@ const EditMyinfo = () => {
           if (err.response.status === 401) {
             setResponseStatus('unauthorized');
             setIsModalOpen(true);
-          } 
-          else if (err.response.status === 409) {
+          } else if (err.response.status === 409) {
             setResponseStatus('password conflict');
             setIsModalOpen(true);
           } else {
@@ -467,7 +466,7 @@ const EditMyinfo = () => {
             <Button
               content='마이페이지'
               color='secondary'
-              handler={() => navigate(`/mypage/${state.userInfo.user_id}`)}
+              handler={() => navigate(`/mypage/${myinfo.user_id}`)}
             />
           </BackContainer>
         </EditMyinfoSection>
@@ -480,7 +479,11 @@ const EditMyinfo = () => {
           </Modal>
         ) : null}
         {isBadgeModalOpen ? (
-          <BadgeModal closeModal={setIsBadgeModalOpen}></BadgeModal>
+          <BadgeModal
+            myinfo={myinfo}
+            setMyinfo={setMyinfo}
+            closeModal={setIsBadgeModalOpen}
+          ></BadgeModal>
         ) : null}
       </EditMyinfoContainer>
     </Container>
