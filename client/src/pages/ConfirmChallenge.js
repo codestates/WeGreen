@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { changeTitle } from '../actions';
 import { createChallenge, editChallenge } from '../apis';
 import styled from 'styled-components';
 import { color, contentWidth, device, radius } from '../styles';
@@ -78,6 +79,9 @@ const ButtonContainer = styled.div`
 `;
 
 const ConfirmChallenge = () => {
+  const dispatch = useDispatch()
+  dispatch(changeTitle('Confirm Challenge'))
+
   const loginState = useSelector((state) => state.userReducer);
   const { state } = useLocation();
   const navigate = useNavigate();

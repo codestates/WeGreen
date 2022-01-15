@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { changeTitle } from '../actions';
 import styled from 'styled-components';
-import { color, device, contentWidth, boxShadow, radius } from '../styles';
+import { color, device, contentWidth, boxShadow } from '../styles';
 import SearchBar from '../components/SearchBar';
 import ChallengeCard from '../components/ChallengeCard';
 import { ReactComponent as AddIcon } from '../assets/images/icon_add.svg';
@@ -102,6 +104,9 @@ const TextBtn = styled.button`
 `;
 
 const Challenges = () => {
+  const dispatch = useDispatch()
+  dispatch(changeTitle('Challenges'))
+
   const navigate = useNavigate();
   const [sorting, setSorting] = useState('popular');
   const [challenges, setChallenges] = useState([]);

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { updateUserinfo } from '../actions';
+import { updateUserinfo, changeTitle } from '../actions';
 import { requestMyinfo } from '../apis';
 import styled from 'styled-components';
 import { color, device, contentWidth, boxShadow } from '../styles';
@@ -116,6 +116,7 @@ const Mypage = () => {
 
   useEffect(() => {
     setIsMine(userId === Number(state.userInfo.user_id));
+    dispatch(changeTitle('Userpage'))
     if (isMine) {
       dispatch(updateUserinfo(userInfo));
     }

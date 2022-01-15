@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { updateUserinfo, logout } from '../actions';
+import { changeTitle, updateUserinfo, logout } from '../actions';
 import { requestMyinfo, updateMyinfo, modifyPassword, signout } from '../apis';
 import styled from 'styled-components';
 import { color, device, contentWidth, boxShadow } from '../styles';
@@ -131,8 +131,9 @@ const Divider = styled.div`
 `;
 
 const EditMyinfo = () => {
+  const dispatch = useDispatch()
+  dispatch(changeTitle('Edit Myinfo'))
   const state = useSelector((state) => state.userReducer);
-  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
