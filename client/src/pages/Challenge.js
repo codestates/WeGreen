@@ -134,6 +134,7 @@ const Challenge = () => {
   const finishedAt = new Date(challengeInfo.started_at)
   finishedAt.setDate(startedAt.getDate() + 6)
 
+  const isAdmin = loginState.userInfo.is_admin
   const isAuthor = loginState.userInfo.user_id === challengeInfo.author;
   const isCheckined = checkin_log.includes(TODAY.toString());
   const isStarted = startedAt <= TODAY;
@@ -143,15 +144,13 @@ const Challenge = () => {
     requestChallenge(params.id)
       .then((result) => {
         setChallengeInfo(result.challenge_info);
-        setComments(result.comments);
-        return result;
-      })
-      .then((result) => {
         setCheckinInfo(result.checkin_info);
-        return result;
-      });
+        setComments(result.comments);
+      })
     // eslint-disable-next-line
   }, []);
+
+  console.log(isAdmin)
 
   const moveEditChallenge = () => {
     navigate(`/editchallenge/${challengeInfo.challenge_id}`, {
@@ -382,8 +381,8 @@ const Challenge = () => {
     <OuterContainer>
       <ChallengeContainer>
         <CommonContainer>
-          {isAuthor ? (
-            !isStarted && challengeInfo.join_count < 2 ? (
+          {isAdmin || isAuthor ? (
+            isAdmin || (!isStarted && challengeInfo.join_count < 2) ? (
               <>
                 <DeleteBtn onClick={handleDeleteChallengeModal}>
                   <DeleteIcon width='20' height='20' fill={color.secondary} />
