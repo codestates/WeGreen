@@ -64,7 +64,7 @@ const InvalidMessage = styled.p`
 const CreateChallenge = () => {
   const loginState = useSelector((state) => state.userReducer);
   const { state } = useLocation();
-  
+
   const requirementArr = new Array(7).fill().map((_, i) => i + 1);
 
   const navigate = useNavigate();
@@ -75,18 +75,20 @@ const CreateChallenge = () => {
     }
   });
 
-  const startDate = new Date(TODAY)
-  startDate.setDate(startDate.getDate()+1)
+  const startDate = new Date(TODAY);
+  startDate.setDate(startDate.getDate() + 1);
   if (startDate.getDate() === 0) {
-    startDate.setMonth(startDate.getMonth() + 1)
+    startDate.setMonth(startDate.getMonth() + 1);
   }
 
-  const info = state ? state : {
-    name: "",
-    content: "",
-    started_at: startDate,
-    requirement: '챌린지 성공 조건',
-  }
+  const info = state
+    ? state
+    : {
+        name: '',
+        content: '',
+        started_at: startDate,
+        requirement: '챌린지 성공 조건',
+      };
 
   const [challengeInfo, setChallengeInfo] = useState(info);
 
@@ -98,7 +100,9 @@ const CreateChallenge = () => {
   const isValidChallenge = () => {
     if (
       isValidChallengeTitle &&
+      challengeInfo.name.length > 0 &&
       isValidChallengeContent &&
+      challengeInfo.content.length > 0 &&
       typeof challengeInfo.requirement === 'number'
     ) {
       return true;
@@ -118,10 +122,14 @@ const CreateChallenge = () => {
   const onChangeChallengeInfo = (key) => (val) => {
     setChallengeInfo({ ...challengeInfo, [key]: val });
     if (key === 'name') {
-      setIsValidChallengeTitle(val.length === 0 || val.length >= 3);
+      setIsValidChallengeTitle(
+        val.length === 0 || (val.length >= 3 && val.length <= 15)
+      );
     }
     if (key === 'content') {
-      setIsValidChallengeContent(val.length === 0 || val.length >= 10);
+      setIsValidChallengeContent(
+        val.length === 0 || (val.length >= 3 && val.length <= 80)
+      );
     }
   };
 
@@ -164,7 +172,8 @@ const CreateChallenge = () => {
         />
         {isValidChallengeTitle ? null : (
           <InvalidMessage>
-            *챌린지 제목은 최소 3글자 이상이어야 합니다
+            *챌린지 제목은 최소 3글자 이상, <br />
+            최대 15글자 미만이어야 합니다
           </InvalidMessage>
         )}
         <TextareaForm
@@ -172,11 +181,12 @@ const CreateChallenge = () => {
           value={challengeInfo.content}
           placeholder='챌린지 소개'
           handleValue={onChangeChallengeInfo('content')}
-          limit={300}
+          limit={80}
         />
         {isValidChallengeContent ? null : (
           <InvalidMessage>
-            *챌린지 소개는 최소 10글자 이상이어야 합니다
+            *챌린지 소개는 최소 3글자 이상, <br />
+            최대 80글자 미만이어야 합니다
           </InvalidMessage>
         )}
         <Calendar

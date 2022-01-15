@@ -41,7 +41,7 @@ const TextareaForm = ({
   };
 
   return (
-    <TextareaContainer width={width} height={height}>
+    <TextareaContainer width={width}>
       <Textarea
         width={width}
         height={height}
