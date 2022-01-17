@@ -43,7 +43,7 @@ const ChallengeCard = ({ challenge }) => {
   } else {
     if (TODAY < startedAt) {
       message = '진행예정';
-    } else if (TODAY < finishedAt) {
+    } else if (TODAY <= finishedAt) {
       message = '진행중';
     } else {
       message = '종료';

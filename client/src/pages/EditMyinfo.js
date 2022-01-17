@@ -12,6 +12,7 @@ import Button from '../components/Button';
 import Modal from '../components/Modal';
 import BadgeModal from '../components/BadgeModal';
 import { ReactComponent as Wave } from '../assets/images/wave.svg';
+import Badges from '../assets/images/badges/badges';
 
 const Container = styled.div`
   @media ${device.laptop} {
@@ -82,8 +83,6 @@ const BadgeNameContainer = styled.div`
 const MainBadgeImg = styled.img`
   width: 80px;
   height: 80px;
-  object-fit: cover;
-  background-color: ${color.primary};
 `;
 
 const ModifyPasswordContainer = styled.div`
@@ -390,7 +389,7 @@ const EditMyinfo = () => {
           <EditMyinfoBioContainer>
             <BadgeNameContainer>
               <MainBadgeImg
-                badgeId={1}
+                src={Badges[myinfo.badge_id]}
                 alt='대표뱃지'
                 onClick={() => setIsBadgeModalOpen(true)}
               />

@@ -55,6 +55,7 @@ export const requestLogout = () => {
 // 챌린지 리스트 - 인기순
 export const requestPopularChallenges = (limit, query) => {
   console.log(limit, query);
+  console.log(process.env.REACT_APP_API_URL)
   return axios
     .get(
       `${process.env.REACT_APP_API_URL}/challenges/popular?limit=${limit}${
