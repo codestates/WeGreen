@@ -17,16 +17,27 @@ const DropButton = styled.button`
   padding: 0 1rem;
   z-index: 999;
   background-color: transparent;
-  color: ${color.primary};
+  color: ${color.primaryBorder};
   font-size: 1rem;
   text-align: left;
   line-height: 40px;
 `;
+
+const Triangle = styled.button`
+  position: absolute;
+  align-self: flex-end;
+  margin-top: 0.7rem;
+  margin-right: 1.5rem;
+  background-color: transparent;
+  color: ${color.primary};
+  font-weight: 900;
+`
+
 const OptionsContainer = styled.div`
   position: relative;
-  top: -1.5rem;
+  top: -1.6rem;
   width: 100%;
-  padding-top: 2rem;
+  padding-top: 1.8rem;
   z-index: 99;
   border: 1px solid ${color.primaryBorder};
   border-top: none;
@@ -74,6 +85,7 @@ const SelectForm = ({ options, requirement, setRequirement }) => {
           ? `주 ${requirement}회 체크인`
           : requirement}
       </DropButton>
+      <Triangle onClick={handleIsOpen}>▼</Triangle>
       {isOpen ? Options : null}
     </SelectContainer>
   );

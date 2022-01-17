@@ -74,7 +74,7 @@ const EditChallenge = () => {
       navigate('/login');
     }
     if (!state) {
-      navigate('/');
+      navigate('/challenges');
     }
     // eslint-disable-next-line
   }, []);
@@ -108,7 +108,9 @@ const EditChallenge = () => {
   const isValidChallenge = () => {
     if (
       isValidChallengeTitle &&
+      challengeInfo.name.length > 0 &&
       isValidChallengeContent &&
+      challengeInfo.content.length > 0 &&
       typeof challengeInfo.requirement === 'number'
     ) {
       return true;
@@ -129,12 +131,12 @@ const EditChallenge = () => {
     setChallengeInfo({ ...challengeInfo, [key]: val });
     if (key === 'name') {
       setIsValidChallengeTitle(
-        val.length === 0 || val.length >= 3 || val.length <= 80
+        val.length === 0 || (val.length >= 3 && val.length <= 15)
       );
     }
     if (key === 'content') {
       setIsValidChallengeContent(
-        val.length === 0 || val.length >= 10 || val.length >= 80
+        val.length === 0 || (val.length >= 3 && val.length <= 80)
       );
     }
   };
@@ -178,7 +180,8 @@ const EditChallenge = () => {
         />
         {isValidChallengeTitle ? null : (
           <InvalidMessage>
-            *챌린지 제목은 최소 3글자 이상, <br /> 최대 80글자 이하여야 합니다.
+             *챌린지 제목은 최소 3글자 이상, <br />
+            최대 15글자 미만이어야 합니다
           </InvalidMessage>
         )}
         <TextareaForm
@@ -190,7 +193,8 @@ const EditChallenge = () => {
         />
         {isValidChallengeContent ? null : (
           <InvalidMessage>
-            *챌린지 소개는 최소 10글자 이상, <br /> 최대 80글자 이하여야 합니다.
+            *챌린지 소개는 최소 3글자 이상, <br />
+            최대 80글자 미만이어야 합니다
           </InvalidMessage>
         )}
         <Calendar
