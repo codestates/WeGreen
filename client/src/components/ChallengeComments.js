@@ -158,6 +158,7 @@ const ChallengeComments = ({
 }) => {
   const state = useSelector((state) => state.userReducer);
   const isLogin = state.isLogin;
+  const userInfo = state.userInfo;
 
   const [content, setContent] = useState('');
   const challenge_id = useParams().id;
@@ -183,7 +184,7 @@ const ChallengeComments = ({
       setIsModalOpen(true);
       return;
     }
-    if (!isJoined) {
+    if (!isJoined && !userInfo.is_admin) {
       setResponseStatus('join required');
       setIsModalOpen(true);
       return;

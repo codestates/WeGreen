@@ -151,23 +151,28 @@ const Comment = ({ comment, handleCommentEdit, handleCommentDelete }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [responseStatus, setResponseStatus] = useState('');
-  const [isAuthorized, setIsAuthorized] = useState(false);
+  const [auth, setAuth] = useState('no auth');
 
   const convertISOTimestamp = (isoTimestamp) => {
     const time = new Date(isoTimestamp);
-    const dateString = time.toLocaleDateString();
+    const dateString = time.toLocaleDateString('en-GB');
     const dateArray = dateString.split('/');
-    const timeString = time.toLocaleTimeString();
-    return `${dateArray[2]}.${dateArray[1]}.${dateArray[0]}. ${timeString.slice(
-      0,
-      5
-    )}`;
+    const timeString = time.toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+    });
+    return `${dateArray[2]}.${dateArray[1]}.${dateArray[0]}. ${timeString}`;
   };
 
   const formatedTimestamp = convertISOTimestamp(comment.created_at);
 
   useEffect(() => {
-    setIsAuthorized(myinfo.is_admin || myinfo.user_id === comment.user_id);
+    if (myinfo.user_id === comment.user_id) {
+      setAuth('author');
+    } else if (myinfo.is_admin) {
+      setAuth('admin');
+    }
   }, []);
 
   const handleTextarea = (event) => {
@@ -244,7 +249,7 @@ const Comment = ({ comment, handleCommentEdit, handleCommentDelete }) => {
         )}
         <CaptionBtnContainer>
           <Caption>{formatedTimestamp}</Caption>
-          {isAuthorized ? (
+          {auth !== 'no auth' ? (
             <>
               {isEditable ? (
                 <ButtonContainer>
@@ -266,13 +271,15 @@ const Comment = ({ comment, handleCommentEdit, handleCommentDelete }) => {
                     <DeleteIcon width='16' height='16' fill={color.grey} />
                     <span>삭제</span>
                   </IconBtn>
-                  <IconBtn
-                    color='secondary'
-                    onClick={() => setIsEditable(!isEditable)}
-                  >
-                    <EditIcon width='16' height='16' fill={color.grey} />
-                    <span>수정</span>
-                  </IconBtn>
+                  {auth === 'author' ? (
+                    <IconBtn
+                      color='secondary'
+                      onClick={() => setIsEditable(!isEditable)}
+                    >
+                      <EditIcon width='16' height='16' fill={color.grey} />
+                      <span>수정</span>
+                    </IconBtn>
+                  ) : null}
                 </ButtonContainer>
               )}
             </>
