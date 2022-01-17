@@ -6,22 +6,39 @@ module.exports = {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
-      content: {
-        type: Sequelize.STRING
-      },
-      createdAt: {
+      // content: { //advanced에서 사용
+      //   type: Sequelize.STRING,
+      // },
+      user_id: {
         allowNull: false,
-        type: Sequelize.DATE
+        references: {
+          model: 'users',
+          key: 'id',
+        },
+        onDelete: 'cascade',
+        onUpdate: 'cascade',
+        type: Sequelize.INTEGER,
       },
-      updatedAt: {
+      challenge_id: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
+        references: {
+          model: 'challenges',
+          key: 'id',
+        },
+        onDelete: 'cascade',
+        onUpdate: 'cascade',
+        type: Sequelize.INTEGER,
+      },
+      created_at: {
+        allowNull: false,
+        type: Sequelize.DATEONLY,
+        default: Sequelize.fn('NOW'),
+      },
     });
   },
   down: async (queryInterface, Sequelize) => {
     await queryInterface.dropTable('checkins');
-  }
+  },
 };

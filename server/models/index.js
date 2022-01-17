@@ -6,7 +6,7 @@ const Sequelize = require("sequelize");
 const { badges } = require("../controllers");
 const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || "development";
-const config = require(__dirname + "/../config/config.json")[env];
+const config = require(__dirname + "/../config/config.js")[env];
 const db = {};
 
 let sequelize;
@@ -43,32 +43,5 @@ Object.keys(db).forEach((modelName) => {
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
-//associations 설정
-const {
-  user,
-  challenge,
-  users_challenge,
-  checkin,
-  badge,
-  comment,
-  users_badge,
-} = sequelize.models;
-challenge.belongsTo(users_challenge);
-challenge.belongsTo(checkin);
-challenge.belongsTo(comment);
-user.belongsTo(users_challenge);
-user.belongsTo(checkin);
-user.belongsTo(comment);
-user.belongsTo(users_badge);
-badge.belongsTo(users_badge);
-
-users_challenge.hasMany(challenge);
-checkin.hasMany(challenge);
-comment.hasMany(challenge);
-users_challenge.hasMany(user);
-checkin.hasMany(user);
-comment.hasMany(user);
-users_badge.hasMany(user);
-users_badge.hasMany(badge);
 
 module.exports = db;

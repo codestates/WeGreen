@@ -6,22 +6,49 @@ module.exports = {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       content: {
-        type: Sequelize.STRING
+        type: Sequelize.TEXT,
       },
-      createdAt: {
+      user_id: {
         allowNull: false,
-        type: Sequelize.DATE
+        references: {
+          model: 'users',
+          key: 'id',
+        },
+        onDelete: 'cascade',
+        onUpdate: 'cascade',
+        type: Sequelize.INTEGER,
       },
-      updatedAt: {
+      challenge_id: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
+        references: {
+          model: 'challenges',
+          key: 'id',
+        },
+        onDelete: 'cascade',
+        onUpdate: 'cascade',
+        type: Sequelize.INTEGER,
+      },
+      username: {
+        allowNull: false,
+        type: Sequelize.STRING,
+        references: {
+          model: 'users',
+          key: 'username',
+        },
+        onDelete: 'cascade',
+        onUpdate: 'cascade',
+      },
+      created_at: {
+        allowNull: false,
+        type: Sequelize.DATE,
+        default: Sequelize.fn('NOW'),
+      },
     });
   },
   down: async (queryInterface, Sequelize) => {
     await queryInterface.dropTable('comments');
-  }
+  },
 };

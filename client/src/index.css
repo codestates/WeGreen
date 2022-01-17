@@ -1,6 +1,7 @@
 @font-face {
   font-family: 'NanumSquareRound';
-  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_two@1.0/NanumSquareRound.woff') format('woff');
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_two@1.0/NanumSquareRound.woff')
+    format('woff');
   font-weight: normal;
   font-style: normal;
 }
@@ -16,7 +17,9 @@ body {
   margin: 0;
 }
 
-ul, li, ol {
+ul,
+li,
+ol {
   list-style: none;
 }
 
@@ -26,9 +29,51 @@ ul {
 
 a {
   text-decoration: none;
-  color: black;
+  color: inherit;
 }
 
 button {
   border: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+}
+
+h1 {
+  font-size: 32px;
+  word-break: keep-all;
+}
+
+p {
+  line-height: 1.5;
+}
+
+main {
+  margin-top: 60px;
+}
+
+svg,
+img {
+  vertical-align: top;
+}
+
+::placeholder {
+  color: #81c0ba;
+  opacity: 1; /* Firefox */
+}
+
+:-ms-input-placeholder {
+  /* Internet Explorer 10-11 */
+  color: #81c0ba;
+}
+
+::-ms-input-placeholder {
+  /* Microsoft Edge */
+  color: #81c0ba;
 }

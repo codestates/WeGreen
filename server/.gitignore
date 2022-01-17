@@ -23,4 +23,10 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-config/config.json
+config/config.js
+migrations/20220105013517-create-challenge.js
+migrations/20220105013348-create-challenges.js
+migrations/20220105175224-create-challengeadd.js
+models/challengeadd.js
+
+.gitignore

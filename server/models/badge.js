@@ -1,7 +1,5 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
+const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class badge extends Model {
     /**
@@ -11,13 +9,18 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      models.badge.hasMany(models.users_badge);
     }
-  };
-  badge.init({
-    name: DataTypes.STRING
-  }, {
-    sequelize,
-    modelName: 'badge',
-  });
+  }
+  badge.init(
+    {
+      name: DataTypes.STRING,
+    },
+    {
+      sequelize,
+      timestamps: false,
+      modelName: 'badge',
+    }
+  );
   return badge;
 };
