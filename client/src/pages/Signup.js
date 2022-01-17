@@ -1,5 +1,7 @@
 import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
+import { changeTitle } from '../actions';
 import styled from 'styled-components';
 import InputForm from '../components/InputForm';
 import Button from '../components/Button';
@@ -190,6 +192,9 @@ const ModalMessage = ({ status }) => {
 };
 
 const Signup = () => {
+  const dispatch = useDispatch()
+  dispatch(changeTitle('Challenge'))
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [responseStatus, setResponseStatus] = useState('no status');
 

@@ -13,7 +13,7 @@ import googleIcon from '../assets/images/login_icon_google.svg';
 import naverIcon from '../assets/images/login_icon_naver.svg';
 import { color, device, radius, boxShadow } from '../styles';
 import { requestKakaoLogin, requestNaverLogin, requestGoogleLogin, requestLogin } from '../apis';
-import { login } from '../actions';
+import { login, changeTitle } from '../actions';
 
 const Container = styled.div`
   @media ${device.laptop} {
@@ -178,6 +178,7 @@ const ModalMessage = ({ status }) => {
 const Login = () => {
   let navigate = useNavigate();
   const dispatch = useDispatch();
+  dispatch(changeTitle('Login'))
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [responseStatus, setResponseStatus] = useState('no status');

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { changeTitle } from '../actions';
 import {
   requestChallenge,
   deleteChallenge,
@@ -109,6 +110,9 @@ const GridSpan = styled.div`
 `;
 
 const Challenge = () => {
+  const dispatch = useDispatch()
+  dispatch(changeTitle('Challenge'))
+
   const params = useParams();
   const loginState = useSelector((state) => state.userReducer);
   const navigate = useNavigate();

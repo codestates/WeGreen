@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { changeTitle } from '../actions';
 import styled from 'styled-components';
 import { color, contentWidth, device } from '../styles';
 import InputForm from '../components/InputForm';
@@ -62,6 +63,9 @@ const InvalidMessage = styled.p`
 `;
 
 const CreateChallenge = () => {
+  const dispatch = useDispatch()
+  dispatch(changeTitle('Create Challenge'))
+
   const loginState = useSelector((state) => state.userReducer);
   const { state } = useLocation();
 

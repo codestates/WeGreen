@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { changeTitle } from '../actions';
 import styled from 'styled-components';
 import Button from '../components/Button';
 import ChallengeCard from '../components/ChallengeCard';
 import { color, device, contentWidth } from '../styles';
 import mainIllust from '../assets/images/main_illust.png';
 import { ReactComponent as Wave } from '../assets/images/wave.svg';
-import { requestPopularChallenges, requestPopularChallengess } from '../apis';
+import { requestPopularChallenges } from '../apis';
 
 const HomeContainer = styled.div`
   background-color: ${color.primaryLight};
@@ -79,6 +81,9 @@ const ChallengeList = styled.ul`
 `;
 
 const Home = () => {
+  const dispatch = useDispatch()
+  dispatch(changeTitle('홈'))
+
   const navigate = useNavigate();
 
   const [challenges, setChallenges] = useState([]);
@@ -90,7 +95,7 @@ const Home = () => {
   return (
     <HomeContainer>
       <HeroSection>
-        <img src={mainIllust}></img>
+        <img src={mainIllust} alt="main-illust"></img>
         <h1>
           일주일 챌린지로 환경을 지켜요, <span>WeGreen</span>
         </h1>
