@@ -85,7 +85,7 @@ const ChallengeInfo = ({ challengeInfo }) => {
   useEffect(() => {
     if (TODAY < startedAt) {
       setStatus('before');
-    } else if (TODAY < finishedAt) {
+    } else if (TODAY <= finishedAt) {
       setStatus('now');
     } else {
       setStatus('done');

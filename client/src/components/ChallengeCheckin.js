@@ -82,6 +82,7 @@ const ChallengeCheckin = ({ challengeInfo, checkinInfo }) => {
     return log.toString();
   });
 
+
   const startedAt = new Date(challengeInfo.started_at);
   const finishedAt = new Date(challengeInfo.started_at);
   finishedAt.setDate(startedAt.getDate() + 6);
@@ -115,17 +116,17 @@ const ChallengeCheckin = ({ challengeInfo, checkinInfo }) => {
       <ChallengeCheckinContainer>
         {TODAY < startedAt ? (
           <p>챌린지 진행 예정입니다</p>
-        ) : TODAY < finishedAt ? (
+        ) : TODAY <= finishedAt ? (
           <p>
             오늘은 {challengeInfo.join_count}명 중 {checkinInfo.checkin_count}
             명이 <br />
             체크인 하였습니다.
           </p>
-        ) : (
+        ) : challengeInfo.is_joined ? (
           <p>
             {checkinInfo.checkin_count}번 체크인 하셨습니다.
           </p>
-        )}
+        ) : <p>완료된 챌린지입니다.</p>}
         {challengeInfo.is_joined ? (
           <>
             <Highlighted>나의 체크인 현황</Highlighted>
