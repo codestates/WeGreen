@@ -1,7 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { updateUserinfo } from '../actions';
-import { requestMyinfo, updateMyinfo } from '../apis';
+import { updateMyinfo } from '../apis';
 import styled from 'styled-components';
 import { color, device, radius } from '../styles';
 import Button from './Button';
@@ -120,32 +118,28 @@ const ButtonContainer = styled.div`
   display: flex;
 `;
 
-const BadgeModal = ({ closeModal }) => {
-  const state = useSelector((state) => state.userReducer);
-  const { badges } = state.userInfo;
+const BadgeModal = ({ myinfo, setMyinfo, closeModal }) => {
+  const { badges } = myinfo;
   const [badgeInfo, setbadgeInfo] = useState([]);
-  const dispatch = useDispatch();
 
   useEffect(() => {
-    requestMyinfo(`${state.userInfo.user_id}`)
-      .then((result) => {
-        const { badges, badge_id } = result.user_info;
-        const TotalBadges = new Array(20).fill();
-        for (let i = 0; i < TotalBadges.length; i++)
-          TotalBadges[i] = { id: i + 1, src: 'src' };
-          TotalBadges.forEach((el, idx) => {
-            if (badges.includes(idx + 1)) {
-              if (idx + 1 === badge_id) {
-                el.type = 'selected';
-              } else {
-                el.type = 'unselected';
-              }
-            } else {
-              el.type = 'absent';
-            }
-          });
-        setbadgeInfo(TotalBadges)
-      })
+    const { badges, badge_id } = myinfo;
+    const TotalBadges = new Array(20).fill();
+    for (let i = 0; i < TotalBadges.length; i++)
+      TotalBadges[i] = { id: i + 1, src: 'src' };
+    TotalBadges.forEach((el, idx) => {
+      if (badges.includes(idx + 1)) {
+        if (idx + 1 === badge_id) {
+          el.type = 'selected';
+        } else {
+          el.type = 'unselected';
+        }
+      } else {
+        el.type = 'absent';
+      }
+
+      setbadgeInfo(TotalBadges);
+    });
     // eslint-disable-next-line
   }, []);
 
@@ -201,19 +195,21 @@ const BadgeModal = ({ closeModal }) => {
   };
 
   const requestChangeBadge = () => {
-    const result = {
+    const payload = {
       badge_id: badgeInfo
         .filter((el) => el.type === 'selected')
         .map((el) => el.id)[0],
     };
-    dispatch(updateUserinfo(result));
-    updateMyinfo(`${state.userInfo.user_id}`, result).then((result) => {
-      setResponseStatus('success change badge')
-      setIsModalOpen(true)
-    }).catch(err => {
-      setResponseStatus('no status')
-      setIsModalOpen(true)
-    });
+    updateMyinfo(`${myinfo.user_id}`, payload)
+      .then((result) => {
+        setResponseStatus('success change badge');
+        setIsModalOpen(true);
+        setMyinfo({ ...myinfo, badge_id: payload.badge_id });
+      })
+      .catch((err) => {
+        setResponseStatus('no status');
+        setIsModalOpen(true);
+      });
   };
 
   return (
@@ -235,7 +231,7 @@ const BadgeModal = ({ closeModal }) => {
           })}
         </BadgesViewer>
         <ButtonContainer>
-          <Button content="저장" handler={requestChangeBadge}/>
+          <Button content='저장' handler={requestChangeBadge} />
         </ButtonContainer>
       </BadgeModalContainer>
       {isModalOpen ? (

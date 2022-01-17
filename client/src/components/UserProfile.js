@@ -72,20 +72,20 @@ const UserProfileLowContainer = styled.div`
   font-size: 0.875rem;
 `;
 
-const UserProfile = ({ userInfo, successCounts }) => {
+const UserProfile = ({ userInfo, setUserInfo, successCounts }) => {
   const navigate = useNavigate();
   const state = useSelector((state) => state.userReducer);
 
   const params = useParams();
   const userId = Number(params.id);
 
-  const [isMine, setIsMine] = useState(false)
+  const [isMine, setIsMine] = useState(false);
   const [isBadgesModalOpen, setIsBadgesModalOpen] = useState(false);
 
   useEffect(() => {
-    setIsMine(userId === Number(state.userInfo.user_id))
-  // eslint-disable-next-line
-  }, [state])
+    setIsMine(userId === Number(state.userInfo.user_id));
+    // eslint-disable-next-line
+  }, [state]);
 
   const totalBadgesText = `모은 뱃지 ${userInfo.badges.length}개`;
 
@@ -104,16 +104,24 @@ const UserProfile = ({ userInfo, successCounts }) => {
       </UserNameContainer>
       <p>{userInfo.bio}</p>
       <UserProfileLowContainer>
-        {isMine ? <Button
-          width='140px'
-          height='30px'
-          content={totalBadgesText}
-          handler={() => setIsBadgesModalOpen(true)}
-        /> : totalBadgesText}
+        {isMine ? (
+          <Button
+            width='140px'
+            height='30px'
+            content={totalBadgesText}
+            handler={() => setIsBadgesModalOpen(true)}
+          />
+        ) : (
+          totalBadgesText
+        )}
         <div>성공한 챌린지 : {successCounts}개</div>
       </UserProfileLowContainer>
       {isBadgesModalOpen ? (
-        <BadgesModal closeModal={setIsBadgesModalOpen}></BadgesModal>
+        <BadgesModal
+          userInfo={userInfo}
+          setUserInfo={setUserInfo}
+          closeModal={setIsBadgesModalOpen}
+        ></BadgesModal>
       ) : null}
     </UserProfileContainer>
   );

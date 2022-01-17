@@ -1,7 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { updateUserinfo } from '../actions';
-import { updateMyBadges, requestMyinfo } from '../apis';
+import { updateMyBadges } from '../apis';
 import styled from 'styled-components';
 import { color, device, radius } from '../styles';
 import Button from './Button';
@@ -122,37 +120,32 @@ const ButtonContainer = styled.div`
   display: flex;
 `;
 
-const BadgesModal = ({ closeModal }) => {  
-  const state = useSelector((state) => state.userReducer);  
-  const { badges, badge_id } = state.userInfo;
+const BadgesModal = ({ userInfo, setUserInfo, closeModal }) => {
+  const { badges, badge_id } = userInfo;
   const [badgeInfo, setbadgeInfo] = useState([]);
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    requestMyinfo(`${state.userInfo.user_id}`)
-      .then((result) => {
-        const { badges, selected_badges } = result.user_info;
-        const TotalBadges = new Array(20).fill();
-        for (let i = 0; i < TotalBadges.length; i++)
-          TotalBadges[i] = { id: i + 1, src: 'src' };
-          TotalBadges.forEach((el, idx) => {
-            if (badges.includes(idx + 1)) {
-              if (selected_badges.includes(idx + 1)) {
-                el.type = 'selected';
-              } else {
-                el.type = 'unselected';
-              }
-            } else {
-              el.type = 'absent';
-            }
-          });
-        setbadgeInfo(TotalBadges)
-      })
-  // eslint-disable-next-line
-  }, [])
-
+  
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [responseStatus, setResponseStatus] = useState('no status');
+
+  useEffect(() => {
+    const { badges, selected_badges } = userInfo;
+    const TotalBadges = new Array(20).fill();
+    for (let i = 0; i < TotalBadges.length; i++)
+      TotalBadges[i] = { id: i + 1, src: 'src' };
+    TotalBadges.forEach((el, idx) => {
+      if (badges.includes(idx + 1)) {
+        if (selected_badges.includes(idx + 1)) {
+          el.type = 'selected';
+        } else {
+          el.type = 'unselected';
+        }
+      } else {
+        el.type = 'absent';
+      }
+    });
+    setbadgeInfo(TotalBadges)
+    // eslint-disable-next-line
+  }, []);
 
   const ModalMessage = ({ status, btnHandler = () => {} }) => {
     switch (status) {
@@ -183,11 +176,9 @@ const BadgesModal = ({ closeModal }) => {
     if (!badges.includes(idx)) {
       return;
     }
-
     const selectedBadges = badgeInfo
       .filter((el) => el.type === 'selected')
       .map((el) => el.id);
-
     if (selectedBadges.includes(idx)) {
       const change = [...badgeInfo];
       change[idx - 1] = Object.assign({}, badgeInfo[idx - 1], {
@@ -204,23 +195,21 @@ const BadgesModal = ({ closeModal }) => {
   };
 
   const requestChangeSelectedBadges = () => {
-    const result = {
+    const payload = {
       badge_ids: badgeInfo
         .filter((el) => el.type === 'selected')
         .map((el) => el.id),
     };
-    updateMyBadges(result).then((result) => {
-      setResponseStatus('success change badges')
-      setIsModalOpen(true)
-    }).then(() => {
-      const toDispatch = Object.assign({}, result, { selected_badges: result.badge_ids })
-      delete toDispatch.badge_ids
-      console.log(toDispatch)
-      dispatch(updateUserinfo(toDispatch));
-    }).catch(err => {
-      setResponseStatus('no status')
-      setIsModalOpen(true)
-    });
+    updateMyBadges(payload)
+      .then((result) => {
+        setResponseStatus('success change badges');
+        setIsModalOpen(true);
+        setUserInfo({ ...userInfo, selected_badges: payload.badge_ids })
+      })
+      .catch((err) => {
+        setResponseStatus('no status');
+        setIsModalOpen(true);
+      });
   };
 
   return (
@@ -243,7 +232,7 @@ const BadgesModal = ({ closeModal }) => {
           })}
         </BadgesViewer>
         <ButtonContainer>
-          <Button content="저장" handler={requestChangeSelectedBadges}/>
+          <Button content='저장' handler={requestChangeSelectedBadges} />
         </ButtonContainer>
       </BadgesModalContainer>
       {isModalOpen ? (
