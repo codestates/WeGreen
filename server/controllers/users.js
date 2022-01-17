@@ -51,6 +51,7 @@ module.exports = {
             user_id: user.id,
             username: user.username,
             is_admin: user.is_admin,
+            is_social: user.is_social,
           };
           const { id, email, username, is_social, is_admin, bio, badge_id } =
             user;
@@ -368,6 +369,7 @@ module.exports = {
               badge_id: user.badge_id,
               badges: badges,
               selected_badges: selected_badges,
+              is_social: user.is_social,
             },
             challenge_info: {
               challenges: result,
