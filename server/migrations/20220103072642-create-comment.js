@@ -34,6 +34,12 @@ module.exports = {
       username: {
         allowNull: false,
         type: Sequelize.STRING,
+        references: {
+          model: 'users',
+          key: 'username',
+        },
+        onDelete: 'cascade',
+        onUpdate: 'cascade',
       },
       created_at: {
         allowNull: false,

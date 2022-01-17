@@ -21,7 +21,7 @@ const KakaoLoginInfo = styled.div`
     background-color: ${color.primaryLight};
   }
 `;
-
+var check = false;
 const KakaoPage = () => {
   // 인가코드
   const authorizationCode = new URL(window.location.href).searchParams.get(
@@ -37,22 +37,25 @@ const KakaoPage = () => {
       }, 1000);
     }
   }, [loginState.isLogin]);
+  if (!check) {
+    check = true;
+    axios
+      .post(
+        `${process.env.REACT_APP_API_URL}/oauth/kakao/login`,
+        {
+          authorizationCode,
+        },
+        { 'Content-Type': 'application/json', withCredentials: true }
+      )
+      .then((result) => {
+        console.log('THIS IS CLIENT SIDE RESULT DATA!!', result.data);
+        dispatch(login(result.data.data));
+      })
+      .catch((err) => {
+        return err.response ? err.response : 'network error';
+      });
+  }
 
-  axios
-    .post(
-      `${process.env.REACT_APP_API_URL}/oauth/kakao/login`,
-      {
-        authorizationCode,
-      },
-      { 'Content-Type': 'application/json', withCredentials: true }
-    )
-    .then((result) => {
-      console.log('THIS IS CLIENT SIDE RESULT DATA!!', result.data);
-      dispatch(login(result.data.data));
-    })
-    .catch((err) => {
-      return err.response ? err.response : 'network error';
-    });
   return (
     <KakaoLoginInfo>
       <img src={kakaoIcon}></img> 카카오톡으로 로그인 중...

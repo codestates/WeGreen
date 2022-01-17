@@ -220,6 +220,7 @@ module.exports = {
     //유저정보 변경
     patch: async (req, res, next) => {
       try {
+        console.log('REQUEST BODY TO UPDATE USER INFO', req.body);
         if (req.body.username) {
           await UserModel.update(
             {
@@ -269,6 +270,7 @@ module.exports = {
           },
         });
       } catch (err) {
+        console.log('ERROR IN PATCH USER INFO', err);
         res.status(500).send({
           message: 'Internal server error',
         });
@@ -324,7 +326,6 @@ module.exports = {
             raw: true,
           });
 
-          console.log('!!THIS IS CHECK IN LOG', checkinLog.length);
           const is_accomplished =
             checkinLog.length >= Number(toCalculate.requirement);
           const joinCountArray = await UserChallengeModel.findOne({
