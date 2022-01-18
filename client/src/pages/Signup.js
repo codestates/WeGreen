@@ -193,7 +193,7 @@ const ModalMessage = ({ status }) => {
 
 const Signup = () => {
   const dispatch = useDispatch()
-  dispatch(changeTitle('Challenge'))
+  dispatch(changeTitle('SignUp'))
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [responseStatus, setResponseStatus] = useState('no status');

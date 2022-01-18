@@ -6,6 +6,7 @@ import { color, device, radius, boxShadow } from '../styles';
 import Button from './Button';
 import BadgesModal from './BadgesModal';
 import { ReactComponent as SettingIcon } from '../assets/images/icon_setting.svg';
+import Badges from '../assets/images/badges/badges';
 
 const UserProfileContainer = styled.div`
   position: relative;
@@ -30,12 +31,18 @@ const UserNameContainer = styled.div`
   align-items: center;
 
   & > div {
+    max-width: 70%;
     display: flex;
+    align-items: center;
     gap: 1rem;
+    overflow-x: clip;
   }
 `;
 
-const MainBadgeImg = styled.img``;
+const MainBadgeImg = styled.img`
+  width: 40px;
+  height: 40px;
+`;
 
 const SettingBtn = styled.button`
   position: relative;
@@ -93,7 +100,7 @@ const UserProfile = ({ userInfo, setUserInfo, successCounts }) => {
     <UserProfileContainer>
       <UserNameContainer>
         <div>
-          <MainBadgeImg badgeId={userInfo.badge_id} alt='대표뱃지' />
+          <MainBadgeImg src={Badges[userInfo.badge_id - 1]} alt='대표뱃지' />
           <h3>{userInfo.username}</h3>
         </div>
         {isMine ? (
