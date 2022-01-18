@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 import { color, radius } from '../styles';
-import { TODAY } from '../data/dummyData';
+import { TODAY } from '../data/initialData';
 
 const Container = styled.div`
   width: 100%;
@@ -15,7 +15,7 @@ const DateViewContainer = styled.div`
   justify-content: space-between;
   padding: 0 1rem;
   color: ${color.primary};
-  
+
   p {
     line-height: 0;
   }
@@ -83,11 +83,11 @@ const DayContainer = styled.div`
 
 const DateContainer = styled.div`
   width: 100%;
-  opacity: ${(props) => props.opacity === 'current' ? 1 : 0.5};
-  background-color: ${(props) => props.days === 'green' ? props.days : null};
-  border: ${(props) => props.today ? '1px solid green' : null};
+  opacity: ${(props) => (props.opacity === 'current' ? 1 : 0.5)};
+  background-color: ${(props) => (props.days === 'green' ? props.days : null)};
+  border: ${(props) => (props.today ? '1px solid green' : null)};
   border-radius: 10px;
-  color: ${(props) => props.days === 'green' ? 'white' : props.days};
+  color: ${(props) => (props.days === 'green' ? 'white' : props.days)};
 
   &:hover {
     cursor: pointer;
@@ -178,10 +178,11 @@ const Calendar = ({ pickedDate, setPickedDate }) => {
       <CalendarContainer>
         <CalendarHeaderSection>
           <ChangeMonthButton onClick={handleViewer}>&lt;</ChangeMonthButton>
-          {viewDate.getFullYear()}. {('0' + (viewDate.getMonth() + 1)).slice(-2)}.
+          {viewDate.getFullYear()}.{' '}
+          {('0' + (viewDate.getMonth() + 1)).slice(-2)}.
           <ChangeMonthButton onClick={handleViewer}>&gt;</ChangeMonthButton>
         </CalendarHeaderSection>
-          <TodayButton onClick={handleTodayButton}>오늘</TodayButton>
+        <TodayButton onClick={handleTodayButton}>오늘</TodayButton>
         <Divider />
         <CalendarDatesContainer>
           {days.map((day, i) => {

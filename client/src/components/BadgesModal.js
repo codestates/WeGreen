@@ -97,8 +97,8 @@ const BadgesViewer = styled.div`
 
 const MainBadge = styled.div`
   position: absolute;
-  bottom: 2px;
-  right: 2px;
+  bottom: 6px;
+  right: 6px;
   z-index: 899;
   width: 20px;
   height: 20px;

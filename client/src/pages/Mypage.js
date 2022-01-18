@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { updateUserinfo, changeTitle } from '../actions';
 import { requestMyinfo } from '../apis';
 import styled from 'styled-components';
@@ -40,6 +40,10 @@ const MyChallengesContainer = styled.section`
   flex-direction: column;
   align-items: center;
   gap: 1rem;
+  
+  @media ${device.laptop} {
+    max-width: calc(${contentWidth} * 1 / 3);
+  }
 `;
 
 const TitleContainer = styled.div`
@@ -103,6 +107,7 @@ const Mypage = () => {
   const userId = Number(params.id);
 
   const [isMine, setIsMine] = useState(false);
+  const navigate = useNavigate()
 
   const dispatch = useDispatch();
 
@@ -110,6 +115,8 @@ const Mypage = () => {
     requestMyinfo(`${userId}`).then((result) => {
       setUserInfo(result.user_info);
       setChallenges(result.challenge_info.challenges);
+    }).catch(err => {
+      navigate('/404')
     });
     // eslint-disable-next-line
   }, []);

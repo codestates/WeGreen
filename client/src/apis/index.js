@@ -198,7 +198,6 @@ export const joinChallenge = (challengeId) => {
 
 // 챌린지 체크인
 export const checkin = (challengeId) => {
-  console.log(`${process.env.REACT_APP_API_URL}/challenges/${challengeId}`);
   return axios
     .post(
       `${process.env.REACT_APP_API_URL}/challenges/${challengeId}/checkins`,

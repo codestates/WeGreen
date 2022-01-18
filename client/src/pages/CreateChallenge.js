@@ -11,7 +11,7 @@ import SelectForm from '../components/SelectForm';
 import Button from '../components/Button';
 import Modal from '../components/Modal';
 import { ReactComponent as Wave } from '../assets/images/wave.svg';
-import { TODAY } from '../data/dummyData';
+import { TODAY } from '../data/initialData';
 
 const Container = styled.div`
   padding-top: 1rem;
@@ -63,8 +63,8 @@ const InvalidMessage = styled.p`
 `;
 
 const CreateChallenge = () => {
-  const dispatch = useDispatch()
-  dispatch(changeTitle('Create Challenge'))
+  const dispatch = useDispatch();
+  dispatch(changeTitle('Create Challenge'));
 
   const loginState = useSelector((state) => state.userReducer);
   const { state } = useLocation();
