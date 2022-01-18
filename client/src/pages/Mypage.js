@@ -14,7 +14,6 @@ import { ReactComponent as Wave } from '../assets/images/wave.svg';
 const Container = styled.div`
   @media ${device.laptop} {
     width: 100%;
-    height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -116,7 +115,7 @@ const Mypage = () => {
 
   useEffect(() => {
     setIsMine(userId === Number(state.userInfo.user_id));
-    dispatch(changeTitle('Userpage'))
+    dispatch(changeTitle('Userpage'));
     if (isMine) {
       dispatch(updateUserinfo(userInfo));
     }
@@ -181,7 +180,11 @@ const Mypage = () => {
             <Wave width='100%' height='100' fill={color.white} />
           </TitleContainer>
           <ContentSection>
-            <UserProfile userInfo={userInfo} setUserInfo={setUserInfo} successCounts={successCounts} />
+            <UserProfile
+              userInfo={userInfo}
+              setUserInfo={setUserInfo}
+              successCounts={successCounts}
+            />
             <Tab
               tabInfo={[
                 ['ongoing', '참여중인 챌린지'],

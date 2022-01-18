@@ -10,6 +10,7 @@ export const device = {
 export const color = {
   primary: '#038175',
   primaryLight: '#E9F3F2',
+  primaryDark: '#005544',
   primaryBorder: '#81C0BA',
   secondary: '#94DD8B',
   secondaryDark: '#46BA37',
