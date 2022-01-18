@@ -97,6 +97,7 @@ const Mypage = () => {
   const [view, setView] = useState('ongoing');
   const [userInfo, setUserInfo] = useState(state.userInfo);
   const [challenges, setChallenges] = useState([{}]);
+  const [badgeInfo, setBadgeInfo] = useState([]);
 
   const params = useParams();
   const userId = Number(params.id);
@@ -109,6 +110,22 @@ const Mypage = () => {
     requestMyinfo(`${userId}`).then((result) => {
       setUserInfo(result.user_info);
       setChallenges(result.challenge_info.challenges);
+      const { badges, selected_badges } = result.user_info;
+      const TotalBadges = new Array(20).fill();
+      for (let i = 0; i < TotalBadges.length; i++)
+        TotalBadges[i] = { id: i + 1, src: 'src' };
+      TotalBadges.forEach((el, idx) => {
+        if (badges.includes(idx + 1)) {
+          if (selected_badges.includes(idx + 1)) {
+            el.type = 'selected';
+          } else {
+            el.type = 'unselected';
+          }
+        } else {
+          el.type = 'absent';
+        }
+      });
+      setBadgeInfo(TotalBadges);
     });
     // eslint-disable-next-line
   }, []);
@@ -121,6 +138,26 @@ const Mypage = () => {
     }
     // eslint-disable-next-line
   }, [state]);
+
+  // useEffect(() => {
+  //   const { badges, selected_badges } = userInfo;
+  //   const TotalBadges = new Array(20).fill();
+  //   for (let i = 0; i < TotalBadges.length; i++)
+  //     TotalBadges[i] = { id: i + 1, src: 'src' };
+  //   TotalBadges.forEach((el, idx) => {
+  //     if (badges.includes(idx + 1)) {
+  //       if (selected_badges.includes(idx + 1)) {
+  //         el.type = 'selected';
+  //       } else {
+  //         el.type = 'unselected';
+  //       }
+  //     } else {
+  //       el.type = 'absent';
+  //     }
+  //   });
+  //   setBadgeInfo(TotalBadges);
+  //   // eslint-disable-next-line
+  // }, []);
 
   const ongoingChallenges = challenges.filter((el) => el.is_finished === false);
   const finishedChallenges = challenges.filter((el) => el.is_finished === true);
@@ -173,7 +210,7 @@ const Mypage = () => {
   return (
     <Container>
       <MypageContainer>
-        <Illust />
+        <Illust badgeInfo={badgeInfo} />
         <MyChallengesContainer>
           <TitleContainer>
             <h1>{isMine ? '마이' : '사용자'}페이지</h1>
@@ -184,6 +221,8 @@ const Mypage = () => {
               userInfo={userInfo}
               setUserInfo={setUserInfo}
               successCounts={successCounts}
+              badgeInfo={badgeInfo}
+              setBadgeInfo={setBadgeInfo}
             />
             <Tab
               tabInfo={[

@@ -120,32 +120,16 @@ const ButtonContainer = styled.div`
   display: flex;
 `;
 
-const BadgesModal = ({ userInfo, setUserInfo, closeModal }) => {
+const BadgesModal = ({
+  userInfo,
+  setUserInfo,
+  closeModal,
+  badgeInfo,
+  setBadgeInfo,
+}) => {
   const { badges, badge_id } = userInfo;
-  const [badgeInfo, setbadgeInfo] = useState([]);
-  
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [responseStatus, setResponseStatus] = useState('no status');
-
-  useEffect(() => {
-    const { badges, selected_badges } = userInfo;
-    const TotalBadges = new Array(20).fill();
-    for (let i = 0; i < TotalBadges.length; i++)
-      TotalBadges[i] = { id: i + 1, src: 'src' };
-    TotalBadges.forEach((el, idx) => {
-      if (badges.includes(idx + 1)) {
-        if (selected_badges.includes(idx + 1)) {
-          el.type = 'selected';
-        } else {
-          el.type = 'unselected';
-        }
-      } else {
-        el.type = 'absent';
-      }
-    });
-    setbadgeInfo(TotalBadges)
-    // eslint-disable-next-line
-  }, []);
 
   const ModalMessage = ({ status, btnHandler = () => {} }) => {
     switch (status) {
@@ -184,13 +168,13 @@ const BadgesModal = ({ userInfo, setUserInfo, closeModal }) => {
       change[idx - 1] = Object.assign({}, badgeInfo[idx - 1], {
         type: 'unselected',
       });
-      setbadgeInfo(change);
+      setBadgeInfo(change);
     } else {
       const change = [...badgeInfo];
       change[idx - 1] = Object.assign({}, badgeInfo[idx - 1], {
         type: 'selected',
       });
-      setbadgeInfo(change);
+      setBadgeInfo(change);
     }
   };
 
@@ -204,7 +188,7 @@ const BadgesModal = ({ userInfo, setUserInfo, closeModal }) => {
       .then((result) => {
         setResponseStatus('success change badges');
         setIsModalOpen(true);
-        setUserInfo({ ...userInfo, selected_badges: payload.badge_ids })
+        setUserInfo({ ...userInfo, selected_badges: payload.badge_ids });
       })
       .catch((err) => {
         setResponseStatus('no status');

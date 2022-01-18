@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { color, device } from '../styles';
 import { ReactComponent as Background } from '../assets/images/illust/background.svg';
@@ -357,30 +358,74 @@ const IllustContainer = styled.div`
   }
 `;
 
-const Illust = () => {
+const Illust = ({ badgeInfo }) => {
   return (
     <IllustContainer>
       <Background width='100%' height='100%' />
-      <StyledPalm width='100%' height='100%' />
-      <StyledPuma width='100%' height='100%' />
-      <StyledMonstera width='100%' height='100%' />
-      <StyledStag width='100%' height='100%' />
-      <StyledPhilodendron width='100%' height='100%' />
-      <StyledGuzmania width='100%' height='100%' />
-      <StyledRedPanda width='100%' height='100%' />
-      <StyledFox width='100%' height='100%' />
-      <StyledMusa width='100%' height='100%' />
-      <StyledPhilodendronSmall width='100%' height='100%' />
-      <StyledPenstemon width='100%' height='100%' />
-      <StyledRafflesia width='100%' height='100%' />
-      <StyledRedFlowers width='100%' height='100%' />
-      <StyledVine width='100%' height='100%' />
-      <StyledToucan width='100%' height='100%' />
-      <StyledSlowth width='100%' height='100%' />
-      <StyledSnake width='100%' height='100%' />
-      <StyledTamarin width='100%' height='100%' />
-      <StyledBabyBear width='100%' height='100%' />
-      <StyledButterfly width='100%' height='100%' />
+      {badgeInfo[0] ? (
+        <>
+          {badgeInfo[0].type === 'selected' ? (
+            <StyledPalm width='100%' height='100%' />
+          ) : null}
+          {badgeInfo[10].type === 'selected' ? (
+            <StyledPuma width='100%' height='100%' />
+          ) : null}
+          {badgeInfo[1].type === 'selected' ? (
+            <StyledMonstera width='100%' height='100%' />
+          ) : null}
+          {badgeInfo[11].type === 'selected' ? (
+            <StyledStag width='100%' height='100%' />
+          ) : null}
+          {badgeInfo[2].type === 'selected' ? (
+            <StyledPhilodendron width='100%' height='100%' />
+          ) : null}
+          {badgeInfo[3].type === 'selected' ? (
+            <StyledGuzmania width='100%' height='100%' />
+          ) : null}
+          {badgeInfo[12].type === 'selected' ? (
+            <StyledRedPanda width='100%' height='100%' />
+          ) : null}
+          {badgeInfo[13].type === 'selected' ? (
+            <StyledFox width='100%' height='100%' />
+          ) : null}
+          {badgeInfo[4].type === 'selected' ? (
+            <StyledMusa width='100%' height='100%' />
+          ) : null}
+          {badgeInfo[6].type === 'selected' ? (
+            <StyledPhilodendronSmall width='100%' height='100%' />
+          ) : null}
+          {badgeInfo[5].type === 'selected' ? (
+            <StyledPenstemon width='100%' height='100%' />
+          ) : null}
+          {badgeInfo[7].type === 'selected' ? (
+            <StyledRafflesia width='100%' height='100%' />
+          ) : null}
+          {badgeInfo[8].type === 'selected' ? (
+            <StyledRedFlowers width='100%' height='100%' />
+          ) : null}
+          {badgeInfo[9].type === 'selected' ? (
+            <StyledVine width='100%' height='100%' />
+          ) : null}
+          {badgeInfo[14].type === 'selected' ? (
+            <StyledToucan width='100%' height='100%' />
+          ) : null}
+          {badgeInfo[15].type === 'selected' ? (
+            <StyledSlowth width='100%' height='100%' />
+          ) : null}
+          {badgeInfo[16].type === 'selected' ? (
+            <StyledSnake width='100%' height='100%' />
+          ) : null}
+          {badgeInfo[17].type === 'selected' ? (
+            <StyledTamarin width='100%' height='100%' />
+          ) : null}
+          {badgeInfo[18].type === 'selected' ? (
+            <StyledBabyBear width='100%' height='100%' />
+          ) : null}
+          {badgeInfo[19].type === 'selected' ? (
+            <StyledButterfly width='100%' height='100%' />
+          ) : null}
+        </>
+      ) : null}
     </IllustContainer>
   );
 };

@@ -72,7 +72,13 @@ const UserProfileLowContainer = styled.div`
   font-size: 0.875rem;
 `;
 
-const UserProfile = ({ userInfo, setUserInfo, successCounts }) => {
+const UserProfile = ({
+  userInfo,
+  setUserInfo,
+  successCounts,
+  badgeInfo,
+  setBadgeInfo,
+}) => {
   const navigate = useNavigate();
   const state = useSelector((state) => state.userReducer);
 
@@ -119,8 +125,10 @@ const UserProfile = ({ userInfo, setUserInfo, successCounts }) => {
       {isBadgesModalOpen ? (
         <BadgesModal
           userInfo={userInfo}
+          badgeInfo={badgeInfo}
           setUserInfo={setUserInfo}
           closeModal={setIsBadgesModalOpen}
+          setBadgeInfo={setBadgeInfo}
         ></BadgesModal>
       ) : null}
     </UserProfileContainer>
