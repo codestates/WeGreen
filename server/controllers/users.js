@@ -86,7 +86,13 @@ module.exports = {
   //토큰 구현 후 로그아웃
   logout: async (req, res, next) => {
     try {
-      res.clearCookie('accessToken'); //쿠키 클리어
+      res.clearCookie('accessToken', {
+        domain: process.env.SERVER_DOMAIN,
+        path: '/',
+        sameSite: 'none',
+        secure: true,
+        httpOnly: true,
+      }); //쿠키 클리어
       res.status(200).send({ message: 'OK' });
     } catch (err) {
       res.status(500).send({
@@ -158,7 +164,14 @@ module.exports = {
           },
           cascade: true,
         }).then(() => {
-          res.clearCookie('accessToken');
+          // res.clearCookie('accessToken');
+          res.clearCookie('accessToken', {
+            domain: process.env.SERVER_DOMAIN,
+            path: '/',
+            sameSite: 'none',
+            secure: true,
+            httpOnly: true,
+          });
           res.status(200).json({ message: 'OK' });
         });
       }

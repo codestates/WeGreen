@@ -1,6 +1,6 @@
-require("dotenv").config();
-const { sign, verify } = require("jsonwebtoken");
-const bcrypt = require("bcrypt");
+require('dotenv').config();
+const { sign, verify } = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 
 module.exports = {
   hashedpassword: (password) => {
@@ -16,16 +16,16 @@ module.exports = {
     });
   },
   sendAccessToken: (res, data, accessToken) => {
-    console.log("ACCESS TOKEN", accessToken);
-    res.cookie("accessToken", accessToken, {
-      // domain: process.env.SERVER_DOMAIN,
-      path: "/",
+    console.log('ACCESS TOKEN', accessToken);
+    res.cookie('accessToken', accessToken, {
+      domain: process.env.SERVER_DOMAIN,
+      path: '/',
       maxAge: 24 * 60 * 60 * 1000,
-      // sameSite: 'none',
-      // secure: true,
+      sameSite: 'none',
+      secure: true,
       httpOnly: true,
     });
-    res.json({ data, message: "OK" });
+    res.json({ data, message: 'OK' });
   },
   isAuthorized: (req) => {
     const accessToken = req.cookies.accessToken;
