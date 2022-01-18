@@ -380,7 +380,7 @@ const EditMyinfo = () => {
   return (
     <Container>
       <EditMyinfoContainer>
-        <Illust />
+        {/* <Illust badgeInfo={badgeInfo} /> */}
         <EditMyinfoSection>
           <TitleContainer>
             <h1>회원정보수정</h1>
