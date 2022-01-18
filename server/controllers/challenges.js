@@ -4,6 +4,7 @@ const {
   comment: CommentModel,
   checkin: CheckInModel,
   users_badge: UserBadgeModel,
+  user: UserModel,
   sequelize,
 } = require('../models');
 var express = require('express');
@@ -504,20 +505,45 @@ module.exports = {
           for (let element of checkinLog) {
             checkin_log.push(element.created_at);
           }
+          var randombadge;
           if (Number(findIfSuccess.requirement) <= checkin_log.length) {
             is_success = true;
-            const randombadge = getRandomBadge(1, 20);
-            const obtainBadge = await UserBadgeModel.create({
-              user_id: userId,
-              badge_id: randombadge,
-              is_selected: false,
+            const alreadyHave = await UserBadgeModel.findAll({
+              where: { user_id: userId },
+              attributes: ['badge_id'],
+              raw: true,
             });
+            const fullBadge = [
+              1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+              20,
+            ];
+            for (let idx of alreadyHave) {
+              if (fullBadge.includes(idx.badge_id)) {
+                fullBadge.splice(fullBadge.indexOf(idx.badge_id), 1);
+              }
+            }
+            var count = fullBadge.length;
+            if (count > 1) {
+              const randomIdx = getRandomBadge(0, count - 1);
+              randombadge = fullBadge[randomIdx];
+            } else if (count === 1) {
+              randombadge = fullBadge[0];
+            } else {
+              randombadge = -1;
+            }
+            if (randombadge > 0) {
+              const obtainBadge = await UserBadgeModel.create({
+                user_id: userId,
+                badge_id: randombadge,
+                is_selected: true, //획득시 바로 보이게
+              });
+            }
             res.status(201).json({
               message: 'OK',
               data: {
                 checkin_log: checkin_log,
                 is_accomplished: is_success,
-                obtained_badge: obtainBadge.badge_id,
+                obtained_badge: randombadge,
               },
             });
           } else {
@@ -655,11 +681,15 @@ module.exports = {
         } else {
           const authorization = isAuthorized(req);
           const userInfo = JSON.parse(authorization.data);
-          console.log('THIS IS USERINFO'.userInfo);
           const userId = userInfo.id;
+          const latestUserInfo = await UserModel.findOne({
+            where: { id: userId },
+            raw: true,
+            attributes: ['username'],
+          });
           const postComment = await CommentModel.create({
             user_id: userId,
-            username: userInfo.username,
+            username: latestUserInfo.username,
             challenge_id: req.params.challenge_id,
             content: req.body.content,
           });
