@@ -182,7 +182,11 @@ const Challenge = () => {
         setResponseStatus('success delete challenge');
       })
       .catch((err) => {
-        setResponseStatus('no status');
+        if (err.response.status === 401) {
+          setResponseStatus('unauthorized');
+        } else {
+          setResponseStatus('no status')
+        }
       });
   };
 
@@ -214,6 +218,8 @@ const Challenge = () => {
           checkin_count: checkinInfo.checkin_count + 1,
           ...result.data,
         });
+        return result
+      }).then((result) => {
         if (checkinInfo.is_accomplished === result.data.is_accomplished) {
           setResponseStatus('success checkin');
         } else {
@@ -221,7 +227,13 @@ const Challenge = () => {
         }
       })
       .catch((err) => {
-        setResponseStatus('duplicate checkin');
+        if (err.response.status === 401) {
+          setResponseStatus('unauthorized');
+        } else if (err.response.status === 409) {
+          setResponseStatus('duplicate checkin');
+        } else {
+          setResponseStatus('no status')
+        }
       });
   };
 
@@ -351,15 +363,34 @@ const Challenge = () => {
       case 'success challenge':
         return (
           <SuccessChallengeContainer>
-            <ObtainedBadge src={Badges[checkinInfo.obtained_badge - 1]} />
-            <p>
-              축하합니다! <br /> 챌린지에 성공하셨습니다. <br /> 뱃지를
-              획득하셨습니다.
-            </p>
-            <Button
-              content='뱃지 보러가기'
-              handler={() => navigate(`/mypage/${loginState.userInfo.user_id}`)}
-            />
+            {checkinInfo.obtained_badge !== -1 ? (
+              <>
+                <ObtainedBadge src={Badges[checkinInfo.obtained_badge - 1]} />
+                <p>
+                  축하합니다! <br /> 챌린지에 성공하셨습니다. <br /> 뱃지를
+                  획득하셨습니다.
+                </p>
+                <Button
+                  content='뱃지 보러가기'
+                  handler={() =>
+                    navigate(`/mypage/${loginState.userInfo.user_id}`)
+                  }
+                />
+              </>
+            ) : (
+              <>
+                <p>
+                  축하합니다! <br /> 챌린지에 성공하셨습니다. <br /> 이미 모든 뱃지를
+                  획득하셨습니다.
+                </p>
+                <Button
+                  content='뱃지 보러가기'
+                  handler={() =>
+                    navigate(`/mypage/${loginState.userInfo.user_id}`)
+                  }
+                />
+              </>
+            )}
           </SuccessChallengeContainer>
         );
       default:
