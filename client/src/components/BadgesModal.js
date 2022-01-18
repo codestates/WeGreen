@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { color, device, radius } from '../styles';
 import Button from './Button';
 import Modal from '../components/Modal';
+import Badges from '../assets/images/badges/badges';
 
 const Backdrop = styled.div`
   position: fixed;
@@ -94,22 +95,35 @@ const BadgesViewer = styled.div`
   }
 `;
 
-const BadgeType = {
-  absent: '',
-  unselected: '1px dashed black',
-  selected: '1px solid black',
-};
+const MainBadge = styled.div`
+  position: absolute;
+  bottom: 6px;
+  right: 6px;
+  z-index: 899;
+  width: 20px;
+  height: 20px;
+  background-color: ${color.primary};
+  border-radius: 50%;
+`;
 
-const MainBadgeStyle = '2px';
-
-const Badge = styled.img`
+const BadgeContainer = styled.div`
   position: relative;
   z-index: 99;
   width: 80px;
   height: 80px;
-  border: ${(props) => props.border};
-  border-width: ${(props) => props.isMain};
-  border-radius: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  outline: ${(props) => props.outline};
+  border-radius: 50%;
+`;
+
+const Badge = styled.img`
+  src: ${(props) => props.src};
+  position: relative;
+  z-index: 99;
+  width: 66px;
+  height: 66px;
 `;
 
 const ButtonContainer = styled.div`
@@ -204,14 +218,15 @@ const BadgesModal = ({
         <BadgesViewer>
           {badgeInfo.map((el, idx) => {
             return (
-              <Badge
+              <BadgeContainer
                 key={el.id}
-                src={el.src}
-                alt={el.id}
-                isMain={idx + 1 === badge_id ? MainBadgeStyle : null}
-                border={BadgeType[el.type]}
-                onClick={handleBadgeInfo}
-              />
+                outline={
+                  el.type === 'selected' ? `2px solid ${color.primary}` : null
+                }
+              >
+                <Badge src={el.src} alt={el.id} onClick={handleBadgeInfo} />
+                {idx + 1 === badge_id ? <MainBadge /> : null}
+              </BadgeContainer>
             );
           })}
         </BadgesViewer>

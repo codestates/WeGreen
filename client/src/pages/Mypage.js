@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { updateUserinfo, changeTitle } from '../actions';
 import { requestMyinfo } from '../apis';
 import styled from 'styled-components';
@@ -39,6 +39,10 @@ const MyChallengesContainer = styled.section`
   flex-direction: column;
   align-items: center;
   gap: 1rem;
+  
+  @media ${device.laptop} {
+    max-width: calc(${contentWidth} * 1 / 3);
+  }
 `;
 
 const TitleContainer = styled.div`
@@ -103,6 +107,7 @@ const Mypage = () => {
   const userId = Number(params.id);
 
   const [isMine, setIsMine] = useState(false);
+  const navigate = useNavigate()
 
   const dispatch = useDispatch();
 
@@ -126,6 +131,8 @@ const Mypage = () => {
         }
       });
       setBadgeInfo(TotalBadges);
+    }).catch(err => {
+      navigate('/404')
     });
     // eslint-disable-next-line
   }, []);
@@ -138,26 +145,6 @@ const Mypage = () => {
     }
     // eslint-disable-next-line
   }, [state]);
-
-  // useEffect(() => {
-  //   const { badges, selected_badges } = userInfo;
-  //   const TotalBadges = new Array(20).fill();
-  //   for (let i = 0; i < TotalBadges.length; i++)
-  //     TotalBadges[i] = { id: i + 1, src: 'src' };
-  //   TotalBadges.forEach((el, idx) => {
-  //     if (badges.includes(idx + 1)) {
-  //       if (selected_badges.includes(idx + 1)) {
-  //         el.type = 'selected';
-  //       } else {
-  //         el.type = 'unselected';
-  //       }
-  //     } else {
-  //       el.type = 'absent';
-  //     }
-  //   });
-  //   setBadgeInfo(TotalBadges);
-  //   // eslint-disable-next-line
-  // }, []);
 
   const ongoingChallenges = challenges.filter((el) => el.is_finished === false);
   const finishedChallenges = challenges.filter((el) => el.is_finished === true);

@@ -12,6 +12,7 @@ import Button from '../components/Button';
 import Modal from '../components/Modal';
 import BadgeModal from '../components/BadgeModal';
 import { ReactComponent as Wave } from '../assets/images/wave.svg';
+import Badges from '../assets/images/badges/badges';
 
 const Container = styled.div`
   @media ${device.laptop} {
@@ -82,8 +83,6 @@ const BadgeNameContainer = styled.div`
 const MainBadgeImg = styled.img`
   width: 80px;
   height: 80px;
-  object-fit: cover;
-  background-color: ${color.primary};
 `;
 
 const ModifyPasswordContainer = styled.div`
@@ -131,8 +130,8 @@ const Divider = styled.div`
 `;
 
 const EditMyinfo = () => {
-  const dispatch = useDispatch()
-  dispatch(changeTitle('Edit Myinfo'))
+  const dispatch = useDispatch();
+  dispatch(changeTitle('Edit Myinfo'));
   const state = useSelector((state) => state.userReducer);
   const navigate = useNavigate();
 
@@ -390,7 +389,7 @@ const EditMyinfo = () => {
           <EditMyinfoBioContainer>
             <BadgeNameContainer>
               <MainBadgeImg
-                badgeId={1}
+                src={Badges[myinfo.badge_id - 1]}
                 alt='대표뱃지'
                 onClick={() => setIsBadgeModalOpen(true)}
               />
@@ -409,51 +408,55 @@ const EditMyinfo = () => {
             <Button content='저장하기' handler={handleUpdateMyinfo} />
           </EditMyinfoBioContainer>
           <Divider />
-          <ModifyPasswordContainer>
-            <h4>비밀번호 변경</h4>
-            {isExpanded ? (
-              <>
-                <InputForm
-                  value={modify.now}
-                  type='password'
-                  placeholder='현재 비밀번호'
-                  handleValue={handleInputPassword('now')}
-                />
-                <InputForm
-                  value={modify.new}
-                  type='password'
-                  placeholder='새로운 비밀번호'
-                  handleValue={onChangePassword}
-                />
-                {isValidPassword ? null : (
-                  <InvalidMessage>
-                    *비밀번호는 최소 8자리 이상이어야 하며 영문자, 숫자,
-                    특수문자(!@#$%^&*?)가 1개 이상 사용되어야 합니다.
-                  </InvalidMessage>
+          {!myinfo.is_social ? (
+            <>
+              <ModifyPasswordContainer>
+                <h4>비밀번호 변경</h4>
+                {isExpanded ? (
+                  <>
+                    <InputForm
+                      value={modify.now}
+                      type='password'
+                      placeholder='현재 비밀번호'
+                      handleValue={handleInputPassword('now')}
+                    />
+                    <InputForm
+                      value={modify.new}
+                      type='password'
+                      placeholder='새로운 비밀번호'
+                      handleValue={onChangePassword}
+                    />
+                    {isValidPassword ? null : (
+                      <InvalidMessage>
+                        *비밀번호는 최소 8자리 이상이어야 하며 영문자, 숫자,
+                        특수문자(!@#$%^&*?)가 1개 이상 사용되어야 합니다.
+                      </InvalidMessage>
+                    )}
+                    <InputForm
+                      value={modify.re}
+                      type='password'
+                      placeholder='새로운 비밀번호 확인'
+                      handleValue={onChangePasswordConfirm}
+                    />
+                    {isValidPasswordConfirm ? null : (
+                      <InvalidMessage>*비밀번호가 다릅니다.</InvalidMessage>
+                    )}
+                    <Button
+                      content='비밀번호 변경'
+                      handler={handleModifyPassword}
+                    />
+                  </>
+                ) : (
+                  <Button
+                    content='비밀번호 변경'
+                    color='tertiary'
+                    handler={handleIsExpanded}
+                  />
                 )}
-                <InputForm
-                  value={modify.re}
-                  type='password'
-                  placeholder='새로운 비밀번호 확인'
-                  handleValue={onChangePasswordConfirm}
-                />
-                {isValidPasswordConfirm ? null : (
-                  <InvalidMessage>*비밀번호가 다릅니다.</InvalidMessage>
-                )}
-                <Button
-                  content='비밀번호 변경'
-                  handler={handleModifyPassword}
-                />
-              </>
-            ) : (
-              <Button
-                content='비밀번호 변경'
-                color='tertiary'
-                handler={handleIsExpanded}
-              />
-            )}
-          </ModifyPasswordContainer>
-          <Divider />
+              </ModifyPasswordContainer>
+              <Divider />
+            </>
+          ) : null}
           <SignoutContainer>
             <h4>회원탈퇴</h4>
             <Button

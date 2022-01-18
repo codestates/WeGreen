@@ -19,7 +19,8 @@ import ChallengeComments from '../components/ChallengeComments';
 import { ReactComponent as EditIcon } from '../assets/images/icon_edit.svg';
 import { ReactComponent as DeleteIcon } from '../assets/images/icon_delete.svg';
 import { ReactComponent as PersonIcon } from '../assets/images/icon_person.svg';
-import { dummyChallenge, dummyComments, TODAY } from '../data/dummyData';
+import Badges from '../assets/images/badges/badges';
+import { loadingChallenge, loadingComments, TODAY } from '../data/initialData';
 
 const OuterContainer = styled.div`
   @media ${device.laptop} {
@@ -109,52 +110,60 @@ const GridSpan = styled.div`
   grid-column: 2;
 `;
 
+const SuccessChallengeContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const ObtainedBadge = styled.img`
+  width: 200px;
+  object-fit: contain;
+`;
+
 const Challenge = () => {
-  const dispatch = useDispatch()
-  dispatch(changeTitle('Challenge'))
+  const dispatch = useDispatch();
+  dispatch(changeTitle('Challenge'));
 
   const params = useParams();
   const loginState = useSelector((state) => state.userReducer);
   const navigate = useNavigate();
 
   const [view, setView] = useState('info');
-  const [challengeInfo, setChallengeInfo] = useState(dummyChallenge);
+  const [challengeInfo, setChallengeInfo] = useState(loadingChallenge);
   const [checkinInfo, setCheckinInfo] = useState({
     checkin_count: 0,
     checkin_log: [],
     is_accomplished: false,
   });
-  const [comments, setComments] = useState(dummyComments);
+  const [comments, setComments] = useState(loadingComments);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [responseStatus, setResponseStatus] = useState('no status');
 
-  const checkin_log = checkinInfo.checkin_log.map((el) => {
+  const checkinLog = checkinInfo.checkin_log.map((el) => {
     const log = new Date(el);
     return log.toString();
   });
 
-  const startedAt = new Date(challengeInfo.started_at)
-  const finishedAt = new Date(challengeInfo.started_at)
-  finishedAt.setDate(startedAt.getDate() + 6)
+  const startedAt = new Date(challengeInfo.started_at);
+  const finishedAt = new Date(challengeInfo.started_at);
+  finishedAt.setDate(startedAt.getDate() + 6);
 
-  const isAdmin = loginState.userInfo.is_admin
+  const isAdmin = loginState.userInfo.is_admin;
   const isAuthor = loginState.userInfo.user_id === challengeInfo.author;
-  const isCheckined = checkin_log.includes(TODAY.toString());
+  const isCheckined = checkinLog.includes(TODAY.toString());
   const isStarted = startedAt <= TODAY;
-  const isFinished = finishedAt <= TODAY;
+  const isFinished = finishedAt < TODAY;
 
   useEffect(() => {
-    requestChallenge(params.id)
-      .then((result) => {
-        setChallengeInfo(result.challenge_info);
-        setCheckinInfo(result.checkin_info);
-        setComments(result.comments);
-      })
+    requestChallenge(params.id).then((result) => {
+      setChallengeInfo(result.challenge_info);
+      setCheckinInfo(result.checkin_info);
+      setComments(result.comments);
+    });
     // eslint-disable-next-line
   }, []);
-
-  console.log(isAdmin)
 
   const moveEditChallenge = () => {
     navigate(`/editchallenge/${challengeInfo.challenge_id}`, {
@@ -170,11 +179,14 @@ const Challenge = () => {
   const handleDeleteChallenge = () => {
     deleteChallenge(`${challengeInfo.challenge_id}`)
       .then((result) => {
-        setTimeout(() => navigate('/challenges'), 3000);
         setResponseStatus('success delete challenge');
       })
       .catch((err) => {
-        setResponseStatus('no status');
+        if (err.response.status === 401) {
+          setResponseStatus('unauthorized');
+        } else {
+          setResponseStatus('no status');
+        }
       });
   };
 
@@ -187,7 +199,6 @@ const Challenge = () => {
     joinChallenge(challengeInfo.challenge_id)
       .then((result) => {
         setResponseStatus('success join challenge');
-        setTimeout(() => window.location.reload(), 3000);
       })
       .catch((err) => {
         setResponseStatus('no status');
@@ -202,16 +213,28 @@ const Challenge = () => {
   const handleCheckin = () => {
     checkin(challengeInfo.challenge_id)
       .then((result) => {
-        if (checkinInfo.is_accomplished === result.data.is_accomplished ) {
+        setCheckinInfo({
+          ...checkinInfo,
+          checkin_count: checkinInfo.checkin_count + 1,
+          ...result.data,
+        });
+        return result;
+      })
+      .then((result) => {
+        if (checkinInfo.is_accomplished === result.data.is_accomplished) {
           setResponseStatus('success checkin');
-          setTimeout(() => window.location.reload(), 1000);
         } else {
           setResponseStatus('success challenge');
-          setTimeout(() => window.location.reload(), 10000);
         }
       })
       .catch((err) => {
-        setResponseStatus('duplicate checkin');
+        if (err.response.status === 401) {
+          setResponseStatus('unauthorized');
+        } else if (err.response.status === 409) {
+          setResponseStatus('duplicate checkin');
+        } else {
+          setResponseStatus('no status');
+        }
       });
   };
 
@@ -296,11 +319,7 @@ const Challenge = () => {
       case 'success delete challenge':
         return (
           <>
-            <p>
-              챌린지 삭제가 완료되었습니다.
-              <br />
-              잠시 후 이동됩니다.
-            </p>
+            <p>챌린지 삭제가 완료되었습니다.</p>
             <Button content='확인' handler={() => navigate('/challenges')} />
           </>
         );
@@ -343,11 +362,37 @@ const Challenge = () => {
           </>
         );
       case 'success challenge':
-          return (
-            <>
-              <p>축하합니다! <br /> 챌린지에 성공하셨습니다. <br /> 뱃지를 획득하셨습니다.</p>
-              <Button content='뱃지 보러가기' handler={() => navigate(`/mypage/${loginState.userInfo.user_id}`)} />
-            </>
+        return (
+          <SuccessChallengeContainer>
+            {checkinInfo.obtained_badge !== -1 ? (
+              <>
+                <ObtainedBadge src={Badges[checkinInfo.obtained_badge - 1]} />
+                <p>
+                  축하합니다! <br /> 챌린지에 성공하셨습니다. <br /> 뱃지를
+                  획득하셨습니다.
+                </p>
+                <Button
+                  content='뱃지 보러가기'
+                  handler={() =>
+                    navigate(`/mypage/${loginState.userInfo.user_id}`)
+                  }
+                />
+              </>
+            ) : (
+              <>
+                <p>
+                  축하합니다! <br /> 챌린지에 성공하셨습니다. <br /> 이미 모든
+                  뱃지를 획득하셨습니다.
+                </p>
+                <Button
+                  content='뱃지 보러가기'
+                  handler={() =>
+                    navigate(`/mypage/${loginState.userInfo.user_id}`)
+                  }
+                />
+              </>
+            )}
+          </SuccessChallengeContainer>
         );
       default:
         return (
@@ -395,7 +440,7 @@ const Challenge = () => {
                   <EditIcon width='20' height='20' fill={color.secondary} />
                 </EditBtn>
               </>
-             ) : (
+            ) : (
               <>
                 <EditBtn>
                   <EditIcon width='20' height='20' fill={color.grey} />
@@ -478,6 +523,7 @@ const Challenge = () => {
       {isModalOpen ? (
         <Modal closeModal={setIsModalOpen}>
           <ModalMessage
+            obtained_badge={checkinInfo.obtained_badge || null}
             status={responseStatus}
             btnHandler={() => setIsModalOpen(false)}
           />

@@ -12,7 +12,12 @@ import kakaoIcon from '../assets/images/login_icon_kakao.svg';
 import googleIcon from '../assets/images/login_icon_google.svg';
 import naverIcon from '../assets/images/login_icon_naver.svg';
 import { color, device, radius, boxShadow } from '../styles';
-import { requestKakaoLogin, requestNaverLogin, requestGoogleLogin, requestLogin } from '../apis';
+import {
+  requestKakaoLogin,
+  requestNaverLogin,
+  requestGoogleLogin,
+  requestLogin,
+} from '../apis';
 import { login, changeTitle } from '../actions';
 
 const Container = styled.div`
@@ -153,7 +158,7 @@ const ModalMessage = ({ status }) => {
     case 'unauthorized':
       return (
         <p>
-          비밀번호가 잘못되었습니다.
+          이메일 또는 비밀번호가 잘못되었습니다.
           <br />
           다시 시도해 주세요.
         </p>
@@ -178,7 +183,7 @@ const ModalMessage = ({ status }) => {
 const Login = () => {
   let navigate = useNavigate();
   const dispatch = useDispatch();
-  dispatch(changeTitle('Login'))
+  dispatch(changeTitle('Login'));
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [responseStatus, setResponseStatus] = useState('no status');
@@ -186,11 +191,23 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isEmptyEmail, setIsEmptyEmail] = useState(false);
+  const [isValidEmail, setIsValidEmail] = useState(true);
   const [isEmptyPassword, setIsEmptyPassword] = useState(false);
 
+  // const onChangeEmail = (val) => {
+  //   setEmail(val);
+  //   setIsEmptyEmail(val === '');
+  // };
   const onChangeEmail = (val) => {
     setEmail(val);
     setIsEmptyEmail(val === '');
+    const emailRegex =
+      /([\w-.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+    if (!emailRegex.test(val)) {
+      setIsValidEmail(false);
+    } else {
+      setIsValidEmail(true);
+    }
   };
 
   const onChangePassword = (val) => {
@@ -245,10 +262,16 @@ const Login = () => {
             <Wave width='100%' height='100' fill={color.white} />
           </TitleContainer>
           <LoginForm>
-            <InputForm value={email} placeholder='이메일' handleValue={onChangeEmail} />
+            <InputForm
+              value={email}
+              placeholder='이메일'
+              handleValue={onChangeEmail}
+            />
             {isEmptyEmail ? (
               <InvalidMessage>*이메일을 입력해 주세요.</InvalidMessage>
-            ) : null}
+            ) : isValidEmail ? null : (
+              <InvalidMessage>*이메일 형식이 유효하지 않습니다.</InvalidMessage>
+            )}
             <InputForm
               value={password}
               placeholder='비밀번호'
@@ -266,7 +289,11 @@ const Login = () => {
           <SocialContainer>
             <SocialBtn image={kakaoIcon} onClick={requestKakaoLogin} />
             <SocialBtn image={naverIcon} onClick={requestNaverLogin} />
-            <SocialBtn image={googleIcon} onClick={requestGoogleLogin} hasBorder={true} />
+            <SocialBtn
+              image={googleIcon}
+              onClick={requestGoogleLogin}
+              hasBorder={true}
+            />
           </SocialContainer>
           <Link to='/signup'>
             <ColoredSpan>
