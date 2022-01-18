@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { color, contentWidth, device, radius } from '../styles';
-import { TODAY } from '../data/dummyData'
+import { TODAY } from '../data/initialData';
 
 const Container = styled.div`
   width: 100%;
@@ -30,7 +30,7 @@ const ChallengeInfoContainer = styled.div`
   & p:first-child {
     margin-top: 0;
   }
-  
+
   @media ${device.laptop} {
     border-radius: ${radius};
   }

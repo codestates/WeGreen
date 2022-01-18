@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { color, contentWidth, device, radius } from '../styles';
-import { TODAY } from '../data/dummyData';
+import { TODAY } from '../data/initialData';
 
 const Container = styled.div`
   width: 100%;
@@ -82,7 +82,6 @@ const ChallengeCheckin = ({ challengeInfo, checkinInfo }) => {
     return log.toString();
   });
 
-
   const startedAt = new Date(challengeInfo.started_at);
   const finishedAt = new Date(challengeInfo.started_at);
   finishedAt.setDate(startedAt.getDate() + 6);
@@ -123,10 +122,10 @@ const ChallengeCheckin = ({ challengeInfo, checkinInfo }) => {
             체크인 하였습니다.
           </p>
         ) : challengeInfo.is_joined ? (
-          <p>
-            {checkinInfo.checkin_count}번 체크인 하셨습니다.
-          </p>
-        ) : <p>완료된 챌린지입니다.</p>}
+          <p>{checkinInfo.checkin_count}번 체크인 하셨습니다.</p>
+        ) : (
+          <p>완료된 챌린지입니다.</p>
+        )}
         {challengeInfo.is_joined ? (
           <>
             <Highlighted>나의 체크인 현황</Highlighted>
