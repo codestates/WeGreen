@@ -25,7 +25,7 @@ module.exports = (sequelize, DataTypes) => {
       // visits : {type : DataTypes.INTEGER,
       // }
       created_at: {
-        type: DataTypes.DATEONLY,
+        type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
       },
     },
