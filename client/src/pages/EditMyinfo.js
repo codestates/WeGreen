@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { changeTitle, updateUserinfo, logout } from '../actions';
 import { requestMyinfo, updateMyinfo, modifyPassword, signout } from '../apis';
 import styled from 'styled-components';
-import { color, device, contentWidth, boxShadow } from '../styles';
+import { color, device, contentWidth } from '../styles';
 import Illust from '../components/Illust';
 import InputForm from '../components/InputForm';
 import TextareaForm from '../components/TextareaForm';
@@ -12,6 +12,7 @@ import Button from '../components/Button';
 import Modal from '../components/Modal';
 import BadgeModal from '../components/BadgeModal';
 import { ReactComponent as Wave } from '../assets/images/wave.svg';
+import { ReactComponent as EditIcon } from '../assets/images/icon_edit.svg';
 import Badges from '../assets/images/badges/badges';
 
 const Container = styled.div`
@@ -37,7 +38,6 @@ const EditMyinfoContainer = styled.div`
     grid-template-columns: 2fr 1fr;
     width: ${contentWidth};
     height: 100%;
-    box-shadow: ${boxShadow};
   }
 `;
 
@@ -76,13 +76,37 @@ const EditMyinfoBioContainer = styled.div`
 
 const BadgeNameContainer = styled.div`
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 1.5rem;
+  gap: 1rem;
+`;
+
+const MainBadge = styled.div`
+  position: relative;
+  flex-shrink: 0;
+  width: 80px;
+  height: 80px;
+  cursor: pointer;
 `;
 
 const MainBadgeImg = styled.img`
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 80px;
   height: 80px;
+`;
+
+const BadgeEditIcon = styled.div`
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 24px;
+  height: 24px;
+  padding: 5px;
+  border-radius: 50%;
+  background-color: ${color.primary};
+  pointer-events: none;
 `;
 
 const ModifyPasswordContainer = styled.div`
@@ -139,6 +163,7 @@ const EditMyinfo = () => {
   const [responseStatus, setResponseStatus] = useState('no status');
 
   const [isBadgeModalOpen, setIsBadgeModalOpen] = useState(false);
+  const [badgeInfo, setBadgeInfo] = useState([]);
 
   const [myinfo, setMyinfo] = useState(state.userInfo);
   const [badgeInfo, setBadgeInfo] = useState([]);
@@ -185,6 +210,24 @@ const EditMyinfo = () => {
         });
         setBadgeInfo(TotalBadges);
         dispatch(updateUserinfo(data));
+        const { badges, selected_badges } = result.user_info;
+        const TotalBadges = new Array(20).fill();
+        for (let i = 0; i < TotalBadges.length; i++)
+          TotalBadges[i] = { id: i + 1, src: Badges[i] };
+        TotalBadges.forEach((el, idx) => {
+          if (badges.includes(idx + 1)) {
+            if (selected_badges.includes(idx + 1)) {
+              el.type = 'selected';
+            } else {
+              el.type = 'unselected';
+            }
+          } else {
+            el.type = 'absent';
+            el.src = `${Badges[Badges.length - 1]}`;
+          }
+        });
+        setBadgeInfo(TotalBadges);
+        console.log(TotalBadges);
       });
     }
     // eslint-disable-next-line
@@ -423,11 +466,16 @@ const EditMyinfo = () => {
           </TitleContainer>
           <EditMyinfoBioContainer>
             <BadgeNameContainer>
-              <MainBadgeImg
-                src={Badges[myinfo.badge_id - 1]}
-                alt='대표뱃지'
-                onClick={() => setIsBadgeModalOpen(true)}
-              />
+              <MainBadge>
+                <MainBadgeImg
+                  src={Badges[myinfo.badge_id - 1]}
+                  alt='대표뱃지'
+                  onClick={() => setIsBadgeModalOpen(true)}
+                />
+                <BadgeEditIcon>
+                  <EditIcon width='15' height='15' fill={color.white} />
+                </BadgeEditIcon>
+              </MainBadge>
               <InputForm
                 value={myinfo.username}
                 placeholder='사용자 이름'

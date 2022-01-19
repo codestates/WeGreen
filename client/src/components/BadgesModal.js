@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { updateMyBadges } from '../apis';
 import styled from 'styled-components';
-import { color, device, radius } from '../styles';
+import { boxShadow, color, device, radius } from '../styles';
 import Button from './Button';
 import Modal from '../components/Modal';
 import Badges from '../assets/images/badges/badges';
@@ -32,6 +32,7 @@ const BadgesModalContainer = styled.div`
   background-color: white;
   border-radius: ${radius};
   text-align: center;
+  overflow: hidden;
 
   @media ${device.laptop} {
     width: 440px;
@@ -77,7 +78,7 @@ const CloseBtn = styled.button`
 const BadgesViewer = styled.div`
   position: relative;
   padding: 1rem;
-  margin-bottom: 3rem;
+  padding-bottom: 3.5rem;
   z-index: 999;
   display: grid;
   justify-content: center;
@@ -94,6 +95,24 @@ const BadgesViewer = styled.div`
 
   @media ${device.laptop} {
     grid-template-columns: repeat(4, 1fr);
+  }
+
+  &:after {
+    content: '';
+    position: fixed;
+    top: 85%;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 100;
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0) 20%,
+      rgba(255, 255, 255, 1) 80%
+    );
+
+    pointer-events: none;
   }
 `;
 
@@ -119,6 +138,7 @@ const BadgeContainer = styled.div`
   align-items: center;
   outline: ${(props) => props.outline};
   border-radius: 50%;
+  cursor: pointer;
 `;
 
 const Badge = styled.img`
@@ -135,6 +155,8 @@ const ButtonContainer = styled.div`
   z-index: 999;
   width: 50%;
   display: flex;
+  border-radius: ${radius};
+  box-shadow: ${boxShadow};
 `;
 
 const BadgesModal = ({
@@ -218,13 +240,14 @@ const BadgesModal = ({
       <Backdrop onClick={() => closeModal(false)}></Backdrop>
       <BadgesModalContainer>
         <CloseBtn onClick={() => closeModal(false)}>close</CloseBtn>
+        <p>마이페이지 일러스트에 보여질 동식물을 선택해주세요</p>
         <BadgesViewer>
           {badgeInfo.map((el, idx) => {
             return (
               <BadgeContainer
                 key={el.id}
                 outline={
-                  el.type === 'selected' ? `2px solid ${color.primary}` : null
+                  el.type === 'selected' ? `2px solid ${color.secondary}` : null
                 }
               >
                 <Badge src={el.src} alt={el.id} onClick={handleBadgeInfo} />

@@ -15,6 +15,8 @@ import Badges from '../assets/images/badges/badges';
 const Container = styled.div`
   @media ${device.laptop} {
     width: 100%;
+    height: calc(100vh - 60px);
+    min-height: 872px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -30,7 +32,7 @@ const MypageContainer = styled.div`
     grid-template-columns: 2fr 1fr;
     width: ${contentWidth};
     height: 100%;
-    box-shadow: ${boxShadow};
+    /* box-shadow: ${boxShadow}; */
   }
 `;
 
@@ -43,6 +45,7 @@ const MyChallengesContainer = styled.section`
 
   @media ${device.laptop} {
     max-width: calc(${contentWidth} * 1 / 3);
+    overflow-y: auto;
   }
 `;
 
