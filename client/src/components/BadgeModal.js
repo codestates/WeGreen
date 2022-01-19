@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { updateMyinfo } from '../apis';
 import styled from 'styled-components';
-import { color, device, radius } from '../styles';
+import { boxShadow, color, device, radius } from '../styles';
 import Button from './Button';
 import Modal from '../components/Modal';
 import Badges from '../assets/images/badges/badges';
@@ -31,6 +31,7 @@ const BadgeModalContainer = styled.div`
   background-color: white;
   border-radius: ${radius};
   text-align: center;
+  overflow: hidden;
 
   @media ${device.laptop} {
     width: 440px;
@@ -41,7 +42,7 @@ const CloseBtn = styled.button`
   position: relative;
   align-self: flex-end;
   width: 20px;
-  height: 20px;
+  height: 28px;
   z-index: 8999;
   background-color: transparent;
   text-indent: -999px;
@@ -76,6 +77,7 @@ const CloseBtn = styled.button`
 const BadgesViewer = styled.div`
   position: relative;
   padding: 1rem;
+  padding-bottom: 5rem;
   z-index: 999;
   display: grid;
   justify-content: center;
@@ -93,6 +95,24 @@ const BadgesViewer = styled.div`
   @media ${device.laptop} {
     grid-template-columns: repeat(4, 1fr);
   }
+
+  &:after {
+    content: '';
+    position: fixed;
+    top: 85%;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 100;
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0) 20%,
+      rgba(255, 255, 255, 1) 80%
+    );
+
+    pointer-events: none;
+  }
 `;
 
 const BadgeContainer = styled.div`
@@ -105,6 +125,7 @@ const BadgeContainer = styled.div`
   align-items: center;
   outline: ${(props) => props.outline};
   border-radius: 50%;
+  cursor: pointer;
 `;
 
 const Badge = styled.img`
@@ -121,6 +142,8 @@ const ButtonContainer = styled.div`
   z-index: 999;
   width: 50%;
   display: flex;
+  border-radius: ${radius};
+  box-shadow: ${boxShadow};
 `;
 
 const BadgeModal = ({ myinfo, setMyinfo, closeModal }) => {
@@ -131,10 +154,7 @@ const BadgeModal = ({ myinfo, setMyinfo, closeModal }) => {
     const { badges, badge_id } = myinfo;
     const badgeStatus = new Array(Badges.length - 1).fill();
     for (let i = 0; i < badgeStatus.length; i++)
-      badgeStatus[i] = {
-        id: i + 1,
-        src: `${Badges[i]}`,
-      };
+      badgeStatus[i] = { id: i + 1, src: Badges[i] };
     badgeStatus.forEach((el, idx) => {
       if (badges.includes(idx + 1)) {
         if (idx + 1 === badge_id) {
@@ -173,7 +193,6 @@ const BadgeModal = ({ myinfo, setMyinfo, closeModal }) => {
         type: 'unselected',
         src: Badges[selectedBadges - 1],
       };
-      console.log(change);
       setbadgeInfo(change);
     }
   };
@@ -228,6 +247,7 @@ const BadgeModal = ({ myinfo, setMyinfo, closeModal }) => {
       <Backdrop onClick={() => closeModal(false)}></Backdrop>
       <BadgeModalContainer>
         <CloseBtn onClick={() => closeModal(false)}>close</CloseBtn>
+        <p>대표 뱃지를 선택해주세요</p>
         <BadgesViewer>
           {badgeInfo.map((el, idx) => {
             return (
