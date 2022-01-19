@@ -24,7 +24,7 @@ module.exports = {
   popular: async (req, res) => {
     try {
       const search = req.query.query || '';
-      const limitNum = Number(req.query.limit) || 10;
+      const limitNum = Number(req.query.limit) || 20;
       const searchModel = await ChallengeModel.findAll({
         attributes: [
           ['id', 'challenge_id'],
@@ -110,7 +110,7 @@ module.exports = {
     try {
       const search = req.query.limit.split('=')[1] || '';
       //클라이언트에서 보낸 req.query를 찍어보면 req.query : {limit: '10$query=물'}
-      const limitNum = Number(req.query.limit) || 10;
+      const limitNum = Number(req.query.limit) || 20;
       const searchModel = await ChallengeModel.findAll({
         attributes: [
           ['id', 'challenge_id'],
@@ -318,12 +318,13 @@ module.exports = {
         const authorization = isAuthorized(req);
         const userInfo = JSON.parse(authorization.data);
         const userId = userInfo.id;
+        const is_admin = userInfo.is_admin;
         const toBeUpdated = await ChallengeModel.findOne({
           attributes: ['name', 'content'],
           where: { id: req.params.challenge_id, author: userId },
           raw: true,
         });
-        if (!toBeUpdated) {
+        if (!toBeUpdated && !is_admin) {
           //작성자 아니면 수정 불가
           res.status(401).json({
             message: 'Invalid token',
@@ -378,7 +379,7 @@ module.exports = {
           where: { id: req.params.challenge_id, author: userId },
           raw: true,
         });
-        if (!toBeUpdated) {
+        if (!toBeUpdated && !is_admin) {
           //작성자 아니면 삭제 불가
           res.status(401).json({
             message: 'Invalid token',
@@ -612,6 +613,7 @@ module.exports = {
           const authorization = isAuthorized(req);
           const userInfo = JSON.parse(authorization.data);
           const userId = userInfo.id;
+          const is_admin = userInfo.is_admin;
           const findFirst = await CommentModel.findOne({
             attributes: ['user_id'],
             where: {
@@ -620,7 +622,7 @@ module.exports = {
             },
             raw: true,
           });
-          if (findFirst.user_id === userId) {
+          if (findFirst.user_id === userId || is_admin) {
             const changedComment = await CommentModel.update(
               {
                 content: req.body.content,
@@ -650,6 +652,7 @@ module.exports = {
           const authorization = isAuthorized(req);
           const userInfo = JSON.parse(authorization.data);
           const userId = userInfo.id;
+          const is_admin = userInfo.is_admin;
           const findFirst = await CommentModel.findOne({
             attributes: ['user_id'],
             where: {
@@ -660,7 +663,7 @@ module.exports = {
           });
           console.log('USER ID', userId);
           console.log('findFirst.user_id', findFirst.user_id);
-          if (findFirst.user_id === userId) {
+          if (findFirst.user_id === userId || is_admin) {
             await CommentModel.destroy({
               where: { id: req.params.comment_id },
             });
