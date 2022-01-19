@@ -9,8 +9,8 @@ const {
 const { Op } = require('sequelize');
 
 const scheduler = () => {
-  cron.schedule('0 8 1 * *', async function () {
-    //매월 1일 오전 8시 메일 발송
+  cron.schedule('30 * * * *', async function () {
+    //매월 1일 오전 8시 메일 발송('0 8 1 * *')
     const oneMonthAgo = new Date(
       new Date().getFullYear(),
       new Date().getMonth() - 1,

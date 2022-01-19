@@ -48,7 +48,6 @@ const KakaoPage = () => {
         { 'Content-Type': 'application/json', withCredentials: true }
       )
       .then((result) => {
-        console.log('THIS IS CLIENT SIDE RESULT DATA!!', result.data);
         dispatch(login(result.data.data));
       })
       .catch((err) => {

@@ -53,16 +53,13 @@ module.exports = {
             is_admin: user.is_admin,
             is_social: user.is_social,
           };
-          const { id, email, username, is_social, is_admin, bio, badge_id } =
-            user;
+          const { id, email, is_social, is_admin, badge_id } = user;
           const accessToken = generateAccessToken(
             JSON.stringify({
               id,
               email,
-              username,
               is_social,
               is_admin,
-              bio,
               badge_id,
             })
           );
@@ -234,7 +231,6 @@ module.exports = {
     //유저정보 변경
     patch: async (req, res, next) => {
       try {
-        console.log('REQUEST BODY TO UPDATE USER INFO', req.body);
         if (req.body.username) {
           await UserModel.update(
             {
