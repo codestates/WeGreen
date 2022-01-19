@@ -155,7 +155,8 @@ const EditMyinfo = () => {
 
   useEffect(() => {
     if (!state.isLogin) {
-      navigate('/');
+      setResponseStatus('login required');
+      setIsModalOpen(true);
     } else {
       requestMyinfo(`${myinfo.user_id}`).then((result) => {
         setMyinfo({ ...myinfo, ...result.user_info });
@@ -318,6 +319,16 @@ const EditMyinfo = () => {
 
   const ModalMessage = ({ status, btnHandler = () => {} }) => {
     switch (status) {
+      case 'login required':
+        return (
+          <>
+            <p>로그인이 필요한 서비스입니다.</p>
+            <Button
+              content='로그인하러 가기'
+              handler={() => navigate('/login')}
+            ></Button>
+          </>
+        );
       case 'not changed':
         return (
           <>
@@ -510,7 +521,9 @@ const EditMyinfo = () => {
           <BadgeModal
             myinfo={myinfo}
             setMyinfo={setMyinfo}
-            closeModal={setIsBadgeModalOpen}
+            closeModal={
+              responseStatus !== 'login required' ? setIsModalOpen : () => {}
+            }
           ></BadgeModal>
         ) : null}
       </EditMyinfoContainer>

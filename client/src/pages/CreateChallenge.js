@@ -75,9 +75,11 @@ const CreateChallenge = () => {
 
   useEffect(() => {
     if (!loginState.isLogin) {
-      navigate('/login');
+      setResponseStatus('login required');
     }
-  });
+    setIsModalOpen(true);
+  // eslint-disable-next-line
+  }, []);
 
   const startDate = new Date(TODAY);
   startDate.setDate(startDate.getDate() + 1);
@@ -149,6 +151,16 @@ const CreateChallenge = () => {
             <Button content='확인' handler={btnHandler} />
           </>
         );
+      case 'login required':
+        return (
+          <>
+            <p>로그인이 필요한 서비스입니다.</p>
+            <Button
+              content='로그인하러 가기'
+              handler={() => navigate('/login')}
+            ></Button>
+          </>
+        );
       default:
         return (
           <>
@@ -205,7 +217,11 @@ const CreateChallenge = () => {
         <Button content='확인' handler={moveConfirm} />
       </CreateChallengeContainer>
       {isModalOpen ? (
-        <Modal closeModal={setIsModalOpen}>
+        <Modal
+          closeModal={
+            responseStatus !== 'login required' ? setIsModalOpen : () => {}
+          }
+        >
           <ModalMessage
             status={responseStatus}
             btnHandler={() => setIsModalOpen(false)}

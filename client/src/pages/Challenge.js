@@ -191,7 +191,11 @@ const Challenge = () => {
   };
 
   const handleJoinChallengeModal = () => {
-    setResponseStatus('confirm join challenge');
+    if (loginState.isLogin === false) {
+      setResponseStatus('login required');
+    } else {
+      setResponseStatus('confirm join challenge');
+    }
     setIsModalOpen(true);
   };
 
@@ -201,7 +205,11 @@ const Challenge = () => {
         setResponseStatus('success join challenge');
       })
       .catch((err) => {
-        setResponseStatus('no status');
+        if (err.response.status === 401) {
+          setResponseStatus('unauthorized');
+        } else {
+          setResponseStatus('no status');
+        }
       });
   };
 
@@ -299,7 +307,6 @@ const Challenge = () => {
         return (
           <>
             <p>
-              현재 비밀번호가 일치하지 않거나 <br />
               로그인이 만료되었습니다. <br />
               다시 시도해주세요.
             </p>
@@ -331,6 +338,18 @@ const Challenge = () => {
               content='네, 참가하겠습니다'
               handler={handleJoinChallenge}
             />
+          </>
+        );
+      case 'login required':
+        return (
+          <>
+            <p>
+              로그인이 필요한 서비스입니다.
+            </p>
+            <Button
+              content='로그인하러 가기'
+              handler={() => navigate('/login')}
+            ></Button>
           </>
         );
       case 'success join challenge':
