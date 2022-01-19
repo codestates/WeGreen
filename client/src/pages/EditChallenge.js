@@ -73,16 +73,6 @@ const EditChallenge = () => {
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!loginState.isLogin) {
-      navigate('/login');
-    }
-    if (!state) {
-      navigate('/challenges');
-    }
-    // eslint-disable-next-line
-  }, []);
-
   const info = state
     ? {
         challenge_id: state.challenge_id,
@@ -157,6 +147,32 @@ const EditChallenge = () => {
             <Button content='확인' handler={btnHandler} />
           </>
         );
+      case 'login required':
+        return (
+          <>
+            <p>
+              로그인을 하지 않으셨거나 만료되었습니다. <br />
+              다시 로그인을 해주세요.
+            </p>
+            <Button
+              content='로그인하러 가기'
+              handler={() => navigate('/login')}
+            ></Button>
+          </>
+        );
+      case 'invalid access':
+        return (
+          <>
+            <p>
+              비정상적인 접근입니다. <br />
+              홈으로 이동합니다.
+            </p>
+            <Button
+              content='홈으로 이동'
+              handler={() => navigate('/')}
+            ></Button>
+          </>
+        );
       default:
         return (
           <>
@@ -169,6 +185,16 @@ const EditChallenge = () => {
         );
     }
   };
+
+  useEffect(() => {
+    if (!loginState.isLogin) {
+      setResponseStatus('login required');
+    } else if (!state) {
+      setResponseStatus('invalid access');
+    }
+    setIsModalOpen(true);
+    // eslint-disable-next-line
+  }, []);
 
   return (
     <Container>
@@ -213,7 +239,14 @@ const EditChallenge = () => {
         <Button content='확인' handler={moveToConfirm} />
       </EditChallengeContainer>
       {isModalOpen ? (
-        <Modal closeModal={setIsModalOpen}>
+        <Modal
+          closeModal={
+            responseStatus !== 'login required' &&
+            responseStatus !== 'invalid access'
+              ? setIsModalOpen
+              : () => {}
+          }
+        >
           <ModalMessage
             status={responseStatus}
             btnHandler={() => setIsModalOpen(false)}

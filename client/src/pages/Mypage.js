@@ -97,6 +97,8 @@ const EmptyMessage = styled.p`
 `;
 
 const Mypage = () => {
+  const dispatch = useDispatch();
+  dispatch(changeTitle('Userpage'));
   const state = useSelector((state) => state.userReducer);
 
   const [view, setView] = useState('ongoing');
@@ -109,8 +111,6 @@ const Mypage = () => {
 
   const [isMine, setIsMine] = useState(false);
   const navigate = useNavigate();
-
-  const dispatch = useDispatch();
 
   useEffect(() => {
     requestMyinfo(`${userId}`)
@@ -143,7 +143,6 @@ const Mypage = () => {
 
   useEffect(() => {
     setIsMine(userId === Number(state.userInfo.user_id));
-    dispatch(changeTitle('Userpage'));
     if (isMine) {
       dispatch(updateUserinfo(userInfo));
     }

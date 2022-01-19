@@ -131,10 +131,7 @@ const BadgeModal = ({ myinfo, setMyinfo, closeModal }) => {
     const { badges, badge_id } = myinfo;
     const badgeStatus = new Array(Badges.length - 1).fill();
     for (let i = 0; i < badgeStatus.length; i++)
-      badgeStatus[i] = {
-        id: i + 1,
-        src: `${Badges[i]}`,
-      };
+      badgeStatus[i] = { id: i + 1, src: Badges[i] };
     badgeStatus.forEach((el, idx) => {
       if (badges.includes(idx + 1)) {
         if (idx + 1 === badge_id) {
@@ -173,7 +170,6 @@ const BadgeModal = ({ myinfo, setMyinfo, closeModal }) => {
         type: 'unselected',
         src: Badges[selectedBadges - 1],
       };
-      console.log(change);
       setbadgeInfo(change);
     }
   };

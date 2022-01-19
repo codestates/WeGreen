@@ -141,6 +141,7 @@ const EditMyinfo = () => {
   const [isBadgeModalOpen, setIsBadgeModalOpen] = useState(false);
 
   const [myinfo, setMyinfo] = useState(state.userInfo);
+  const [badgeInfo, setBadgeInfo] = useState([]);
   const [modify, setModify] = useState({
     now: '',
     new: '',
@@ -154,11 +155,35 @@ const EditMyinfo = () => {
 
   useEffect(() => {
     if (!state.isLogin) {
-      navigate('/');
+      setResponseStatus('login required');
+      setIsModalOpen(true);
     } else {
       requestMyinfo(`${myinfo.user_id}`).then((result) => {
         setMyinfo({ ...myinfo, ...result.user_info });
         const data = result.user_info;
+        const { badges, selected_badges, badge_id } = result.user_info;
+        const TotalBadges = new Array(20).fill();
+        for (let i = 0; i < TotalBadges.length; i++)
+          TotalBadges[i] = { id: i + 1, src: Badges[i] };
+        TotalBadges.forEach((el, idx) => {
+          if (badges.includes(idx + 1)) {
+            if (idx + 1 === badge_id) {
+              el.is_main = true;
+            } else {
+              el.is_main = false;
+            }
+            if (selected_badges.includes(idx + 1)) {
+              el.type = 'selected';
+            } else {
+              el.type = 'unselected';
+            }
+          } else {
+            el.is_main = false;
+            el.type = 'absent';
+            el.src = `${Badges[Badges.length - 1]}`;
+          }
+        });
+        setBadgeInfo(TotalBadges);
         dispatch(updateUserinfo(data));
       });
     }
@@ -294,6 +319,16 @@ const EditMyinfo = () => {
 
   const ModalMessage = ({ status, btnHandler = () => {} }) => {
     switch (status) {
+      case 'login required':
+        return (
+          <>
+            <p>로그인이 필요한 서비스입니다.</p>
+            <Button
+              content='로그인하러 가기'
+              handler={() => navigate('/login')}
+            ></Button>
+          </>
+        );
       case 'not changed':
         return (
           <>
@@ -380,7 +415,7 @@ const EditMyinfo = () => {
   return (
     <Container>
       <EditMyinfoContainer>
-        {/* <Illust badgeInfo={badgeInfo} /> */}
+        <Illust badgeInfo={badgeInfo} />
         <EditMyinfoSection>
           <TitleContainer>
             <h1>회원정보수정</h1>
@@ -486,7 +521,9 @@ const EditMyinfo = () => {
           <BadgeModal
             myinfo={myinfo}
             setMyinfo={setMyinfo}
-            closeModal={setIsBadgeModalOpen}
+            closeModal={
+              responseStatus !== 'login required' ? setIsModalOpen : () => {}
+            }
           ></BadgeModal>
         ) : null}
       </EditMyinfoContainer>
