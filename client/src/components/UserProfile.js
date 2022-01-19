@@ -6,6 +6,7 @@ import { color, device, radius, boxShadow } from '../styles';
 import Button from './Button';
 import BadgesModal from './BadgesModal';
 import { ReactComponent as SettingIcon } from '../assets/images/icon_setting.svg';
+import { ReactComponent as CrownIcon } from '../assets/images/icon_crown.svg';
 import Badges from '../assets/images/badges/badges';
 
 const UserProfileContainer = styled.div`
@@ -39,17 +40,39 @@ const UserNameContainer = styled.div`
   }
 `;
 
+const MainBadge = styled.div`
+  position: relative;
+  flex-shrink: 0;
+  width: 54px;
+  height: 54px;
+`;
+
 const MainBadgeImg = styled.img`
-  width: 40px;
-  height: 40px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 54px;
+  height: 54px;
+`;
+
+const MainBadgeIcon = styled.div`
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 16px;
+  height: 16px;
+  padding: 3px;
+  border-radius: 50%;
+  background-color: ${color.primary};
+  pointer-events: none;
 `;
 
 const SettingBtn = styled.button`
   position: relative;
-  width: 40px;
-  height: 27px;
+  width: 32px;
+  height: 32px;
   background-color: ${color.secondary};
-  border-radius: 17px;
+  border-radius: 16px;
   cursor: pointer;
 
   &::after {
@@ -106,7 +129,12 @@ const UserProfile = ({
     <UserProfileContainer>
       <UserNameContainer>
         <div>
-          <MainBadgeImg src={Badges[userInfo.badge_id - 1]} alt='대표뱃지' />
+          <MainBadge>
+            <MainBadgeImg src={Badges[userInfo.badge_id - 1]} alt='대표뱃지' />
+            <MainBadgeIcon>
+              <CrownIcon width='10' height='10' fill={color.tertiary} />
+            </MainBadgeIcon>
+          </MainBadge>
           <h3>{userInfo.username}</h3>
         </div>
         {isMine ? (
