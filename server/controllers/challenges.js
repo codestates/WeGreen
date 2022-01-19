@@ -54,23 +54,30 @@ module.exports = {
 
       const popularResult = [];
 
-      for (let challenge of searchModel) {
-        var join_count = await UserChallengeModel.findAll({
-          attributes: [
-            [sequelize.fn('COUNT', sequelize.col('user_id')), 'join_count'],
-            'challenge_id',
-          ],
-          where: { challenge_id: challenge.challenge_id },
-          group: ['challenge_id'],
-          raw: true,
-        });
-        if (join_count.length === 0) join_count = [{ join_count: 0 }];
-        popularResult.push(
-          Object.assign(challenge, {
-            join_count: join_count[0].join_count,
-          })
+      const joinCountArray = await UserChallengeModel.findAll({
+        attributes: [
+          [sequelize.fn('COUNT', sequelize.col('user_id')), 'join_count'],
+          'challenge_id',
+        ],
+        group: ['challenge_id'],
+        limit: limitNum,
+        order: [[sequelize.col('join_count'), 'DESC']],
+        raw: true,
+      });
+
+      for (let idx of joinCountArray) {
+        const searchModelIdx = searchModel.find(
+          (ele) => ele.challenge_id === idx.challenge_id
         );
+        if (searchModelIdx) {
+          popularResult.push(
+            Object.assign(searchModelIdx, {
+              join_count: idx.join_count,
+            })
+          );
+        }
       }
+
       res.status(200).json({ message: 'OK', data: popularResult });
     } catch (err) {
       console.log('ERROR', err);
