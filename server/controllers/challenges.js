@@ -52,52 +52,26 @@ module.exports = {
         },
       });
 
-      const joinCountArray = await UserChallengeModel.findAll({
-        attributes: [
-          [sequelize.fn('COUNT', sequelize.col('user_id')), 'join_count'],
-          'challenge_id',
-        ],
-        group: ['challenge_id'],
-        limit: limitNum,
-        order: [[sequelize.col('join_count'), 'DESC']],
-        raw: true,
-      });
       const popularResult = [];
 
-      if (searchModel) {
-        for (let i = 0; i < joinCountArray.length; i++) {
-          for (let j = 0; j < searchModel.length; j++) {
-            if (searchModel[j].id === joinCountArray[i].challenge_id) {
-              searchModel[j].join_count = joinCountArray[i].join_count;
-            } else {
-              continue;
-            }
-          }
-        }
-      }
-      for (let i = 0; i < joinCountArray.length; i++) {
-        await ChallengeModel.findOne({
+      for (let challenge of searchModel) {
+        var join_count = await UserChallengeModel.findAll({
           attributes: [
-            ['id', 'challenge_id'],
-            'name',
-            'content',
-            'started_at',
-            'requirement',
-            'created_at',
+            [sequelize.fn('COUNT', sequelize.col('user_id')), 'join_count'],
+            'challenge_id',
           ],
-          where: { id: joinCountArray[i].challenge_id },
+          where: { challenge_id: challenge.challenge_id },
+          group: ['challenge_id'],
           raw: true,
-        }).then((result) =>
-          popularResult.push(
-            Object.assign(result, {
-              join_count: joinCountArray[i]['join_count'],
-            })
-          )
+        });
+        if (join_count.length === 0) join_count = [{ join_count: 0 }];
+        popularResult.push(
+          Object.assign(challenge, {
+            join_count: join_count[0].join_count,
+          })
         );
       }
-      res
-        .status(200)
-        .json({ message: 'OK', data: search ? searchModel : popularResult });
+      res.status(200).json({ message: 'OK', data: popularResult });
     } catch (err) {
       console.log('ERROR', err);
       res.status(500).send({
@@ -108,7 +82,8 @@ module.exports = {
   //최신 챌린지 목록 불러오기 GET /latest
   latest: async (req, res) => {
     try {
-      const search = req.query.limit.split('=')[1] || '';
+      console.log('req.query', req.query);
+      const search = req.query.query || '';
       //클라이언트에서 보낸 req.query를 찍어보면 req.query : {limit: '10$query=물'}
       const limitNum = Number(req.query.limit) || 20;
       const searchModel = await ChallengeModel.findAll({
