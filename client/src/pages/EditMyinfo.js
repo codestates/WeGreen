@@ -163,7 +163,6 @@ const EditMyinfo = () => {
   const [responseStatus, setResponseStatus] = useState('no status');
 
   const [isBadgeModalOpen, setIsBadgeModalOpen] = useState(false);
-  const [badgeInfo, setBadgeInfo] = useState([]);
 
   const [myinfo, setMyinfo] = useState(state.userInfo);
   const [badgeInfo, setBadgeInfo] = useState([]);
@@ -185,31 +184,7 @@ const EditMyinfo = () => {
     } else {
       requestMyinfo(`${myinfo.user_id}`).then((result) => {
         setMyinfo({ ...myinfo, ...result.user_info });
-        const data = result.user_info;
-        const { badges, selected_badges, badge_id } = result.user_info;
-        const TotalBadges = new Array(20).fill();
-        for (let i = 0; i < TotalBadges.length; i++)
-          TotalBadges[i] = { id: i + 1, src: Badges[i] };
-        TotalBadges.forEach((el, idx) => {
-          if (badges.includes(idx + 1)) {
-            if (idx + 1 === badge_id) {
-              el.is_main = true;
-            } else {
-              el.is_main = false;
-            }
-            if (selected_badges.includes(idx + 1)) {
-              el.type = 'selected';
-            } else {
-              el.type = 'unselected';
-            }
-          } else {
-            el.is_main = false;
-            el.type = 'absent';
-            el.src = `${Badges[Badges.length - 1]}`;
-          }
-        });
-        setBadgeInfo(TotalBadges);
-        dispatch(updateUserinfo(data));
+        dispatch(updateUserinfo(result.user_info));
         const { badges, selected_badges } = result.user_info;
         const TotalBadges = new Array(20).fill();
         for (let i = 0; i < TotalBadges.length; i++)
@@ -227,7 +202,6 @@ const EditMyinfo = () => {
           }
         });
         setBadgeInfo(TotalBadges);
-        console.log(TotalBadges);
       });
     }
     // eslint-disable-next-line
@@ -558,7 +532,11 @@ const EditMyinfo = () => {
           </BackContainer>
         </EditMyinfoSection>
         {isModalOpen ? (
-          <Modal closeModal={setIsModalOpen}>
+          <Modal
+            closeModal={
+              responseStatus !== 'login required' ? setIsModalOpen : () => {}
+            }
+          >
             <ModalMessage
               status={responseStatus}
               btnHandler={() => setIsModalOpen(false)}
@@ -569,9 +547,7 @@ const EditMyinfo = () => {
           <BadgeModal
             myinfo={myinfo}
             setMyinfo={setMyinfo}
-            closeModal={
-              responseStatus !== 'login required' ? setIsModalOpen : () => {}
-            }
+            closeModal={setIsBadgeModalOpen}
           ></BadgeModal>
         ) : null}
       </EditMyinfoContainer>
