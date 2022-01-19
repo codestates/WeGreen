@@ -5,6 +5,7 @@ import { color, device, radius } from '../styles';
 import Button from './Button';
 import Modal from '../components/Modal';
 import Badges from '../assets/images/badges/badges';
+import { ReactComponent as CrownIcon } from '../assets/images/icon_crown.svg';
 
 const Backdrop = styled.div`
   position: fixed;
@@ -41,7 +42,7 @@ const CloseBtn = styled.button`
   position: relative;
   align-self: flex-end;
   width: 20px;
-  height: 20px;
+  height: 28px;
   z-index: 8999;
   background-color: transparent;
   text-indent: -999px;
@@ -76,6 +77,7 @@ const CloseBtn = styled.button`
 const BadgesViewer = styled.div`
   position: relative;
   padding: 1rem;
+  margin-bottom: 3rem;
   z-index: 999;
   display: grid;
   justify-content: center;
@@ -97,11 +99,12 @@ const BadgesViewer = styled.div`
 
 const MainBadge = styled.div`
   position: absolute;
-  bottom: 6px;
-  right: 6px;
+  bottom: 2px;
+  right: 2px;
   z-index: 899;
   width: 20px;
   height: 20px;
+  padding: 4px;
   background-color: ${color.primary};
   border-radius: 50%;
 `;
@@ -225,7 +228,11 @@ const BadgesModal = ({
                 }
               >
                 <Badge src={el.src} alt={el.id} onClick={handleBadgeInfo} />
-                {idx + 1 === badge_id ? <MainBadge /> : null}
+                {idx + 1 === badge_id ? (
+                  <MainBadge>
+                    <CrownIcon width='12' height='12' fill={color.tertiary} />
+                  </MainBadge>
+                ) : null}
               </BadgeContainer>
             );
           })}

@@ -10,6 +10,7 @@ import UserProfile from '../components/UserProfile';
 import Tab from '../components/Tab';
 import ChallengeCard from '../components/ChallengeCard';
 import { ReactComponent as Wave } from '../assets/images/wave.svg';
+import Badges from '../assets/images/badges/badges';
 
 const Container = styled.div`
   @media ${device.laptop} {
@@ -39,7 +40,7 @@ const MyChallengesContainer = styled.section`
   flex-direction: column;
   align-items: center;
   gap: 1rem;
-  
+
   @media ${device.laptop} {
     max-width: calc(${contentWidth} * 1 / 3);
   }
@@ -107,33 +108,36 @@ const Mypage = () => {
   const userId = Number(params.id);
 
   const [isMine, setIsMine] = useState(false);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const dispatch = useDispatch();
 
   useEffect(() => {
-    requestMyinfo(`${userId}`).then((result) => {
-      setUserInfo(result.user_info);
-      setChallenges(result.challenge_info.challenges);
-      const { badges, selected_badges } = result.user_info;
-      const TotalBadges = new Array(20).fill();
-      for (let i = 0; i < TotalBadges.length; i++)
-        TotalBadges[i] = { id: i + 1, src: 'src' };
-      TotalBadges.forEach((el, idx) => {
-        if (badges.includes(idx + 1)) {
-          if (selected_badges.includes(idx + 1)) {
-            el.type = 'selected';
+    requestMyinfo(`${userId}`)
+      .then((result) => {
+        setUserInfo(result.user_info);
+        setChallenges(result.challenge_info.challenges);
+        const { badges, selected_badges } = result.user_info;
+        const TotalBadges = new Array(20).fill();
+        for (let i = 0; i < TotalBadges.length; i++)
+          TotalBadges[i] = { id: i + 1, src: Badges[i] };
+        TotalBadges.forEach((el, idx) => {
+          if (badges.includes(idx + 1)) {
+            if (selected_badges.includes(idx + 1)) {
+              el.type = 'selected';
+            } else {
+              el.type = 'unselected';
+            }
           } else {
-            el.type = 'unselected';
+            el.type = 'absent';
+            el.src = `${Badges[Badges.length - 1]}`;
           }
-        } else {
-          el.type = 'absent';
-        }
+        });
+        setBadgeInfo(TotalBadges);
+      })
+      .catch((err) => {
+        navigate('/404');
       });
-      setBadgeInfo(TotalBadges);
-    }).catch(err => {
-      navigate('/404')
-    });
     // eslint-disable-next-line
   }, []);
 
