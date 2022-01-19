@@ -5,6 +5,8 @@ import { changeTitle } from '../actions';
 import styled from 'styled-components';
 import Button from '../components/Button';
 import ChallengeCard from '../components/ChallengeCard';
+import Loading from '../components/Loading';
+import NoResult from '../components/NoResult';
 import { color, device, contentWidth } from '../styles';
 import mainIllust from '../assets/images/main_illust.png';
 import { ReactComponent as Wave } from '../assets/images/wave.svg';
@@ -81,21 +83,27 @@ const ChallengeList = styled.ul`
 `;
 
 const Home = () => {
-  const dispatch = useDispatch()
-  dispatch(changeTitle('WeGreen | 홈'))
+  const dispatch = useDispatch();
+  dispatch(changeTitle('WeGreen | 홈'));
 
   const navigate = useNavigate();
 
   const [challenges, setChallenges] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasNoResult, setHasNoResult] = useState(false);
 
   useEffect(() => {
-    requestPopularChallenges(4).then((result) => setChallenges(result));
+    requestPopularChallenges(4).then((result) => {
+      setChallenges(result);
+      setIsLoading(false);
+      if (result.length === 0) setHasNoResult(true);
+    });
   }, []);
 
   return (
     <HomeContainer>
       <HeroSection>
-        <img src={mainIllust} alt="main-illust"></img>
+        <img src={mainIllust} alt='main-illust'></img>
         <h1>
           일주일 챌린지로 환경을 지켜요, <span>WeGreen</span>
         </h1>
@@ -118,14 +126,18 @@ const Home = () => {
       <ChallengesContainer>
         <ChallengeListContainer>
           <h2>인기 챌린지를 확인해 보세요</h2>
+          {isLoading ? (
+            <Loading theme='dark' text='인기 챌린지를 불러오는 중입니다.' />
+          ) : null}
+          {hasNoResult ? (
+            <NoResult theme='dark' text='인기 챌린지가 없습니다.' />
+          ) : null}
           <ChallengeList>
-            {challenges.length === 0 ? (
-              <p>챌린지가 없습니다.</p>
-            ) : (
-              challenges.map((el) => (
-                <ChallengeCard challenge={el} key={el.challenge_id} />
-              ))
-            )}
+            {challenges.length !== 0
+              ? challenges.map((el) => (
+                  <ChallengeCard challenge={el} key={el.challenge_id} />
+                ))
+              : null}
           </ChallengeList>
         </ChallengeListContainer>
       </ChallengesContainer>

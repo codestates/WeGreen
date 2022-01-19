@@ -7,6 +7,8 @@ import { ReactComponent as SendIcon } from '../assets/images/icon_send.svg';
 import Comment from './Comment';
 import Modal from './Modal';
 import Button from './Button';
+import Loading from '../components/Loading';
+import NoResult from '../components/NoResult';
 import { createComment, requestComments } from '../apis';
 
 const ChallengeCommentsContainer = styled.div`
@@ -155,7 +157,9 @@ const ChallengeComments = ({
   handleCommentEdit,
   handleCommentDelete,
   isJoined,
+  loadingInfo,
 }) => {
+  console.log(loadingInfo);
   const state = useSelector((state) => state.userReducer);
   const isLogin = state.isLogin;
   const userInfo = state.userInfo;
@@ -193,8 +197,10 @@ const ChallengeComments = ({
       return;
     }
 
+    loadingInfo.setIsLoading(true);
     createComment(challenge_id, content)
       .then((result) => {
+        loadingInfo.setIsLoading(false);
         if (result.status === 500) {
           setResponseStatus('server error');
           setIsModalOpen(true);
@@ -202,9 +208,11 @@ const ChallengeComments = ({
         }
         if (result.status === 201) {
           setContent('');
-          return requestComments(challenge_id).then((result) =>
-            handleCommentsUpdate(result.data.data.comments)
-          );
+          return requestComments(challenge_id).then((result) => {
+            handleCommentsUpdate(result.data.data.comments);
+            if (result.data.data.comments.length === 0)
+              loadingInfo.setHasNoResult(true);
+          });
         }
       })
       .catch((err) => {
@@ -232,19 +240,23 @@ const ChallengeComments = ({
           </CommentInputContainer>
         </SendCommentContainer>
         <CommentsListContainer>
+          {loadingInfo.isLoading ? (
+            <Loading theme='light' text='댓글을 불러오는 중입니다.' />
+          ) : null}
+          {comments.length === 0 && !loadingInfo.isLoading ? (
+            <NoResult theme='light' text='작성된 댓글이 없습니다.' />
+          ) : null}
           <CommentsList>
-            {comments.length !== 0 ? (
-              comments.map((el) => (
-                <Comment
-                  comment={el}
-                  key={el.comment_id}
-                  handleCommentEdit={handleCommentEdit}
-                  handleCommentDelete={handleCommentDelete}
-                />
-              ))
-            ) : (
-              <p>작성된 댓글이 없습니다.</p>
-            )}
+            {loadingInfo.isLoading
+              ? null
+              : comments.map((el) => (
+                  <Comment
+                    comment={el}
+                    key={el.comment_id}
+                    handleCommentEdit={handleCommentEdit}
+                    handleCommentDelete={handleCommentDelete}
+                  />
+                ))}
           </CommentsList>
         </CommentsListContainer>
       </ChallengeCommentsContainer>

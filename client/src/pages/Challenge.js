@@ -125,7 +125,6 @@ const ObtainedBadge = styled.img`
 const Challenge = () => {
   const dispatch = useDispatch();
 
-
   const params = useParams();
   const loginState = useSelector((state) => state.userReducer);
   const navigate = useNavigate();
@@ -140,6 +139,8 @@ const Challenge = () => {
 
   dispatch(changeTitle(`WeGreen | 챌린지 - ${challengeInfo.name}`));
 
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasNoResult, setHasNoResult] = useState(false);
   const [comments, setComments] = useState(loadingComments);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -161,10 +162,13 @@ const Challenge = () => {
   const isFinished = finishedAt < TODAY;
 
   useEffect(() => {
+    setIsLoading(true);
     requestChallenge(params.id).then((result) => {
       setChallengeInfo(result.challenge_info);
       setCheckinInfo(result.checkin_info);
       setComments(result.comments);
+      if (result.comments.length === 0) setHasNoResult(true);
+      setIsLoading(false);
     });
     // eslint-disable-next-line
   }, []);
@@ -347,9 +351,7 @@ const Challenge = () => {
       case 'login required':
         return (
           <>
-            <p>
-              로그인이 필요한 서비스입니다.
-            </p>
+            <p>로그인이 필요한 서비스입니다.</p>
             <Button
               content='로그인하러 가기'
               handler={() => navigate('/login')}
@@ -431,11 +433,17 @@ const Challenge = () => {
   };
 
   const tabContent = {
-    info: <ChallengeInfo challengeInfo={challengeInfo}></ChallengeInfo>,
+    info: (
+      <ChallengeInfo
+        challengeInfo={challengeInfo}
+        isLoading={isLoading}
+      ></ChallengeInfo>
+    ),
     checkin: (
       <ChallengeCheckin
         challengeInfo={challengeInfo}
         checkinInfo={checkinInfo}
+        isLoading={isLoading}
       ></ChallengeCheckin>
     ),
     comments: (
@@ -445,6 +453,7 @@ const Challenge = () => {
         handleCommentEdit={handleCommentEdit}
         handleCommentDelete={handleCommentDelete}
         isJoined={challengeInfo.is_joined}
+        loadingInfo={{ isLoading, setIsLoading, hasNoResult, setHasNoResult }}
       ></ChallengeComments>
     ),
   };
@@ -479,28 +488,30 @@ const Challenge = () => {
             <PersonIcon width='20' height='20' fill={color.secondaryDark} />
             {challengeInfo.join_count}명 참여중
           </Caption>
-          {challengeInfo.is_joined ? (
-            isStarted && !isCheckined && !isFinished ? (
-              <Button content='챌린지 체크인' handler={handleCheckinModal} />
-            ) : (
+          {!isLoading ? (
+            challengeInfo.is_joined ? (
+              isStarted && !isCheckined && !isFinished ? (
+                <Button content='챌린지 체크인' handler={handleCheckinModal} />
+              ) : (
+                <Button
+                  color={color.black}
+                  disabled={true}
+                  content='챌린지 체크인'
+                />
+              )
+            ) : isStarted ? (
               <Button
                 color={color.black}
                 disabled={true}
-                content='챌린지 체크인'
+                content='진행중에는 참여할 수 없습니다'
+              />
+            ) : (
+              <Button
+                content='챌린지 참여하기'
+                handler={handleJoinChallengeModal}
               />
             )
-          ) : isStarted ? (
-            <Button
-              color={color.black}
-              disabled={true}
-              content='진행중에는 참여할 수 없습니다'
-            />
-          ) : (
-            <Button
-              content='챌린지 참여하기'
-              handler={handleJoinChallengeModal}
-            />
-          )}
+          ) : null}
           {windowWidth < 1024 ? (
             <Tab
               tabInfo={[
@@ -520,7 +531,10 @@ const Challenge = () => {
             <>
               <div>
                 <h3>정보</h3>
-                <ChallengeInfo challengeInfo={challengeInfo} />
+                <ChallengeInfo
+                  challengeInfo={challengeInfo}
+                  isLoading={isLoading}
+                />
               </div>
               <GridSpan>
                 <h3>댓글</h3>
@@ -530,6 +544,12 @@ const Challenge = () => {
                   handleCommentEdit={handleCommentEdit}
                   handleCommentDelete={handleCommentDelete}
                   isJoined={challengeInfo.is_joined}
+                  loadingInfo={{
+                    isLoading,
+                    setIsLoading,
+                    hasNoResult,
+                    setHasNoResult,
+                  }}
                 />
               </GridSpan>
               <div>
@@ -537,6 +557,7 @@ const Challenge = () => {
                 <ChallengeCheckin
                   challengeInfo={challengeInfo}
                   checkinInfo={checkinInfo}
+                  isLoading={isLoading}
                 />
               </div>
             </>
