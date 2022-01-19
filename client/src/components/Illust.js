@@ -1,6 +1,5 @@
-import { useEffect, useState } from 'react';
 import styled, { keyframes } from 'styled-components';
-import { color, device } from '../styles';
+import { boxShadow, color, device } from '../styles';
 import { ReactComponent as Background } from '../assets/images/illust/background.svg';
 import { ReactComponent as Palm } from '../assets/images/illust/palm.svg';
 import { ReactComponent as Puma } from '../assets/images/illust/puma.svg';
@@ -227,7 +226,7 @@ const StyledFox = styled(Fox)`
 `;
 
 const StyledMusa = styled(Musa)`
-  transform: translateX(-5%) translateY(8%);
+  transform: translateX(-5%) translateY(5%);
   #musa-1 {
     animation: ${leaf2} infinite 8s ease-in-out;
     transform-origin: bottom left;
@@ -267,17 +266,25 @@ const StyledPenstemon = styled(Penstemon)`
 `;
 
 const StyledRafflesia = styled(Rafflesia)`
-  transform: translateX(-3%) translateY(6%);
+  transform: translateX(-3%) translateY(7%);
   #rafflesia {
-    animation: ${leaf2} infinite 10s ease-in-out;
+    animation: ${leaf} infinite 10s ease-in-out;
     transform-origin: bottom left;
   }
 `;
 
-const StyledRedFlowers = styled(RedFlowers)``;
+const StyledRedFlowers = styled(RedFlowers)`
+  transform: scale(0.9) translateY(-6%);
+  #redflowers-1 {
+    transform: translateX(5%);
+  }
+  #redflowers-2 {
+    transform: translateX(-2%);
+  }
+`;
 
 const StyledVine = styled(Vine)`
-  transform: translateX(0) translateY(-7.5%);
+  transform: scale(1.3) translateX(0) translateY(-10%);
 `;
 
 const StyledToucan = styled(Toucan)`
@@ -293,6 +300,7 @@ const StyledToucan = styled(Toucan)`
 `;
 
 const StyledSlowth = styled(Slowth)`
+  transform: translateY(-1%);
   #slowth-body {
     animation: ${body} infinite 10s ease-in-out;
     transform-origin: top center;
@@ -300,6 +308,7 @@ const StyledSlowth = styled(Slowth)`
 `;
 
 const StyledSnake = styled(Snake)`
+  transform: translateX(-1%);
   #snake-head {
     animation: ${head} infinite 10s ease-in-out;
     transform-origin: center left;
@@ -338,95 +347,125 @@ const StyledButterfly = styled(Butterfly)`
   }
 `;
 
-const IllustContainer = styled.div`
-  position: relative;
-  width: 100vw; /* 임시 */
+const Container = styled.div`
+  width: 100vw;
   height: 133vw;
-  min-height: 133%; /* 임시 */
+  /* min-height: 133%; */
   margin: 0 auto;
-  /* padding: 1rem; */
   background-color: ${color.primaryDark};
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: hidden;
 
   @media ${device.laptop} {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 100%;
     height: calc(100vh - 60px);
+    min-height: 100%;
+    aspect-ratio: 3/4;
+  }
+`;
+
+const IllustContainer = styled.div`
+  position: relative;
+  /* width: 100%; */
+  /* top: 60px; */
+  height: 100%;
+  aspect-ratio: 3/4;
+  /* box-shadow: ${boxShadow}; */
+  /* border: 1px solid red; */
+
+  @media ${device.laptop} {
+    max-height: 872px;
   }
 
   svg {
     position: absolute;
   }
+
+  /* &:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: pink;
+  } */
 `;
 
 const Illust = ({ badgeInfo }) => {
   return (
-    <IllustContainer>
-      <Background width='100%' height='100%' />
-      {badgeInfo[0] ? (
-        <>
-          {badgeInfo[0].type === 'selected' ? (
-            <StyledPalm width='100%' height='100%' />
-          ) : null}
-          {badgeInfo[10].type === 'selected' ? (
-            <StyledPuma width='100%' height='100%' />
-          ) : null}
-          {badgeInfo[1].type === 'selected' ? (
-            <StyledMonstera width='100%' height='100%' />
-          ) : null}
-          {badgeInfo[11].type === 'selected' ? (
-            <StyledStag width='100%' height='100%' />
-          ) : null}
-          {badgeInfo[2].type === 'selected' ? (
-            <StyledPhilodendron width='100%' height='100%' />
-          ) : null}
-          {badgeInfo[3].type === 'selected' ? (
-            <StyledGuzmania width='100%' height='100%' />
-          ) : null}
-          {badgeInfo[12].type === 'selected' ? (
-            <StyledRedPanda width='100%' height='100%' />
-          ) : null}
-          {badgeInfo[13].type === 'selected' ? (
-            <StyledFox width='100%' height='100%' />
-          ) : null}
-          {badgeInfo[4].type === 'selected' ? (
-            <StyledMusa width='100%' height='100%' />
-          ) : null}
-          {badgeInfo[6].type === 'selected' ? (
-            <StyledPhilodendronSmall width='100%' height='100%' />
-          ) : null}
-          {badgeInfo[5].type === 'selected' ? (
-            <StyledPenstemon width='100%' height='100%' />
-          ) : null}
-          {badgeInfo[7].type === 'selected' ? (
-            <StyledRafflesia width='100%' height='100%' />
-          ) : null}
-          {badgeInfo[8].type === 'selected' ? (
-            <StyledRedFlowers width='100%' height='100%' />
-          ) : null}
-          {badgeInfo[9].type === 'selected' ? (
-            <StyledVine width='100%' height='100%' />
-          ) : null}
-          {badgeInfo[14].type === 'selected' ? (
-            <StyledToucan width='100%' height='100%' />
-          ) : null}
-          {badgeInfo[15].type === 'selected' ? (
-            <StyledSlowth width='100%' height='100%' />
-          ) : null}
-          {badgeInfo[16].type === 'selected' ? (
-            <StyledSnake width='100%' height='100%' />
-          ) : null}
-          {badgeInfo[17].type === 'selected' ? (
-            <StyledTamarin width='100%' height='100%' />
-          ) : null}
-          {badgeInfo[18].type === 'selected' ? (
-            <StyledBabyBear width='100%' height='100%' />
-          ) : null}
-          {badgeInfo[19].type === 'selected' ? (
-            <StyledButterfly width='100%' height='100%' />
-          ) : null}
-        </>
-      ) : null}
-    </IllustContainer>
+    <Container>
+      <IllustContainer>
+        <Background width='100%' height='100%' />
+        {badgeInfo[0] ? (
+          <>
+            {badgeInfo[0].type === 'selected' ? (
+              <StyledPalm width='100%' height='100%' />
+            ) : null}
+            {badgeInfo[10].type === 'selected' ? (
+              <StyledPuma width='100%' height='100%' />
+            ) : null}
+            {badgeInfo[1].type === 'selected' ? (
+              <StyledMonstera width='100%' height='100%' />
+            ) : null}
+            {badgeInfo[11].type === 'selected' ? (
+              <StyledStag width='100%' height='100%' />
+            ) : null}
+            {badgeInfo[2].type === 'selected' ? (
+              <StyledPhilodendron width='100%' height='100%' />
+            ) : null}
+            {badgeInfo[3].type === 'selected' ? (
+              <StyledGuzmania width='100%' height='100%' />
+            ) : null}
+            {badgeInfo[12].type === 'selected' ? (
+              <StyledRedPanda width='100%' height='100%' />
+            ) : null}
+            {badgeInfo[13].type === 'selected' ? (
+              <StyledFox width='100%' height='100%' />
+            ) : null}
+            {badgeInfo[4].type === 'selected' ? (
+              <StyledMusa width='100%' height='100%' />
+            ) : null}
+            {badgeInfo[6].type === 'selected' ? (
+              <StyledPhilodendronSmall width='100%' height='100%' />
+            ) : null}
+            {badgeInfo[5].type === 'selected' ? (
+              <StyledPenstemon width='100%' height='100%' />
+            ) : null}
+            {badgeInfo[7].type === 'selected' ? (
+              <StyledRafflesia width='100%' height='100%' />
+            ) : null}
+            {badgeInfo[8].type === 'selected' ? (
+              <StyledRedFlowers width='100%' height='100%' />
+            ) : null}
+            {badgeInfo[9].type === 'selected' ? (
+              <StyledVine width='100%' height='100%' />
+            ) : null}
+            {badgeInfo[14].type === 'selected' ? (
+              <StyledToucan width='100%' height='100%' />
+            ) : null}
+            {badgeInfo[15].type === 'selected' ? (
+              <StyledSlowth width='100%' height='100%' />
+            ) : null}
+            {badgeInfo[16].type === 'selected' ? (
+              <StyledSnake width='100%' height='100%' />
+            ) : null}
+            {badgeInfo[17].type === 'selected' ? (
+              <StyledTamarin width='100%' height='100%' />
+            ) : null}
+            {badgeInfo[18].type === 'selected' ? (
+              <StyledBabyBear width='100%' height='100%' />
+            ) : null}
+            {badgeInfo[19].type === 'selected' ? (
+              <StyledButterfly width='100%' height='100%' />
+            ) : null}
+          </>
+        ) : null}
+      </IllustContainer>
+    </Container>
   );
 };
 
