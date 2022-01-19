@@ -82,7 +82,7 @@ const ChallengeList = styled.ul`
 
 const Home = () => {
   const dispatch = useDispatch()
-  dispatch(changeTitle('홈'))
+  dispatch(changeTitle('WeGreen | 홈'))
 
   const navigate = useNavigate();
 
