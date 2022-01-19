@@ -64,7 +64,7 @@ const InvalidMessage = styled.p`
 
 const CreateChallenge = () => {
   const dispatch = useDispatch();
-  dispatch(changeTitle('Create Challenge'));
+  dispatch(changeTitle('WeGreen | 챌린지 생성'));
 
   const loginState = useSelector((state) => state.userReducer);
   const { state } = useLocation();

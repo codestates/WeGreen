@@ -105,7 +105,7 @@ const TextBtn = styled.button`
 
 const Challenges = () => {
   const dispatch = useDispatch()
-  dispatch(changeTitle('Challenges'))
+  dispatch(changeTitle('WeGreen | 챌린지 목록'))
 
   const navigate = useNavigate();
   const [sorting, setSorting] = useState('popular');

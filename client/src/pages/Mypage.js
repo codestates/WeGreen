@@ -146,7 +146,7 @@ const Mypage = () => {
 
   useEffect(() => {
     setIsMine(userId === Number(state.userInfo.user_id));
-    dispatch(changeTitle('Userpage'));
+    dispatch(changeTitle(`WeGreen | 마이페이지 - ${userInfo.username}`));
     if (isMine) {
       dispatch(updateUserinfo(userInfo));
     }
