@@ -11,7 +11,7 @@ import SelectForm from '../components/SelectForm';
 import Button from '../components/Button';
 import Modal from '../components/Modal';
 import { ReactComponent as Wave } from '../assets/images/wave.svg';
-import { TODAY } from '../data/dummyData';
+import { TODAY } from '../data/initialData';
 
 const Container = styled.div`
   padding-top: 1rem;
@@ -63,8 +63,8 @@ const InvalidMessage = styled.p`
 `;
 
 const EditChallenge = () => {
-  const dispatch = useDispatch()
-  dispatch(changeTitle('Edit Challenge'))
+  const dispatch = useDispatch();
+  dispatch(changeTitle('Edit Challenge'));
 
   const loginState = useSelector((state) => state.userReducer);
   const { state } = useLocation();
@@ -184,7 +184,7 @@ const EditChallenge = () => {
         />
         {isValidChallengeTitle ? null : (
           <InvalidMessage>
-             *챌린지 제목은 최소 3글자 이상, <br />
+            *챌린지 제목은 최소 3글자 이상, <br />
             최대 15글자 미만이어야 합니다
           </InvalidMessage>
         )}

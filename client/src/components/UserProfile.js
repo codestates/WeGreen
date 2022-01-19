@@ -6,6 +6,7 @@ import { color, device, radius, boxShadow } from '../styles';
 import Button from './Button';
 import BadgesModal from './BadgesModal';
 import { ReactComponent as SettingIcon } from '../assets/images/icon_setting.svg';
+import Badges from '../assets/images/badges/badges';
 
 const UserProfileContainer = styled.div`
   position: relative;
@@ -30,12 +31,18 @@ const UserNameContainer = styled.div`
   align-items: center;
 
   & > div {
+    max-width: 70%;
     display: flex;
+    align-items: center;
     gap: 1rem;
+    overflow-x: clip;
   }
 `;
 
-const MainBadgeImg = styled.img``;
+const MainBadgeImg = styled.img`
+  width: 40px;
+  height: 40px;
+`;
 
 const SettingBtn = styled.button`
   position: relative;
@@ -72,7 +79,13 @@ const UserProfileLowContainer = styled.div`
   font-size: 0.875rem;
 `;
 
-const UserProfile = ({ userInfo, setUserInfo, successCounts }) => {
+const UserProfile = ({
+  userInfo,
+  setUserInfo,
+  successCounts,
+  badgeInfo,
+  setBadgeInfo,
+}) => {
   const navigate = useNavigate();
   const state = useSelector((state) => state.userReducer);
 
@@ -93,7 +106,7 @@ const UserProfile = ({ userInfo, setUserInfo, successCounts }) => {
     <UserProfileContainer>
       <UserNameContainer>
         <div>
-          <MainBadgeImg badgeId={userInfo.badge_id} alt='대표뱃지' />
+          <MainBadgeImg src={Badges[userInfo.badge_id - 1]} alt='대표뱃지' />
           <h3>{userInfo.username}</h3>
         </div>
         {isMine ? (
@@ -119,8 +132,10 @@ const UserProfile = ({ userInfo, setUserInfo, successCounts }) => {
       {isBadgesModalOpen ? (
         <BadgesModal
           userInfo={userInfo}
+          badgeInfo={badgeInfo}
           setUserInfo={setUserInfo}
           closeModal={setIsBadgesModalOpen}
+          setBadgeInfo={setBadgeInfo}
         ></BadgesModal>
       ) : null}
     </UserProfileContainer>

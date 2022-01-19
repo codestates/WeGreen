@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { color, contentWidth, device, radius } from '../styles';
-import { TODAY } from '../data/dummyData';
+import { TODAY } from '../data/initialData';
 
 const Container = styled.div`
   width: 100%;
@@ -115,16 +115,16 @@ const ChallengeCheckin = ({ challengeInfo, checkinInfo }) => {
       <ChallengeCheckinContainer>
         {TODAY < startedAt ? (
           <p>챌린지 진행 예정입니다</p>
-        ) : TODAY < finishedAt ? (
+        ) : TODAY <= finishedAt ? (
           <p>
             오늘은 {challengeInfo.join_count}명 중 {checkinInfo.checkin_count}
             명이 <br />
             체크인 하였습니다.
           </p>
+        ) : challengeInfo.is_joined ? (
+          <p>{checkinInfo.checkin_count}번 체크인 하셨습니다.</p>
         ) : (
-          <p>
-            {checkinInfo.checkin_count}번 체크인 하셨습니다.
-          </p>
+          <p>완료된 챌린지입니다.</p>
         )}
         {challengeInfo.is_joined ? (
           <>

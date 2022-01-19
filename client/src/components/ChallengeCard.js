@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { boxShadow, color, radius } from '../styles';
 import { Link } from 'react-router-dom';
-import { TODAY } from '../data/dummyData';
+import { TODAY } from '../data/initialData';
 
 const ChallengeCardList = styled.li`
   padding: 1rem;
@@ -24,16 +24,18 @@ const ChallengeCardStatusContainer = styled.div`
 `;
 
 const ChallengeCard = ({ challenge }) => {
-  const href = "/challenge/" + challenge.challenge_id
+  const href = '/challenge/' + challenge.challenge_id;
 
-  const startedAt = new Date(challenge.started_at)
-  const finishedAt = new Date(challenge.started_at)
-  finishedAt.setDate(startedAt.getDate() + 6)
-  
-  let message = ""
-  
-  const progress = (challenge.checkin_count / challenge.requirement) >= 1 ?
-                     1 : (challenge.checkin_count / challenge.requirement).toFixed(2)
+  const startedAt = new Date(challenge.started_at);
+  const finishedAt = new Date(challenge.started_at);
+  finishedAt.setDate(startedAt.getDate() + 6);
+
+  let message = '';
+
+  const progress =
+    challenge.checkin_count / challenge.requirement >= 1
+      ? 1
+      : (challenge.checkin_count / challenge.requirement).toFixed(2);
 
   if (challenge.is_finished === true) {
     if (challenge.is_accomplished) message = '챌린지 성공';
@@ -43,7 +45,7 @@ const ChallengeCard = ({ challenge }) => {
   } else {
     if (TODAY < startedAt) {
       message = '진행예정';
-    } else if (TODAY < finishedAt) {
+    } else if (TODAY <= finishedAt) {
       message = '진행중';
     } else {
       message = '종료';
