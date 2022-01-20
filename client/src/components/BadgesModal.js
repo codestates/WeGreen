@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import { boxShadow, color, device, radius } from '../styles';
 import Button from './Button';
 import Modal from '../components/Modal';
-import Badges from '../assets/images/badges/badges';
 import { ReactComponent as CrownIcon } from '../assets/images/icon_crown.svg';
 
 const Backdrop = styled.div`

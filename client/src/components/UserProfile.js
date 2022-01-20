@@ -147,8 +147,9 @@ const UserProfile = ({
       <UserProfileLowContainer>
         {isMine ? (
           <Button
-            width='140px'
+            width='125px'
             height='30px'
+            fontSize='0.875rem'
             content={totalBadgesText}
             handler={() => setIsBadgesModalOpen(true)}
           />
