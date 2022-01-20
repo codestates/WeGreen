@@ -8,6 +8,13 @@ const ChallengeCardList = styled.li`
   background-color: ${color.white};
   border-radius: ${radius};
   box-shadow: ${boxShadow};
+
+  & h3 {
+    width: 200px;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 `;
 
 const Highlighted = styled.p`

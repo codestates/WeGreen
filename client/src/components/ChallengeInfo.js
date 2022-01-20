@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { color, contentWidth, device, radius } from '../styles';
 import { TODAY } from '../data/initialData';
+import Loading from './Loading';
 
 const Container = styled.div`
   width: 100%;
@@ -44,29 +45,35 @@ const Highlighted = styled.p`
 const BoxContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 0.1rem;
+  gap: 0.5rem;
 `;
 
 const Box = styled.div`
-  border: 1px solid black;
-  border-radius: 5px;
+  padding: .3rem 0;
+  border-radius: 12px;
+  background-color: ${color.secondaryLight};
   font-size: 0.875rem;
   text-align: center;
   opacity: ${(props) => (props.status === 'before' ? 0.5 : 1)};
 `;
 
-const ChallengeInfo = ({ challengeInfo }) => {
+const ChallengeInfo = ({ challengeInfo, isLoading }) => {
   const startedAt = new Date(challengeInfo.started_at);
   const finishedAt = new Date(challengeInfo.started_at);
   finishedAt.setDate(startedAt.getDate() + 6);
+
+  const days = ['일', '월', '화', '수', '목', '금', '토']
 
   const count = 7;
   const Boxes = new Array(count).fill([]).map((_, i) => {
     const date = new Date(startedAt);
     date.setDate(startedAt.getDate() + i);
+
+    const day = days[date.getDay()]
+
     return (
       <Box key={i} status={date < TODAY ? 'before' : 'active'}>
-        {date.toString().split(' ')[0]}
+        {day}
         <br />
         {date.getDate()}
       </Box>
@@ -96,16 +103,22 @@ const ChallengeInfo = ({ challengeInfo }) => {
   return (
     <Container>
       <ChallengeInfoContainer>
-        <Highlighted>{statusMessage[status]}</Highlighted>
-        <p>
-          {startedAt.toLocaleDateString('ko-KR', { timezone: 'UTC' })} ~{' '}
-          {finishedAt.toLocaleDateString('ko-KR', { timezone: 'UTC' })}
-        </p>
-        <BoxContainer>{Boxes.map((box) => box)}</BoxContainer>
-        <Highlighted>챌린지 성공 조건</Highlighted>
-        <p>주 {challengeInfo.requirement}회 체크인</p>
-        <Highlighted>챌린지 설명</Highlighted>
-        <p>{challengeInfo.content}</p>
+        {isLoading ? (
+          <Loading theme='light' text='챌린지 정보를 불러오는 중입니다.' />
+        ) : (
+          <>
+            <Highlighted>{statusMessage[status]}</Highlighted>
+            <p>
+              {startedAt.toLocaleDateString('ko-KR', { timezone: 'UTC' })} ~{' '}
+              {finishedAt.toLocaleDateString('ko-KR', { timezone: 'UTC' })}
+            </p>
+            <BoxContainer>{Boxes.map((box) => box)}</BoxContainer>
+            <Highlighted>챌린지 성공 조건</Highlighted>
+            <p>주 {challengeInfo.requirement}회 체크인</p>
+            <Highlighted>챌린지 설명</Highlighted>
+            <p>{challengeInfo.content}</p>
+          </>
+        )}
       </ChallengeInfoContainer>
     </Container>
   );

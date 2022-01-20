@@ -30,12 +30,19 @@ const ButtonTemplate = styled.button`
     }
   }
 
-  &:disabled:hover {
-    cursor: not-allowed;
-    &::after {
-      opacity: 0;
+  &:disabled {
+    border: 1px solid ${color.primary};
+    color: black;
+
+    &:hover {
+      cursor: not-allowed;
+      &::after {
+        opacity: 0;
+      }
     }
   }
+
+
 `;
 
 const Button = ({

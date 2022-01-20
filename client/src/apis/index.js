@@ -55,12 +55,14 @@ export const requestLogout = () => {
 // 챌린지 리스트 - 인기순
 export const requestPopularChallenges = (limit, query) => {
   console.log(limit, query);
-  console.log(process.env.REACT_APP_API_URL)
+  console.log(process.env.REACT_APP_API_URL);
+  let string = `${process.env.REACT_APP_API_URL}/challenges/popular?`;
+  string +=  `${limit > 0 ? 'limit=' + limit + '&' : ''}`;
+  string += `${query ? '&query=' + query : ''}`;
+
   return axios
     .get(
-      `${process.env.REACT_APP_API_URL}/challenges/popular?limit=${limit}${
-        query ? '&query=' + query : ''
-      }`,
+      string,
       {},
       {
         'Content-Type': 'application/json',
@@ -71,11 +73,12 @@ export const requestPopularChallenges = (limit, query) => {
 
 // 챌린지 리스트 - 최신순
 export const requestLatestChallenges = (limit, query) => {
+  let string = `${process.env.REACT_APP_API_URL}/challenges/latest?`;
+  string +=  `${limit > 0 ? 'limit=' + limit + '&' : ''}`;
+  string += `${query ? '&query=' + query : ''}`;
   return axios
     .get(
-      `${process.env.REACT_APP_API_URL}/challenges/latest?limit=${limit}${
-        query ? '$query=' + query : ''
-      }`,
+      string,
       {},
       {
         'Content-Type': 'application/json',

@@ -9,6 +9,8 @@ import Illust from '../components/Illust';
 import UserProfile from '../components/UserProfile';
 import Tab from '../components/Tab';
 import ChallengeCard from '../components/ChallengeCard';
+import Loading from '../components/Loading';
+import NoResult from '../components/NoResult';
 import { ReactComponent as Wave } from '../assets/images/wave.svg';
 import Badges from '../assets/images/badges/badges';
 
@@ -105,9 +107,15 @@ const Mypage = () => {
   const state = useSelector((state) => state.userReducer);
 
   const [view, setView] = useState('ongoing');
-  const [userInfo, setUserInfo] = useState(state.userInfo);
+  const [userInfo, setUserInfo] = useState({
+    ...state.userInfo,
+    badge_id: 21,
+    badges: [],
+  });
   const [challenges, setChallenges] = useState([{}]);
   const [badgeInfo, setBadgeInfo] = useState([]);
+
+  const [isLoading, setIsLoading] = useState(true);
 
   const params = useParams();
   const userId = Number(params.id);
@@ -137,6 +145,7 @@ const Mypage = () => {
           }
         });
         setBadgeInfo(TotalBadges);
+        setIsLoading(false);
       })
       .catch((err) => {
         navigate('/404');
@@ -163,15 +172,13 @@ const Mypage = () => {
   const tabContent = {
     ongoing: (
       <>
-        {ongoingChallenges.length === 0 ? (
-          <EmptyMessage>
-            참여중인
-            <br />
-            챌린지가
-            <br />
-            없습니다
-          </EmptyMessage>
-        ) : (
+        {isLoading ? (
+          <Loading theme='light' text='참여중인 챌린지를 불러오는 중입니다.' />
+        ) : null}
+        {!isLoading && ongoingChallenges.length === 0 ? (
+          <NoResult theme='light' text='참여중인 챌린지가 없습니다.' />
+        ) : null}
+        {isLoading ? null : (
           <ChallengeList>
             {ongoingChallenges.map((el) => (
               <ChallengeCard challenge={el} key={el.challenge_id} />
@@ -182,15 +189,13 @@ const Mypage = () => {
     ),
     finished: (
       <>
-        {finishedChallenges.length === 0 ? (
-          <EmptyMessage>
-            완료된
-            <br />
-            챌린지가
-            <br />
-            없습니다
-          </EmptyMessage>
-        ) : (
+        {isLoading ? (
+          <Loading theme='light' text='완료된 챌린지를 불러오는 중입니다.' />
+        ) : null}
+        {!isLoading && finishedChallenges.length === 0 ? (
+          <NoResult theme='light' text='완료된 챌린지가 없습니다.' />
+        ) : null}
+        {isLoading ? null : (
           <ChallengeList>
             {finishedChallenges.map((el) => (
               <ChallengeCard challenge={el} key={el.challenge_id} />

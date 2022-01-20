@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { color, contentWidth, device, radius } from '../styles';
 import { TODAY } from '../data/initialData';
+import Loading from './Loading';
 
 const Container = styled.div`
   width: 100%;
@@ -43,16 +44,16 @@ const Highlighted = styled.p`
 const BoxContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 0.1rem;
+  gap: 0.5rem;
 `;
 
 const Box = styled.div`
-  border: 1px solid black;
-  border-radius: 5px;
+  padding: .3rem 0;
+  border-radius: 12px;
   font-size: 0.875rem;
   text-align: center;
   background-color: ${(props) =>
-    props.checked === 'checked' ? color.secondary : 'white'};
+    props.checked === 'checked' ? color.secondaryDark : color.secondaryLight};
   opacity: ${(props) => (props.status === 'before' ? 0.5 : 1)};
 `;
 
@@ -76,7 +77,7 @@ const ProgressBar = styled.div`
   border-radius: ${radius};
 `;
 
-const ChallengeCheckin = ({ challengeInfo, checkinInfo }) => {
+const ChallengeCheckin = ({ challengeInfo, checkinInfo, isLoading }) => {
   const checkin_log = checkinInfo.checkin_log.map((el) => {
     const log = new Date(el);
     return log.toString();
@@ -86,17 +87,21 @@ const ChallengeCheckin = ({ challengeInfo, checkinInfo }) => {
   const finishedAt = new Date(challengeInfo.started_at);
   finishedAt.setDate(startedAt.getDate() + 6);
 
+  const days = ['일', '월', '화', '수', '목', '금', '토']
+
   const count = 7;
   const Boxes = new Array(count).fill([]).map((_, i) => {
     const date = new Date(startedAt);
     date.setDate(startedAt.getDate() + i);
+    const day = days[date.getDay()]
+
     return (
       <Box
         key={i}
         status={date < TODAY ? 'before' : 'active'}
         checked={checkin_log.includes(date.toString()) ? 'checked' : 'none'}
       >
-        {date.toString().split(' ')[0]}
+        {day}
         <br />
         {date.getDate()}
       </Box>
@@ -113,32 +118,39 @@ const ChallengeCheckin = ({ challengeInfo, checkinInfo }) => {
   return (
     <Container>
       <ChallengeCheckinContainer>
-        {TODAY < startedAt ? (
-          <p>챌린지 진행 예정입니다</p>
-        ) : TODAY <= finishedAt ? (
-          <p>
-            오늘은 {challengeInfo.join_count}명 중 {checkinInfo.checkin_count}
-            명이 <br />
-            체크인 하였습니다.
-          </p>
-        ) : challengeInfo.is_joined ? (
-          <p>{checkinInfo.checkin_count}번 체크인 하셨습니다.</p>
+        {isLoading ? (
+          <Loading theme='light' text='챌린지 체크인을 불러오는 중입니다.' />
         ) : (
-          <p>완료된 챌린지입니다.</p>
-        )}
-        {challengeInfo.is_joined ? (
           <>
-            <Highlighted>나의 체크인 현황</Highlighted>
-            <BoxContainer>{Boxes.map((box) => box)}</BoxContainer>
-            <Highlighted>나의 목표 달성률</Highlighted>
-            <ProgressContainer>
-              <p>{progress * 100}%</p>
-              <ProgressBarContainer>
-                <ProgressBar width={`${progress * 100}%`} />
-              </ProgressBarContainer>
-            </ProgressContainer>
+            {TODAY < startedAt ? (
+              <p>챌린지 진행 예정입니다</p>
+            ) : TODAY <= finishedAt ? (
+              <p>
+                오늘은 {challengeInfo.join_count}명 중{' '}
+                {checkinInfo.checkin_count}
+                명이 <br />
+                체크인 하였습니다.
+              </p>
+            ) : challengeInfo.is_joined ? (
+              <p>{checkinInfo.checkin_count}번 체크인 하셨습니다.</p>
+            ) : (
+              <p>완료된 챌린지입니다.</p>
+            )}
+            {challengeInfo.is_joined ? (
+              <>
+                <Highlighted>나의 체크인 현황</Highlighted>
+                <BoxContainer>{Boxes.map((box) => box)}</BoxContainer>
+                <Highlighted>나의 목표 달성률</Highlighted>
+                <ProgressContainer>
+                  <p>{progress * 100}%</p>
+                  <ProgressBarContainer>
+                    <ProgressBar width={`${progress * 100}%`} />
+                  </ProgressBarContainer>
+                </ProgressContainer>
+              </>
+            ) : null}
           </>
-        ) : null}
+        )}
       </ChallengeCheckinContainer>
     </Container>
   );
