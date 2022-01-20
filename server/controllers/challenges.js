@@ -82,8 +82,8 @@ module.exports = {
   //최신 챌린지 목록 불러오기 GET /latest
   latest: async (req, res) => {
     try {
-      console.log('req.query', req.query);
-      const search = req.query.query || '';
+      // console.log('req.query', req.query);
+      const search = req.query.limit.split('=')[0] || '';
       //클라이언트에서 보낸 req.query를 찍어보면 req.query : {limit: '10$query=물'}
       const limitNum = Number(req.query.limit) || 20;
       const searchModel = await ChallengeModel.findAll({
