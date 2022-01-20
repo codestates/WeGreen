@@ -462,8 +462,11 @@ const Challenge = () => {
     <OuterContainer>
       <ChallengeContainer>
         <CommonContainer>
-          {isAdmin ||          
-          (isAuthor && !isStarted && challengeInfo.join_count < 2 && !isFinished) ? (
+          {isAdmin ||
+          (isAuthor &&
+            !isStarted &&
+            challengeInfo.join_count < 2 &&
+            !isFinished) ? (
             <>
               <DeleteBtn onClick={handleDeleteChallengeModal}>
                 <DeleteIcon width='20' height='20' fill={color.secondary} />
@@ -490,7 +493,11 @@ const Challenge = () => {
                 '완료된 챌린지입니다'
               )
             ) : isStarted ? (
-              '진행중에는 참여할 수 없습니다'
+              !isFinished ? (
+                '진행중에는 참여할 수 없습니다'
+              ) : (
+                '완료된 챌린지입니다'
+              )
             ) : (
               <Button
                 content='챌린지 참여하기'
