@@ -80,7 +80,7 @@ const ButtonContainer = styled.div`
 
 const ConfirmChallenge = () => {
   const dispatch = useDispatch()
-  dispatch(changeTitle('Confirm Challenge'))
+  dispatch(changeTitle('WeGreen | 챌린지 생성/수정 확인'))
 
   const loginState = useSelector((state) => state.userReducer);
   const { state } = useLocation();

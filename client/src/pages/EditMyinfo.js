@@ -155,7 +155,7 @@ const Divider = styled.div`
 
 const EditMyinfo = () => {
   const dispatch = useDispatch();
-  dispatch(changeTitle('Edit Myinfo'));
+  dispatch(changeTitle('WeGreen | 회원정보수정'));
   const state = useSelector((state) => state.userReducer);
   const navigate = useNavigate();
 

@@ -183,7 +183,7 @@ const ModalMessage = ({ status }) => {
 const Login = () => {
   let navigate = useNavigate();
   const dispatch = useDispatch();
-  dispatch(changeTitle('Login'));
+  dispatch(changeTitle('WeGreen | 로그인'));
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [responseStatus, setResponseStatus] = useState('no status');

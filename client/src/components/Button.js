@@ -31,6 +31,7 @@ const ButtonTemplate = styled.button`
   }
 
   &:disabled:hover {
+    cursor: not-allowed;
     &::after {
       opacity: 0;
     }

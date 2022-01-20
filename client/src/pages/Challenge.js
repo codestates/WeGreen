@@ -86,6 +86,7 @@ const ContentContainer = styled.div`
   padding: 1rem;
   background-color: ${color.white};
   border-top-right-radius: 60px;
+  overflow: hidden;
 
   h3 {
     margin-left: 1rem;
@@ -123,7 +124,7 @@ const ObtainedBadge = styled.img`
 
 const Challenge = () => {
   const dispatch = useDispatch();
-  dispatch(changeTitle('Challenge'));
+
 
   const params = useParams();
   const loginState = useSelector((state) => state.userReducer);
@@ -136,6 +137,9 @@ const Challenge = () => {
     checkin_log: [],
     is_accomplished: false,
   });
+
+  dispatch(changeTitle(`WeGreen | 챌린지 - ${challengeInfo.name}`));
+
   const [comments, setComments] = useState(loadingComments);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -489,7 +493,7 @@ const Challenge = () => {
             <Button
               color={color.black}
               disabled={true}
-              content='챌린지 참여하기'
+              content='진행중에는 참여할 수 없습니다'
             />
           ) : (
             <Button

@@ -1,21 +1,20 @@
-const dotenv = require('dotenv');
+const dotenv = require("dotenv");
 dotenv.config();
 
 const config = {
   development: {
-    username: process.env.DATABASE_USER,
+    username: "root",
     password: process.env.DATABASE_PASSWORD,
-    database: 'wegreen',
-    host: process.env.DATABASE_HOST,
-    dialect: 'mysql',
-    port: process.env.DATABASE_PORT,
+    database: "wegreen",
+    host: "127.0.0.1",
+    dialect: "mysql",
   },
   production: {
-    username: process.env.DATABASE_USER,
+    user: process.env.DATABASE_USER,
     password: process.env.DATABASE_PASSWORD,
-    database: 'wegreen',
+    database: "wegreen",
     host: process.env.DATABASE_HOST,
-    dialect: 'mysql',
+    dialect: "mysql",
     port: process.env.DATABASE_PORT,
   },
 };
