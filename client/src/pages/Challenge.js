@@ -496,7 +496,8 @@ const Challenge = () => {
                 content='챌린지 참여하기'
                 handler={handleJoinChallengeModal}
               />
-          )}
+            )
+          ) : null}
           {windowWidth < 1024 ? (
             <Tab
               tabInfo={[
