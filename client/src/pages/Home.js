@@ -7,6 +7,7 @@ import Button from '../components/Button';
 import ChallengeCard from '../components/ChallengeCard';
 import Loading from '../components/Loading';
 import NoResult from '../components/NoResult';
+import Footer from '../components/Footer';
 import { color, device, contentWidth } from '../styles';
 import mainIllust from '../assets/images/main_illust.png';
 import { ReactComponent as Wave } from '../assets/images/wave.svg';
@@ -141,6 +142,7 @@ const Home = () => {
           </ChallengeList>
         </ChallengeListContainer>
       </ChallengesContainer>
+      <Footer />
     </HomeContainer>
   );
 };
