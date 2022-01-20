@@ -164,7 +164,11 @@ const EditMyinfo = () => {
 
   const [isBadgeModalOpen, setIsBadgeModalOpen] = useState(false);
 
-  const [myinfo, setMyinfo] = useState(state.userInfo);
+  const [myinfo, setMyinfo] = useState({
+    ...state.userInfo,
+    badge_id: 21,
+    badges: [],
+  });
   const [badgeInfo, setBadgeInfo] = useState([]);
   const [modify, setModify] = useState({
     now: '',

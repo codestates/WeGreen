@@ -6,6 +6,8 @@ import styled from 'styled-components';
 import { color, device, contentWidth, boxShadow } from '../styles';
 import SearchBar from '../components/SearchBar';
 import ChallengeCard from '../components/ChallengeCard';
+import Loading from '../components/Loading';
+import NoResult from '../components/NoResult';
 import { ReactComponent as AddIcon } from '../assets/images/icon_add.svg';
 import { requestPopularChallenges, requestLatestChallenges } from '../apis';
 
@@ -104,38 +106,50 @@ const TextBtn = styled.button`
 `;
 
 const Challenges = () => {
-  const dispatch = useDispatch()
-  dispatch(changeTitle('WeGreen | 챌린지 목록'))
+  const dispatch = useDispatch();
+  dispatch(changeTitle('WeGreen | 챌린지 목록'));
 
   const navigate = useNavigate();
   const [sorting, setSorting] = useState('popular');
   const [challenges, setChallenges] = useState([]);
   const [query, setQuery] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasNoResult, setHasNoResult] = useState(false);
 
   const handleSubmit = () => {
     console.log('submit handling');
     if (sorting === 'latest') {
-      console.log('latest');
-      requestLatestChallenges(-1, query).then((result) =>
-        setChallenges(result)
-      );
+      setIsLoading(true);
+      requestLatestChallenges(-1, query).then((result) => {
+        setChallenges(result);
+        if (result.length === 0) setHasNoResult(true);
+        setIsLoading(false);
+      });
     } else {
-      console.log('popular');
-      requestPopularChallenges(-1, query).then((result) =>
-        setChallenges(result)
-      );
+      setIsLoading(true);
+      requestPopularChallenges(-1, query).then((result) => {
+        setChallenges(result);
+        if (result.length === 0) setHasNoResult(true);
+        setIsLoading(false);
+      });
     }
   };
 
   useEffect(() => {
     if (sorting === 'latest') {
-      console.log('latest');
-      requestLatestChallenges(-1).then((result) => setChallenges(result));
+      setIsLoading(true);
+      requestLatestChallenges(-1).then((result) => {
+        setChallenges(result);
+        if (result.length === 0) setHasNoResult(true);
+        setIsLoading(false);
+      });
     } else {
-      console.log('popular');
-      requestPopularChallenges(-1, query).then((result) =>
-        setChallenges(result)
-      );
+      setIsLoading(true);
+      requestLatestChallenges(-1).then((result) => {
+        setChallenges(result);
+        if (result.length === 0) setHasNoResult(true);
+        setIsLoading(false);
+      });
     }
   }, [sorting]);
 
@@ -164,10 +178,18 @@ const Challenges = () => {
             인기순
           </TextBtn>
         </Sorting>
+        {isLoading ? (
+          <Loading theme='light' text='챌린지 목록을 불러오는 중입니다.' />
+        ) : null}
+        {hasNoResult && !isLoading ? (
+          <NoResult theme='light' text='해당 챌린지가 없습니다.' />
+        ) : null}
         <ChallengeList>
-          {challenges.map((el) => (
-            <ChallengeCard challenge={el} key={el.id} />
-          ))}
+          {isLoading
+            ? null
+            : challenges.map((el) => (
+                <ChallengeCard challenge={el} key={el.id} />
+              ))}
         </ChallengeList>
       </ChallengeListContainer>
     </ChallengesContainer>
