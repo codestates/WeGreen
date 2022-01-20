@@ -189,10 +189,11 @@ const EditChallenge = () => {
   useEffect(() => {
     if (!loginState.isLogin) {
       setResponseStatus('login required');
+      setIsModalOpen(true);
     } else if (!state) {
       setResponseStatus('invalid access');
+      setIsModalOpen(true);
     }
-    setIsModalOpen(true);
     // eslint-disable-next-line
   }, []);
 
@@ -240,6 +241,12 @@ const EditChallenge = () => {
       </EditChallengeContainer>
       {isModalOpen ? (
         <Modal
+          canClose={
+            responseStatus !== 'login required' &&
+            responseStatus !== 'invalid access'
+              ? true
+              : false
+          }
           closeModal={
             responseStatus !== 'login required' &&
             responseStatus !== 'invalid access'

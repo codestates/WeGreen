@@ -86,17 +86,21 @@ const ChallengeCheckin = ({ challengeInfo, checkinInfo }) => {
   const finishedAt = new Date(challengeInfo.started_at);
   finishedAt.setDate(startedAt.getDate() + 6);
 
+  const days = ['일', '월', '화', '수', '목', '금', '토']
+
   const count = 7;
   const Boxes = new Array(count).fill([]).map((_, i) => {
     const date = new Date(startedAt);
     date.setDate(startedAt.getDate() + i);
+    const day = days[date.getDay()]
+
     return (
       <Box
         key={i}
         status={date < TODAY ? 'before' : 'active'}
         checked={checkin_log.includes(date.toString()) ? 'checked' : 'none'}
       >
-        {date.toString().split(' ')[0]}
+        {day}
         <br />
         {date.getDate()}
       </Box>

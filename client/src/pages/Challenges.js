@@ -116,12 +116,12 @@ const Challenges = () => {
     console.log('submit handling');
     if (sorting === 'latest') {
       console.log('latest');
-      requestLatestChallenges(10, query).then((result) =>
+      requestLatestChallenges(-1, query).then((result) =>
         setChallenges(result)
       );
     } else {
       console.log('popular');
-      requestPopularChallenges(10, query).then((result) =>
+      requestPopularChallenges(-1, query).then((result) =>
         setChallenges(result)
       );
     }
@@ -130,10 +130,10 @@ const Challenges = () => {
   useEffect(() => {
     if (sorting === 'latest') {
       console.log('latest');
-      requestLatestChallenges(10).then((result) => setChallenges(result));
+      requestLatestChallenges(-1).then((result) => setChallenges(result));
     } else {
       console.log('popular');
-      requestPopularChallenges(10, query).then((result) =>
+      requestPopularChallenges(-1, query).then((result) =>
         setChallenges(result)
       );
     }

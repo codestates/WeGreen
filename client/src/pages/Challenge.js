@@ -464,14 +464,15 @@ const Challenge = () => {
                 </EditBtn>
               </>
             ) : (
-              <>
-                <EditBtn>
-                  <EditIcon width='20' height='20' fill={color.grey} />
-                </EditBtn>
-                <DeleteBtn>
-                  <DeleteIcon width='20' height='20' fill={color.grey} />
-                </DeleteBtn>
-              </>
+              null
+              // <>
+              //   <EditBtn>
+              //     <EditIcon width='20' height='20' fill={color.grey} />
+              //   </EditBtn>
+              //   <DeleteBtn>
+              //     <DeleteIcon width='20' height='20' fill={color.grey} />
+              //   </DeleteBtn>
+              // </>
             )
           ) : null}
           <Title>{challengeInfo.name}</Title>
@@ -483,18 +484,10 @@ const Challenge = () => {
             isStarted && !isCheckined && !isFinished ? (
               <Button content='챌린지 체크인' handler={handleCheckinModal} />
             ) : (
-              <Button
-                color={color.black}
-                disabled={true}
-                content='챌린지 체크인'
-              />
+              '챌린지 진행 예정입니다'
             )
           ) : isStarted ? (
-            <Button
-              color={color.black}
-              disabled={true}
-              content='진행중에는 참여할 수 없습니다'
-            />
+            '진행중에는 참여할 수 없습니다'
           ) : (
             <Button
               content='챌린지 참여하기'

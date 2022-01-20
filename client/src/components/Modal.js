@@ -68,12 +68,14 @@ const CloseBtn = styled.button`
   }
 `;
 
-const Modal = ({ children, closeModal }) => {
+const Modal = ({ children, canClose = true, closeModal }) => {
   return (
     <>
-      <Backdrop></Backdrop>
+      <Backdrop />
       <ModalContainer>
-        <CloseBtn onClick={() => closeModal(false)}>close</CloseBtn>
+        {canClose ? (
+          <CloseBtn onClick={() => closeModal(false)}>close</CloseBtn>
+        ) : null}
         {children}
       </ModalContainer>
     </>
