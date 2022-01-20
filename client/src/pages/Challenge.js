@@ -125,7 +125,6 @@ const ObtainedBadge = styled.img`
 const Challenge = () => {
   const dispatch = useDispatch();
 
-
   const params = useParams();
   const loginState = useSelector((state) => state.userReducer);
   const navigate = useNavigate();
@@ -347,9 +346,7 @@ const Challenge = () => {
       case 'login required':
         return (
           <>
-            <p>
-              로그인이 필요한 서비스입니다.
-            </p>
+            <p>로그인이 필요한 서비스입니다.</p>
             <Button
               content='로그인하러 가기'
               handler={() => navigate('/login')}
@@ -453,27 +450,16 @@ const Challenge = () => {
     <OuterContainer>
       <ChallengeContainer>
         <CommonContainer>
-          {isAdmin || isAuthor ? (
-            isAdmin || (!isStarted && challengeInfo.join_count < 2) ? (
-              <>
-                <DeleteBtn onClick={handleDeleteChallengeModal}>
-                  <DeleteIcon width='20' height='20' fill={color.secondary} />
-                </DeleteBtn>
-                <EditBtn onClick={moveEditChallenge}>
-                  <EditIcon width='20' height='20' fill={color.secondary} />
-                </EditBtn>
-              </>
-            ) : (
-              null
-              // <>
-              //   <EditBtn>
-              //     <EditIcon width='20' height='20' fill={color.grey} />
-              //   </EditBtn>
-              //   <DeleteBtn>
-              //     <DeleteIcon width='20' height='20' fill={color.grey} />
-              //   </DeleteBtn>
-              // </>
-            )
+          {isAdmin ||          
+          (isAuthor && !isStarted && challengeInfo.join_count < 2 && !isFinished) ? (
+            <>
+              <DeleteBtn onClick={handleDeleteChallengeModal}>
+                <DeleteIcon width='20' height='20' fill={color.secondary} />
+              </DeleteBtn>
+              <EditBtn onClick={moveEditChallenge}>
+                <EditIcon width='20' height='20' fill={color.secondary} />
+              </EditBtn>
+            </>
           ) : null}
           <Title>{challengeInfo.name}</Title>
           <Caption>
@@ -483,8 +469,12 @@ const Challenge = () => {
           {challengeInfo.is_joined ? (
             isStarted && !isCheckined && !isFinished ? (
               <Button content='챌린지 체크인' handler={handleCheckinModal} />
-            ) : (
+            ) : !isCheckined && !isFinished ? (
               '챌린지 진행 예정입니다'
+            ) : !isFinished ? (
+              '이미 체크인 하셨습니다'
+            ) : (
+              '완료된 챌린지입니다'
             )
           ) : isStarted ? (
             '진행중에는 참여할 수 없습니다'

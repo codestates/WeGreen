@@ -43,16 +43,16 @@ const Highlighted = styled.p`
 const BoxContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 0.1rem;
+  gap: 0.5rem;
 `;
 
 const Box = styled.div`
-  border: 1px solid black;
-  border-radius: 5px;
+  padding: .3rem 0;
+  border-radius: 12px;
   font-size: 0.875rem;
   text-align: center;
   background-color: ${(props) =>
-    props.checked === 'checked' ? color.secondary : 'white'};
+    props.checked === 'checked' ? color.secondaryDark : color.secondaryLight};
   opacity: ${(props) => (props.status === 'before' ? 0.5 : 1)};
 `;
 

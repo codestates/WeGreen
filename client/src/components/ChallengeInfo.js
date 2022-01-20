@@ -48,8 +48,9 @@ const BoxContainer = styled.div`
 `;
 
 const Box = styled.div`
-  border: 1px solid black;
-  border-radius: 5px;
+  padding: .3rem 0;
+  border-radius: 12px;
+  background-color: ${color.secondaryLight};
   font-size: 0.875rem;
   text-align: center;
   opacity: ${(props) => (props.status === 'before' ? 0.5 : 1)};
