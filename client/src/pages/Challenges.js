@@ -120,14 +120,14 @@ const Challenges = () => {
     console.log('submit handling');
     if (sorting === 'latest') {
       setIsLoading(true);
-      requestLatestChallenges(10, query).then((result) => {
+      requestLatestChallenges(-1, query).then((result) => {
         setChallenges(result);
         if (result.length === 0) setHasNoResult(true);
         setIsLoading(false);
       });
     } else {
       setIsLoading(true);
-      requestPopularChallenges(10, query).then((result) => {
+      requestPopularChallenges(-1, query).then((result) => {
         setChallenges(result);
         if (result.length === 0) setHasNoResult(true);
         setIsLoading(false);
@@ -138,14 +138,14 @@ const Challenges = () => {
   useEffect(() => {
     if (sorting === 'latest') {
       setIsLoading(true);
-      requestLatestChallenges(10).then((result) => {
+      requestLatestChallenges(-1).then((result) => {
         setChallenges(result);
         if (result.length === 0) setHasNoResult(true);
         setIsLoading(false);
       });
     } else {
       setIsLoading(true);
-      requestLatestChallenges(10).then((result) => {
+      requestLatestChallenges(-1).then((result) => {
         setChallenges(result);
         if (result.length === 0) setHasNoResult(true);
         setIsLoading(false);

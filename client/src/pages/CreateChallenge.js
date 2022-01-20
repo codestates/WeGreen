@@ -73,14 +73,6 @@ const CreateChallenge = () => {
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!loginState.isLogin) {
-      setResponseStatus('login required');
-    }
-    setIsModalOpen(true);
-  // eslint-disable-next-line
-  }, []);
-
   const startDate = new Date(TODAY);
   startDate.setDate(startDate.getDate() + 1);
   if (startDate.getDate() === 0) {
@@ -174,6 +166,14 @@ const CreateChallenge = () => {
     }
   };
 
+  useEffect(() => {
+    if (!loginState.isLogin) {
+      setResponseStatus('login required');
+      setIsModalOpen(true)
+    }
+    // eslint-disable-next-line
+  }, []);
+
   return (
     <Container>
       <TitleContainer>
@@ -218,6 +218,7 @@ const CreateChallenge = () => {
       </CreateChallengeContainer>
       {isModalOpen ? (
         <Modal
+          canClose={responseStatus !== 'login required' ? true : false}
           closeModal={
             responseStatus !== 'login required' ? setIsModalOpen : () => {}
           }

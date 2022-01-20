@@ -44,16 +44,16 @@ const Highlighted = styled.p`
 const BoxContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 0.1rem;
+  gap: 0.5rem;
 `;
 
 const Box = styled.div`
-  border: 1px solid black;
-  border-radius: 5px;
+  padding: .3rem 0;
+  border-radius: 12px;
   font-size: 0.875rem;
   text-align: center;
   background-color: ${(props) =>
-    props.checked === 'checked' ? color.secondary : 'white'};
+    props.checked === 'checked' ? color.secondaryDark : color.secondaryLight};
   opacity: ${(props) => (props.status === 'before' ? 0.5 : 1)};
 `;
 
@@ -87,17 +87,21 @@ const ChallengeCheckin = ({ challengeInfo, checkinInfo, isLoading }) => {
   const finishedAt = new Date(challengeInfo.started_at);
   finishedAt.setDate(startedAt.getDate() + 6);
 
+  const days = ['일', '월', '화', '수', '목', '금', '토']
+
   const count = 7;
   const Boxes = new Array(count).fill([]).map((_, i) => {
     const date = new Date(startedAt);
     date.setDate(startedAt.getDate() + i);
+    const day = days[date.getDay()]
+
     return (
       <Box
         key={i}
         status={date < TODAY ? 'before' : 'active'}
         checked={checkin_log.includes(date.toString()) ? 'checked' : 'none'}
       >
-        {date.toString().split(' ')[0]}
+        {day}
         <br />
         {date.getDate()}
       </Box>
