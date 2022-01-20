@@ -64,8 +64,13 @@ const ChallengeCard = ({ challenge }) => {
       <Link to={href}>
         <h3>{challenge.name}</h3>
         <p>
-          {startedAt.toLocaleDateString('ko-KR', { timezone: 'UTC' })} ~{' '}
-          {finishedAt.toLocaleDateString('ko-KR', { timezone: 'UTC' })}
+          {`${startedAt.getFullYear()}.${
+            startedAt.getMonth() + 1
+          }.${startedAt.getDate()}.`}{' '}
+          ~{' '}
+          {`${finishedAt.getFullYear()}.${
+            finishedAt.getMonth() + 1
+          }.${finishedAt.getDate()}.`}
         </p>
         <p>주 {challenge.requirement}회</p>
         <ChallengeCardStatusContainer>
