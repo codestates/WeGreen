@@ -8,10 +8,11 @@ import ChallengeCard from '../components/ChallengeCard';
 import Loading from '../components/Loading';
 import NoResult from '../components/NoResult';
 import Footer from '../components/Footer';
-import { color, device, contentWidth } from '../styles';
+import { color, device, contentWidth, boxShadow } from '../styles';
 import mainIllust from '../assets/images/main_illust.png';
 import { ReactComponent as Wave } from '../assets/images/wave.svg';
 import { requestPopularChallenges } from '../apis';
+import image1 from '../assets/images/home/desc1.gif';
 
 const HomeContainer = styled.div`
   background-color: ${color.primaryLight};
@@ -83,6 +84,71 @@ const ChallengeList = styled.ul`
   }
 `;
 
+const ServiceSection = styled.section`
+  background-color: ${(props) =>
+    props.theme === 'dark' ? color.primary : 'none'};
+  color: ${(props) => (props.theme === 'dark' ? color.white : color.black)};
+`;
+
+const ServiceSectionContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6rem 1rem;
+  text-align: center;
+  word-break: keep-all;
+
+  img {
+    order: 3;
+    width: 100%;
+    max-width: 320px;
+    margin-top: 1rem;
+    border: 4px solid ${color.primary};
+    border-radius: 10px;
+    box-shadow: ${boxShadow};
+  }
+
+  @media ${device.laptop} {
+    flex-direction: row;
+    width: ${contentWidth};
+    margin: 0 auto;
+    padding: 8rem 0;
+    text-align: ${(props) => (props.theme === 'dark' ? 'right' : 'left')};
+    img {
+      order: ${(props) => (props.theme === 'dark' ? 1 : 3)};
+    }
+  }
+`;
+
+const DescContainer = styled.div`
+  order: 2;
+  h2 {
+    margin-bottom: 2rem;
+    line-height: 1.5;
+  }
+  p {
+    line-height: 2;
+  }
+`;
+
+const InitiationSection = styled.section`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6rem 1rem;
+  text-align: center;
+  word-break: keep-all;
+  h2 {
+    margin-bottom: 2rem;
+    line-height: 1.5;
+  }
+  p {
+    line-height: 2;
+  }
+`;
+
 const Home = () => {
   const dispatch = useDispatch();
   dispatch(changeTitle('WeGreen | 홈'));
@@ -142,6 +208,92 @@ const Home = () => {
           </ChallengeList>
         </ChallengeListContainer>
       </ChallengesContainer>
+      <ServiceSection theme='light'>
+        <ServiceSectionContainer theme='light'>
+          <DescContainer>
+            <h2>
+              챌린지에
+              <br />
+              도전해 보세요
+            </h2>
+            <p>
+              WeGreen 일주일 챌린지로 환경을 지키는 습관을 만들어 보세요. <br />
+              모든 챌린지는 실천하기 쉽도록 일주일 단위로 진행됩니다. <br />
+              챌린지 참여하기를 눌러 마음에 드는 챌린지에 참여할 수 있습니다.{' '}
+              <br />
+              마음에 드는 챌린지가 없다면 직접 새로운 챌린지를 만들어 보세요!
+            </p>
+          </DescContainer>
+          <img src={image1}></img>
+        </ServiceSectionContainer>
+      </ServiceSection>
+      <ServiceSection theme='dark'>
+        <ServiceSectionContainer theme='dark'>
+          <DescContainer>
+            <h2>
+              다른 사람들은
+              <br />
+              어떻게 하고 있을까요?
+            </h2>
+            <p>
+              매일 전체 참여자 중 몇명이 체크인 했는지 확인할 수 있습니다.{' '}
+              <br />
+              챌린지에 참여한 다른 사람들과 댓글창에서 대화를 나눌 수도 있어요.{' '}
+              <br />
+              댓글창의 사용자 이름을 클릭하면, <br />
+              해당 사용자가의 챌린지 참여 정보를 볼 수 있습니다.
+            </p>
+          </DescContainer>
+          <img src={image1}></img>
+        </ServiceSectionContainer>
+      </ServiceSection>
+      <ServiceSection theme='light'>
+        <ServiceSectionContainer theme='light'>
+          <DescContainer>
+            <h2>
+              챌린지 보상으로
+              <br />
+              마이페이지를 꾸며요
+            </h2>
+            <p>
+              챌린지를 성공적으로 완료하면 보상으로 랜덤 뱃지가 주어져요!
+              <br />
+              획득한 뱃지로 마이페이지의 일러스트를 꾸밀 수 있어요.
+            </p>
+          </DescContainer>
+          <img src={image1}></img>
+        </ServiceSectionContainer>
+      </ServiceSection>
+      <ServiceSection theme='dark'>
+        <ServiceSectionContainer theme='dark'>
+          <DescContainer>
+            <h2>
+              매달 참여결과를
+              <br />
+              이메일로 받아보세요
+            </h2>
+            <p>
+              이달 가장 많이 참여한 챌린지와 자신이 했던 챌린지 목록을
+              <br />
+              등록된 이메일로 받아볼 수 있습니다.
+            </p>
+          </DescContainer>
+          <img src={image1}></img>
+        </ServiceSectionContainer>
+      </ServiceSection>
+      <InitiationSection>
+        <h2>챌린지를 시작할 준비가 되셨나요?</h2>
+        <p>
+          어떤 챌린지들이 있는지 둘러봅시다.
+          <br />
+          작은 실천들이 모여 환경을 지키는 큰 힘이 됩니다.
+        </p>
+        <Button
+          width='fit-content'
+          content={'챌린지 보러가기'}
+          handler={() => navigate('/challenges')}
+        />
+      </InitiationSection>
       <Footer />
     </HomeContainer>
   );
