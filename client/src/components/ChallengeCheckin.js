@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { color, contentWidth, device, radius } from '../styles';
 import { TODAY } from '../data/initialData';
+import Loading from './Loading';
 
 const Container = styled.div`
   width: 100%;
@@ -76,7 +77,7 @@ const ProgressBar = styled.div`
   border-radius: ${radius};
 `;
 
-const ChallengeCheckin = ({ challengeInfo, checkinInfo }) => {
+const ChallengeCheckin = ({ challengeInfo, checkinInfo, isLoading }) => {
   const checkin_log = checkinInfo.checkin_log.map((el) => {
     const log = new Date(el);
     return log.toString();
@@ -113,32 +114,39 @@ const ChallengeCheckin = ({ challengeInfo, checkinInfo }) => {
   return (
     <Container>
       <ChallengeCheckinContainer>
-        {TODAY < startedAt ? (
-          <p>챌린지 진행 예정입니다</p>
-        ) : TODAY <= finishedAt ? (
-          <p>
-            오늘은 {challengeInfo.join_count}명 중 {checkinInfo.checkin_count}
-            명이 <br />
-            체크인 하였습니다.
-          </p>
-        ) : challengeInfo.is_joined ? (
-          <p>{checkinInfo.checkin_count}번 체크인 하셨습니다.</p>
+        {isLoading ? (
+          <Loading theme='light' text='챌린지 체크인을 불러오는 중입니다.' />
         ) : (
-          <p>완료된 챌린지입니다.</p>
-        )}
-        {challengeInfo.is_joined ? (
           <>
-            <Highlighted>나의 체크인 현황</Highlighted>
-            <BoxContainer>{Boxes.map((box) => box)}</BoxContainer>
-            <Highlighted>나의 목표 달성률</Highlighted>
-            <ProgressContainer>
-              <p>{progress * 100}%</p>
-              <ProgressBarContainer>
-                <ProgressBar width={`${progress * 100}%`} />
-              </ProgressBarContainer>
-            </ProgressContainer>
+            {TODAY < startedAt ? (
+              <p>챌린지 진행 예정입니다</p>
+            ) : TODAY <= finishedAt ? (
+              <p>
+                오늘은 {challengeInfo.join_count}명 중{' '}
+                {checkinInfo.checkin_count}
+                명이 <br />
+                체크인 하였습니다.
+              </p>
+            ) : challengeInfo.is_joined ? (
+              <p>{checkinInfo.checkin_count}번 체크인 하셨습니다.</p>
+            ) : (
+              <p>완료된 챌린지입니다.</p>
+            )}
+            {challengeInfo.is_joined ? (
+              <>
+                <Highlighted>나의 체크인 현황</Highlighted>
+                <BoxContainer>{Boxes.map((box) => box)}</BoxContainer>
+                <Highlighted>나의 목표 달성률</Highlighted>
+                <ProgressContainer>
+                  <p>{progress * 100}%</p>
+                  <ProgressBarContainer>
+                    <ProgressBar width={`${progress * 100}%`} />
+                  </ProgressBarContainer>
+                </ProgressContainer>
+              </>
+            ) : null}
           </>
-        ) : null}
+        )}
       </ChallengeCheckinContainer>
     </Container>
   );
