@@ -83,7 +83,7 @@ module.exports = {
   latest: async (req, res) => {
     try {
       console.log('THIS IS LATEST req.query', req.query);
-      if(req.query.limit){
+      if(req.query){
       var search = req.query.limit.split('=')[1];
       }
       else{
