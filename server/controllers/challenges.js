@@ -83,13 +83,7 @@ module.exports = {
   latest: async (req, res) => {
     try {
       console.log('THIS IS LATEST req.query', req.query);
-      if(req.query.limit){
-        var split =req.query.limit
-      var search = split.slice(10);
-      }
-      else{
-        search = '';
-      }
+      const search = req.query.query || '';
       //클라이언트에서 보낸 req.query를 찍어보면 req.query : {limit: '10$query=물'}
       const limitNum = Number(req.query.limit) || 20;
       const searchModel = await ChallengeModel.findAll({
