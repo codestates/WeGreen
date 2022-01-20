@@ -11,6 +11,7 @@ import TextareaForm from '../components/TextareaForm';
 import Button from '../components/Button';
 import Modal from '../components/Modal';
 import BadgeModal from '../components/BadgeModal';
+import Loading from '../components/Loading'
 import { ReactComponent as Wave } from '../assets/images/wave.svg';
 import { ReactComponent as EditIcon } from '../assets/images/icon_edit.svg';
 import Badges from '../assets/images/badges/badges';
@@ -267,18 +268,18 @@ const EditMyinfo = () => {
           myinfo.bio === state.userInfo.bio
         )
       ) {
+        setResponseStatus('wait response')
+        setIsModalOpen(true);
         updateMyinfo(`${myinfo.user_id}`, {
           username: myinfo.username,
           bio: myinfo.bio,
         })
           .then((result) => {
             setResponseStatus('success modify profile');
-            setIsModalOpen(true);
             dispatch(updateUserinfo(result));
           })
           .catch((err) => {
             setResponseStatus('no status');
-            setIsModalOpen(true);
           });
       } else {
         setResponseStatus('not changed');
@@ -292,6 +293,8 @@ const EditMyinfo = () => {
 
   const handleModifyPassword = () => {
     if (isValidPassword && isValidPasswordConfirm) {
+      setResponseStatus('wait response')
+      setIsModalOpen(true);
       modifyPassword(`${myinfo.user_id}`, {
         currentPWD: modify.now,
         newPWD: modify.new,
@@ -303,18 +306,14 @@ const EditMyinfo = () => {
             re: '',
           });
           setResponseStatus('success modify password');
-          setIsModalOpen(true);
         })
         .catch((err) => {
           if (err.response.status === 401) {
             setResponseStatus('unauthorized');
-            setIsModalOpen(true);
           } else if (err.response.status === 409) {
             setResponseStatus('password conflict');
-            setIsModalOpen(true);
           } else {
             setResponseStatus('no status');
-            setIsModalOpen(true);
           }
         });
     }
@@ -326,15 +325,14 @@ const EditMyinfo = () => {
   };
 
   const handleSignout = () => {
+    setResponseStatus('wait response')
     signout()
       .then((result) => {
         setResponseStatus('success signout');
-        setIsModalOpen(true);
         dispatch(logout());
       })
       .catch((err) => {
         setResponseStatus('no status');
-        setIsModalOpen(true);
       });
   };
 
@@ -348,6 +346,12 @@ const EditMyinfo = () => {
               content='로그인하러 가기'
               handler={() => navigate('/login')}
             ></Button>
+          </>
+        );
+      case 'wait response':
+        return (
+          <>
+            <Loading theme='light' text='응답을 기다리는 중입니다.' />
           </>
         );
       case 'not changed':
