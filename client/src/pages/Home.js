@@ -13,6 +13,8 @@ import mainIllust from '../assets/images/main_illust.png';
 import { ReactComponent as Wave } from '../assets/images/wave.svg';
 import { requestPopularChallenges } from '../apis';
 import image1 from '../assets/images/home/desc1.gif';
+import image3badges from '../assets/images/home/desc3_badges.gif';
+import image3animals from '../assets/images/home/desc3_animals.gif';
 
 const HomeContainer = styled.div`
   background-color: ${color.primaryLight};
@@ -149,6 +151,36 @@ const InitiationSection = styled.section`
   }
 `;
 
+const GIFContainer = styled.div`
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  height: 80vw;
+  max-height: 320px;
+  order: 3;
+  @media ${device.laptop} {
+    width: 50%;
+    order: ${(props) => (props.theme === 'dark' ? 1 : 3)};
+  }
+  text-align: right;
+  .bottomleft {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 90%;
+    margin-top: 0;
+  }
+
+  .topright {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 10;
+    width: 50%;
+    margin-top: 0;
+  }
+`;
+
 const Home = () => {
   const dispatch = useDispatch();
   dispatch(changeTitle('WeGreen | 홈'));
@@ -261,7 +293,10 @@ const Home = () => {
               획득한 뱃지로 마이페이지의 일러스트를 꾸밀 수 있어요.
             </p>
           </DescContainer>
-          <img src={image1}></img>
+          <GIFContainer>
+            <img className='topright' src={image3badges}></img>
+            <img className='bottomleft' src={image3animals}></img>
+          </GIFContainer>
         </ServiceSectionContainer>
       </ServiceSection>
       <ServiceSection theme='dark'>
