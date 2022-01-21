@@ -24,7 +24,6 @@ module.exports = {
   popular: async (req, res) => {
     try {
       const search = req.query.query || '';
-      console.log('!!THIS IS SEARCH',search)
       const limitNum = Number(req.query.limit) || 20;
       const searchModel = await ChallengeModel.findAll({
         attributes: [
