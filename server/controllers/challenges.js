@@ -56,7 +56,7 @@ module.exports = {
 
       const joinCountArray = await UserChallengeModel.findAll({
         attributes: [
-          [sequelize.fn('COUNT', sequelize.col('user_id')), 'join_count'],
+          [sequelize.fn('COUNT', sequelize.col('id')), 'join_count'],
           'challenge_id',
         ],
         group: ['challenge_id'],
@@ -123,7 +123,7 @@ module.exports = {
       for (let challenge of searchModel) {
         var join_count = await UserChallengeModel.findAll({
           attributes: [
-            [sequelize.fn('COUNT', sequelize.col('user_id')), 'join_count'],
+            [sequelize.fn('COUNT', sequelize.col('id')), 'join_count'],
             'challenge_id',
           ],
           where: { challenge_id: challenge.challenge_id },
@@ -208,11 +208,16 @@ module.exports = {
       if (!newChallenge) {
         res.status(404).json({ message: 'Not found' });
       } else {
-        const joinCountArray = await UserChallengeModel.findAll({
-          attributes: ['user_id'],
+        const joinCountArray = await UserChallengeModel.findOne({
+          attributes: [
+            [sequelize.fn('COUNT', sequelize.col('id')), 'join_count'],
+            'challenge_id',
+          ],
+          group: ['challenge_id'],
           where: { challenge_id: req.params.challenge_id },
+          raw: true,
         });
-        const join_count = joinCountArray.length;
+        const join_count = joinCountArray.join_count;
         var total_checkin_count = 0;
         const today = moment().format().slice(0, 10);
         const checkinTimes = await CheckInModel.findAll({
