@@ -3,6 +3,8 @@ import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { changeTitle } from '../actions';
 import styled from 'styled-components';
+import aos from 'aos';
+import 'aos/dist/aos.css';
 import Button from '../components/Button';
 import ChallengeCard from '../components/ChallengeCard';
 import Loading from '../components/Loading';
@@ -192,6 +194,7 @@ const Home = () => {
   const [hasNoResult, setHasNoResult] = useState(false);
 
   useEffect(() => {
+    aos.init({ duration: 1000, offset: 50, once: true });
     requestPopularChallenges(4).then((result) => {
       setChallenges(result);
       setIsLoading(false);
@@ -202,11 +205,16 @@ const Home = () => {
   return (
     <HomeContainer>
       <HeroSection>
-        <img src={mainIllust} alt='main-illust'></img>
-        <h1>
+        <img
+          src={mainIllust}
+          alt='main-illust'
+          data-aos='fade-up'
+          data-aos-delay='100'
+        ></img>
+        <h1 data-aos='fade-up' data-aos-delay='200'>
           일주일 챌린지로 환경을 지켜요, <span>WeGreen</span>
         </h1>
-        <p>
+        <p data-aos='fade-up' data-aos-delay='300'>
           다른 사람들과 함께 챌린지를 진행하며 서로를 응원해요.
           <br />
           챌린지를 성공하면 뱃지가 주어져요. 뱃지들을 모아 마이페이지를
@@ -215,21 +223,29 @@ const Home = () => {
           이달 가장 많이 참여한 챌린지와 자신이 했던 챌린지 목록을 받아볼 수
           있습니다.
         </p>
-        <Button
-          width='fit-content'
-          content={'챌린지 보러가기'}
-          handler={() => navigate('/challenges')}
-        />
+        <div data-aos='fade-up' data-aos-delay='400'>
+          <Button
+            width='fit-content'
+            content={'챌린지 보러가기'}
+            handler={() => navigate('/challenges')}
+          />
+        </div>
       </HeroSection>
       <Wave width='100%' height='100' fill={color.primary} />
       <ChallengesContainer>
         <ChallengeListContainer>
-          <h2>인기 챌린지를 확인해 보세요</h2>
+          <h2 data-aos='fade-up'>인기 챌린지를 확인해 보세요</h2>
           {isLoading ? (
             <Loading theme='dark' text='인기 챌린지를 불러오는 중입니다.' />
           ) : null}
           {hasNoResult ? (
-            <NoResult theme='dark' text='인기 챌린지가 없습니다.' />
+            <div data-aos='fade-up'>
+              <NoResult
+                data-aos='fade-up'
+                theme='dark'
+                text='인기 챌린지가 없습니다.'
+              />
+            </div>
           ) : null}
           <ChallengeList>
             {challenges.length !== 0
@@ -243,12 +259,12 @@ const Home = () => {
       <ServiceSection theme='light'>
         <ServiceSectionContainer theme='light'>
           <DescContainer>
-            <h2>
+            <h2 data-aos='fade-up'>
               챌린지에
               <br />
               도전해 보세요
             </h2>
-            <p>
+            <p data-aos='fade-up'>
               WeGreen 일주일 챌린지로 환경을 지키는 습관을 만들어 보세요. <br />
               모든 챌린지는 실천하기 쉽도록 일주일 단위로 진행됩니다. <br />
               챌린지 참여하기를 눌러 마음에 드는 챌린지에 참여할 수 있습니다.{' '}
@@ -256,18 +272,18 @@ const Home = () => {
               마음에 드는 챌린지가 없다면 직접 새로운 챌린지를 만들어 보세요!
             </p>
           </DescContainer>
-          <img src={image1}></img>
+          <img src={image1} data-aos='fade-up'></img>
         </ServiceSectionContainer>
       </ServiceSection>
       <ServiceSection theme='dark'>
         <ServiceSectionContainer theme='dark'>
           <DescContainer>
-            <h2>
+            <h2 data-aos='fade-up'>
               다른 사람들은
               <br />
               어떻게 하고 있을까요?
             </h2>
-            <p>
+            <p data-aos='fade-up'>
               매일 전체 참여자 중 몇명이 체크인 했는지 확인할 수 있습니다.{' '}
               <br />
               챌린지에 참여한 다른 사람들과 댓글창에서 대화를 나눌 수도 있어요.{' '}
@@ -276,58 +292,68 @@ const Home = () => {
               해당 사용자가의 챌린지 참여 정보를 볼 수 있습니다.
             </p>
           </DescContainer>
-          <img src={image1}></img>
+          <img src={image1} data-aos='fade-up'></img>
         </ServiceSectionContainer>
       </ServiceSection>
       <ServiceSection theme='light'>
         <ServiceSectionContainer theme='light'>
           <DescContainer>
-            <h2>
+            <h2 data-aos='fade-up'>
               챌린지 보상으로
               <br />
               마이페이지를 꾸며요
             </h2>
-            <p>
+            <p data-aos='fade-up'>
               챌린지를 성공적으로 완료하면 보상으로 랜덤 뱃지가 주어져요!
               <br />
               획득한 뱃지로 마이페이지의 일러스트를 꾸밀 수 있어요.
             </p>
           </DescContainer>
           <GIFContainer>
-            <img className='topright' src={image3badges}></img>
-            <img className='bottomleft' src={image3animals}></img>
+            <img
+              className='topright'
+              src={image3badges}
+              data-aos='fade-up'
+            ></img>
+            <img
+              className='bottomleft'
+              src={image3animals}
+              data-aos='fade-up'
+            ></img>
           </GIFContainer>
         </ServiceSectionContainer>
       </ServiceSection>
       <ServiceSection theme='dark'>
         <ServiceSectionContainer theme='dark'>
           <DescContainer>
-            <h2>
+            <h2 data-aos='fade-up'>
               매달 참여결과를
               <br />
               이메일로 받아보세요
             </h2>
-            <p>
+            <p data-aos='fade-up'>
               이달 가장 많이 참여한 챌린지와 자신이 했던 챌린지 목록을
               <br />
               등록된 이메일로 받아볼 수 있습니다.
             </p>
           </DescContainer>
-          <img src={image1}></img>
+          <img src={image1} data-aos='fade-up'></img>
         </ServiceSectionContainer>
       </ServiceSection>
       <InitiationSection>
-        <h2>챌린지를 시작할 준비가 되셨나요?</h2>
-        <p>
+        <h2 data-aos='fade-up'>챌린지를 시작할 준비가 되셨나요?</h2>
+        <p data-aos='fade-up'>
           어떤 챌린지들이 있는지 둘러봅시다.
           <br />
           작은 실천들이 모여 환경을 지키는 큰 힘이 됩니다.
         </p>
-        <Button
-          width='fit-content'
-          content={'챌린지 보러가기'}
-          handler={() => navigate('/challenges')}
-        />
+        <div data-aos='fade-up'>
+          <Button
+            width='fit-content'
+            content={'챌린지 보러가기'}
+            handler={() => navigate('/challenges')}
+          />
+        </div>
       </InitiationSection>
       <Footer />
     </HomeContainer>
