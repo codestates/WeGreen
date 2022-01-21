@@ -47,7 +47,6 @@ module.exports = {
         res.status(401).json({ message: 'Invalid token' });
       }
     } catch (err) {
-      console.log('ERROR', err);
       res.status(500).send({
         message: 'Internal server error',
       });

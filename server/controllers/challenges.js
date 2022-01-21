@@ -79,7 +79,6 @@ module.exports = {
       }
       res.status(200).json({ message: 'OK', data: popularResult });
     } catch (err) {
-      console.log('ERROR', err);
       res.status(500).send({
         message: 'Internal server error',
       });
@@ -88,7 +87,6 @@ module.exports = {
   //최신 챌린지 목록 불러오기 GET /latest
   latest: async (req, res) => {
     try {
-      console.log('THIS IS LATEST req.query', req.query);
       const search = req.query.query || '';
       //클라이언트에서 보낸 req.query를 찍어보면 req.query : {limit: '10$query=물'}
       const limitNum = Number(req.query.limit) || 20;
@@ -142,7 +140,6 @@ module.exports = {
         data: latestResult,
       });
     } catch (err) {
-      console.log('ERROR IN THE LATEST', err);
       res.status(500).send({
         message: 'Internal server error',
       });
@@ -290,7 +287,6 @@ module.exports = {
         });
       }
     } catch (err) {
-      console.log('ERROR in GET CHALLENGE', err);
       res.status(500).send({
         message: 'Internal server error',
       });
@@ -347,7 +343,6 @@ module.exports = {
         });
       }
     } catch (err) {
-      console.log('ERROR', err);
       res.status(500).send({
         message: 'Internal server error',
       });
@@ -389,168 +384,110 @@ module.exports = {
       });
     }
   },
-  //체크인(인증) 확인하기 GET /:challenge_id/checkins
-  checkins: {
-    get: async (req, res) => {
-      try {
-        // var join_count = 0;
-        // var today_checkin_count = 0;
-        // var is_success = false;
-        // const today = new Date();
-        // console.log('!!TODAY', today);
-        // //토큰 확인 불필요
-        // const joinCount = await UserChallengeModel.findOne({
-        //   attributes: [
-        //     [sequelize.fn('COUNT', sequelize.col('user_id')), 'join_count'],
-        //     'challenge_id',
-        //   ],
-        //   group: ['challenge_id'],
-        //   order: [[sequelize.col('join_count'), 'DESC']],
-        //   raw: true,
-        //   where: { challenge_id: req.params.challenge_id },
-        // });
-        // join_count = joinCount['join_count'];
-        // const checkinTimes = await CheckInModel.findAll({
-        //   attributes: ['created_at'],
-        //   where: { challenge_id: req.params.challenge_id },
-        //   raw: true,
-        // });
-        // console.log('!!THIS IS CHECK IN TIMES', checkinTimes);
-        // today_checkin_count = checkinTimes.length;
-        // const checkin_log = [];
-        // for (let element of checkinTimes) {
-        //   checkin_log.push(element.created_at);
-        // }
-        // const findRequirement = await ChallengeModel.findOne({
-        //   attributes: ['requirement'],
-        //   where: { id: req.params.challenge_id },
-        //   raw: true,
-        // });
-        // if (Number(findRequirement.requirement) <= checkin_log.length) {
-        //   is_success = true;
-        // }
-        // return res.status(200).json({
-        //   message: 'OK',
-        //   data: {
-        //     join_count: join_count,
-        //     checkin_count: today_checkin_count,
-        //     checkin_log: checkin_log,
-        //     is_accomplished: is_success,
-        //   },
-        // });
-      } catch (err) {
-        console.log('ERROR', err);
-        res.status(500).send({
-          message: 'Internal server error',
+  post: async (req, res) => {
+    try {
+      const authorization = isAuthorized(req);
+      const userInfo = JSON.parse(authorization.data);
+      const userId = userInfo.id;
+      var checkin_log = [];
+      var is_success = false;
+      //토큰 확인 불필요
+      const checkIfDone = await CheckInModel.findAll({
+        attributes: ['created_at'],
+        where: {
+          challenge_id: req.params.challenge_id,
+          user_id: userId,
+        },
+        raw: true,
+      });
+      if (
+        checkIfDone.length > 0 &&
+        new Date().toJSON().slice(0, 10) ===
+          checkIfDone[checkIfDone.length - 1].created_at
+      ) {
+        res
+          .status(409)
+          .json({ message: 'Checkin already done within 24 hours' });
+      } else {
+        const checkinDone = await CheckInModel.create({
+          user_id: userId,
+          challenge_id: req.params.challenge_id,
         });
-      }
-    },
-    post: async (req, res) => {
-      try {
-        const authorization = isAuthorized(req);
-        const userInfo = JSON.parse(authorization.data);
-        const userId = userInfo.id;
-        var checkin_log = [];
-        var is_success = false;
-        //토큰 확인 불필요
-        const checkIfDone = await CheckInModel.findAll({
+        const checkinLog = await CheckInModel.findAll({
           attributes: ['created_at'],
           where: {
-            challenge_id: req.params.challenge_id,
             user_id: userId,
+            challenge_id: req.params.challenge_id,
           },
           raw: true,
         });
-        if (
-          checkIfDone.length > 0 &&
-          new Date().toJSON().slice(0, 10) ===
-            checkIfDone[checkIfDone.length - 1].created_at
-        ) {
-          res
-            .status(409)
-            .json({ message: 'Checkin already done within 24 hours' });
-        } else {
-          const checkinDone = await CheckInModel.create({
-            user_id: userId,
-            challenge_id: req.params.challenge_id,
-          });
-          const checkinLog = await CheckInModel.findAll({
-            attributes: ['created_at'],
-            where: {
-              user_id: userId,
-              challenge_id: req.params.challenge_id,
-            },
-            raw: true,
-          });
-          const findIfSuccess = await ChallengeModel.findOne({
-            attributes: ['requirement'],
-            where: {
-              id: req.params.challenge_id,
-            },
-            raw: true,
-          });
-          for (let element of checkinLog) {
-            checkin_log.push(element.created_at);
-          }
-          var randombadge;
-          if (Number(findIfSuccess.requirement) <= checkin_log.length) {
-            is_success = true;
-            const alreadyHave = await UserBadgeModel.findAll({
-              where: { user_id: userId },
-              attributes: ['badge_id'],
-              raw: true,
-            });
-            const fullBadge = [
-              1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
-              20,
-            ];
-            for (let idx of alreadyHave) {
-              if (fullBadge.includes(idx.badge_id)) {
-                fullBadge.splice(fullBadge.indexOf(idx.badge_id), 1);
-              }
-            }
-            var count = fullBadge.length;
-            if (count > 1) {
-              const randomIdx = getRandomBadge(0, count - 1);
-              randombadge = fullBadge[randomIdx];
-            } else if (count === 1) {
-              randombadge = fullBadge[0];
-            } else {
-              randombadge = -1;
-            }
-            if (randombadge > 0) {
-              const obtainBadge = await UserBadgeModel.create({
-                user_id: userId,
-                badge_id: randombadge,
-                is_selected: true, //획득시 바로 보이게
-              });
-            }
-            res.status(201).json({
-              message: 'OK',
-              data: {
-                checkin_log: checkin_log,
-                is_accomplished: is_success,
-                obtained_badge: randombadge,
-              },
-            });
-          } else {
-            res.status(201).json({
-              message: 'OK',
-              data: {
-                checkin_log: checkin_log,
-                is_accomplished: is_success,
-                obtained_badge: null,
-              },
-            });
-          }
-        }
-      } catch (err) {
-        console.log('ERROR', err);
-        res.status(500).send({
-          message: 'Internal server error',
+        const findIfSuccess = await ChallengeModel.findOne({
+          attributes: ['requirement'],
+          where: {
+            id: req.params.challenge_id,
+          },
+          raw: true,
         });
+        for (let element of checkinLog) {
+          checkin_log.push(element.created_at);
+        }
+        var randombadge;
+        if (Number(findIfSuccess.requirement) <= checkin_log.length) {
+          is_success = true;
+          const alreadyHave = await UserBadgeModel.findAll({
+            where: { user_id: userId },
+            attributes: ['badge_id'],
+            raw: true,
+          });
+          const fullBadge = [
+            1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+            20,
+          ];
+          for (let idx of alreadyHave) {
+            if (fullBadge.includes(idx.badge_id)) {
+              fullBadge.splice(fullBadge.indexOf(idx.badge_id), 1);
+            }
+          }
+          var count = fullBadge.length;
+          if (count > 1) {
+            const randomIdx = getRandomBadge(0, count - 1);
+            randombadge = fullBadge[randomIdx];
+          } else if (count === 1) {
+            randombadge = fullBadge[0];
+          } else {
+            randombadge = -1;
+          }
+          if (randombadge > 0) {
+            const obtainBadge = await UserBadgeModel.create({
+              user_id: userId,
+              badge_id: randombadge,
+              is_selected: true, //획득시 바로 보이게
+            });
+          }
+          res.status(201).json({
+            message: 'OK',
+            data: {
+              checkin_log: checkin_log,
+              is_accomplished: is_success,
+              obtained_badge: randombadge,
+            },
+          });
+        } else {
+          res.status(201).json({
+            message: 'OK',
+            data: {
+              checkin_log: checkin_log,
+              is_accomplished: is_success,
+              obtained_badge: null,
+            },
+          });
+        }
       }
-    },
+    } catch (err) {
+      res.status(500).send({
+        message: 'Internal server error',
+      });
+    }
   },
   comments: {
     //댓글 목록 불러오기 GET /:challenge_id/comments
@@ -647,8 +584,7 @@ module.exports = {
             },
             raw: true,
           });
-          console.log('USER ID', userId);
-          console.log('findFirst.user_id', findFirst.user_id);
+
           if (findFirst.user_id === userId || is_admin) {
             await CommentModel.destroy({
               where: { id: req.params.comment_id },
@@ -687,7 +623,6 @@ module.exports = {
             .json({ message: 'OK', data: { content: postComment.content } });
         }
       } catch (err) {
-        console.log('ERROR in POST COMMENT', err);
         res.status(500).json({ message: 'Internal server error' });
       }
     },
