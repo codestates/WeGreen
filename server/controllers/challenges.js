@@ -384,110 +384,117 @@ module.exports = {
       });
     }
   },
-  post: async (req, res) => {
-    try {
-      const authorization = isAuthorized(req);
-      const userInfo = JSON.parse(authorization.data);
-      const userId = userInfo.id;
-      var checkin_log = [];
-      var is_success = false;
-      //토큰 확인 불필요
-      const checkIfDone = await CheckInModel.findAll({
-        attributes: ['created_at'],
-        where: {
-          challenge_id: req.params.challenge_id,
-          user_id: userId,
-        },
-        raw: true,
-      });
-      if (
-        checkIfDone.length > 0 &&
-        new Date().toJSON().slice(0, 10) ===
-          checkIfDone[checkIfDone.length - 1].created_at
-      ) {
-        res
-          .status(409)
-          .json({ message: 'Checkin already done within 24 hours' });
-      } else {
-        const checkinDone = await CheckInModel.create({
-          user_id: userId,
-          challenge_id: req.params.challenge_id,
-        });
-        const checkinLog = await CheckInModel.findAll({
+  //체크인(인증) 확인하기 GET /:challenge_id/checkins
+  checkins: {
+    get: async (req, res) => {
+      try {
+      } catch (err) {}
+    },
+    post: async (req, res) => {
+      try {
+        const authorization = isAuthorized(req);
+        const userInfo = JSON.parse(authorization.data);
+        const userId = userInfo.id;
+        var checkin_log = [];
+        var is_success = false;
+        //토큰 확인 불필요
+        const checkIfDone = await CheckInModel.findAll({
           attributes: ['created_at'],
           where: {
+            challenge_id: req.params.challenge_id,
+            user_id: userId,
+          },
+          raw: true,
+        });
+        if (
+          checkIfDone.length > 0 &&
+          new Date().toJSON().slice(0, 10) ===
+            checkIfDone[checkIfDone.length - 1].created_at
+        ) {
+          res
+            .status(409)
+            .json({ message: 'Checkin already done within 24 hours' });
+        } else {
+          const checkinDone = await CheckInModel.create({
             user_id: userId,
             challenge_id: req.params.challenge_id,
-          },
-          raw: true,
-        });
-        const findIfSuccess = await ChallengeModel.findOne({
-          attributes: ['requirement'],
-          where: {
-            id: req.params.challenge_id,
-          },
-          raw: true,
-        });
-        for (let element of checkinLog) {
-          checkin_log.push(element.created_at);
-        }
-        var randombadge;
-        if (Number(findIfSuccess.requirement) <= checkin_log.length) {
-          is_success = true;
-          const alreadyHave = await UserBadgeModel.findAll({
-            where: { user_id: userId },
-            attributes: ['badge_id'],
+          });
+          const checkinLog = await CheckInModel.findAll({
+            attributes: ['created_at'],
+            where: {
+              user_id: userId,
+              challenge_id: req.params.challenge_id,
+            },
             raw: true,
           });
-          const fullBadge = [
-            1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
-            20,
-          ];
-          for (let idx of alreadyHave) {
-            if (fullBadge.includes(idx.badge_id)) {
-              fullBadge.splice(fullBadge.indexOf(idx.badge_id), 1);
+          const findIfSuccess = await ChallengeModel.findOne({
+            attributes: ['requirement'],
+            where: {
+              id: req.params.challenge_id,
+            },
+            raw: true,
+          });
+          for (let element of checkinLog) {
+            checkin_log.push(element.created_at);
+          }
+          var randombadge;
+          if (Number(findIfSuccess.requirement) <= checkin_log.length) {
+            is_success = true;
+            const alreadyHave = await UserBadgeModel.findAll({
+              where: { user_id: userId },
+              attributes: ['badge_id'],
+              raw: true,
+            });
+            const fullBadge = [
+              1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+              20,
+            ];
+            for (let idx of alreadyHave) {
+              if (fullBadge.includes(idx.badge_id)) {
+                fullBadge.splice(fullBadge.indexOf(idx.badge_id), 1);
+              }
             }
-          }
-          var count = fullBadge.length;
-          if (count > 1) {
-            const randomIdx = getRandomBadge(0, count - 1);
-            randombadge = fullBadge[randomIdx];
-          } else if (count === 1) {
-            randombadge = fullBadge[0];
+            var count = fullBadge.length;
+            if (count > 1) {
+              const randomIdx = getRandomBadge(0, count - 1);
+              randombadge = fullBadge[randomIdx];
+            } else if (count === 1) {
+              randombadge = fullBadge[0];
+            } else {
+              randombadge = -1;
+            }
+            if (randombadge > 0) {
+              const obtainBadge = await UserBadgeModel.create({
+                user_id: userId,
+                badge_id: randombadge,
+                is_selected: true, //획득시 바로 보이게
+              });
+            }
+            res.status(201).json({
+              message: 'OK',
+              data: {
+                checkin_log: checkin_log,
+                is_accomplished: is_success,
+                obtained_badge: randombadge,
+              },
+            });
           } else {
-            randombadge = -1;
-          }
-          if (randombadge > 0) {
-            const obtainBadge = await UserBadgeModel.create({
-              user_id: userId,
-              badge_id: randombadge,
-              is_selected: true, //획득시 바로 보이게
+            res.status(201).json({
+              message: 'OK',
+              data: {
+                checkin_log: checkin_log,
+                is_accomplished: is_success,
+                obtained_badge: null,
+              },
             });
           }
-          res.status(201).json({
-            message: 'OK',
-            data: {
-              checkin_log: checkin_log,
-              is_accomplished: is_success,
-              obtained_badge: randombadge,
-            },
-          });
-        } else {
-          res.status(201).json({
-            message: 'OK',
-            data: {
-              checkin_log: checkin_log,
-              is_accomplished: is_success,
-              obtained_badge: null,
-            },
-          });
         }
+      } catch (err) {
+        res.status(500).send({
+          message: 'Internal server error',
+        });
       }
-    } catch (err) {
-      res.status(500).send({
-        message: 'Internal server error',
-      });
-    }
+    },
   },
   comments: {
     //댓글 목록 불러오기 GET /:challenge_id/comments
