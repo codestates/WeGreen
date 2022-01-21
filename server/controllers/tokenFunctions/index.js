@@ -16,7 +16,6 @@ module.exports = {
     });
   },
   sendAccessToken: (res, data, accessToken) => {
-    console.log('ACCESS TOKEN', accessToken);
     res.cookie('accessToken', accessToken, {
       domain: process.env.SERVER_DOMAIN,
       path: '/',

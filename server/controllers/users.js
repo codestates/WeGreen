@@ -142,7 +142,6 @@ module.exports = {
         res.status(500).json({ message: 'Internal server error' });
       }
     } catch (err) {
-      console.log('ERROR', err);
       res.status(500).send({
         message: 'Internal server error',
       });
@@ -280,7 +279,6 @@ module.exports = {
           },
         });
       } catch (err) {
-        console.log('ERROR IN PATCH USER INFO', err);
         res.status(500).send({
           message: 'Internal server error',
         });
@@ -324,7 +322,6 @@ module.exports = {
           const finishedDate = new Date(
             sevenDaysLater.setDate(sevenDaysLater.getDate() + 7)
           );
-          console.log('!!THIS IS USER ID', req.params.user_id);
           const today = moment().format().slice(0, 10);
 
           const checkinLog = await CheckInModel.findAll({
@@ -386,7 +383,6 @@ module.exports = {
           },
         });
       } catch (err) {
-        console.log('ERROR IN GET USER INFO', err);
         res.status(500).send({
           message: 'Internal server error',
         });

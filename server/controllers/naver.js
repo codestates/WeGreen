@@ -50,7 +50,6 @@ module.exports = {
           },
         });
         delete newUserInfo.dataValues.password;
-        console.log('!!!NEW USER INFO', newUserInfo.id);
         if (created) {
           const randombadge = getRandomBadge(1, 20);
           const obtainBadge = await UserBadgeModel.create({
