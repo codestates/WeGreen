@@ -53,7 +53,7 @@ module.exports = {
       });
 
       const popularResult = [];
-
+      console.log('!!THIS IS SEARCH MODEL!!',searchModel)
       const joinCountArray = await UserChallengeModel.findAll({
         attributes: [
 
@@ -71,12 +71,14 @@ module.exports = {
         const searchModelIdx = searchModel.find(
           (ele) => ele.challenge_id === idx.challenge_id
         );
+        console.log('!!THIS IS SEARCH MODEL IDX',searchModelIdx)
         if (searchModelIdx) {
           popularResult.push(
             Object.assign(searchModelIdx, {
               join_count: idx.join_count,
             })
           );
+          console.log('@@IN IF POPULAR RESULT@@',popularResult)
         }
       }
       console.log('!!THIS IS POPULAR RESULT!!!', popularResult)
