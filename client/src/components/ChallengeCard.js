@@ -1,4 +1,6 @@
+import { useEffect } from 'react';
 import styled from 'styled-components';
+import aos from 'aos';
 import { boxShadow, color, radius } from '../styles';
 import { Link } from 'react-router-dom';
 import { TODAY } from '../data/initialData';
@@ -31,6 +33,10 @@ const ChallengeCardStatusContainer = styled.div`
 `;
 
 const ChallengeCard = ({ challenge }) => {
+  useEffect(() => {
+    aos.init({ duration: 1000, offset: 50, once: true });
+  });
+
   const href = '/challenge/' + challenge.challenge_id;
 
   const startedAt = new Date(challenge.started_at);
@@ -60,25 +66,27 @@ const ChallengeCard = ({ challenge }) => {
   }
 
   return (
-    <ChallengeCardList>
-      <Link to={href}>
-        <h3>{challenge.name}</h3>
-        <p>
-          {`${startedAt.getFullYear()}.${
-            startedAt.getMonth() + 1
-          }.${startedAt.getDate()}.`}{' '}
-          ~{' '}
-          {`${finishedAt.getFullYear()}.${
-            finishedAt.getMonth() + 1
-          }.${finishedAt.getDate()}.`}
-        </p>
-        <p>주 {challenge.requirement}회</p>
-        <ChallengeCardStatusContainer>
-          <Highlighted>{message}</Highlighted>
-          <p>참여인원: {challenge.join_count}명</p>
-        </ChallengeCardStatusContainer>
-      </Link>
-    </ChallengeCardList>
+    <div data-aos='fade-up'>
+      <ChallengeCardList>
+        <Link to={href}>
+          <h3>{challenge.name}</h3>
+          <p>
+            {`${startedAt.getFullYear()}.${
+              startedAt.getMonth() + 1
+            }.${startedAt.getDate()}.`}{' '}
+            ~{' '}
+            {`${finishedAt.getFullYear()}.${
+              finishedAt.getMonth() + 1
+            }.${finishedAt.getDate()}.`}
+          </p>
+          <p>주 {challenge.requirement}회</p>
+          <ChallengeCardStatusContainer>
+            <Highlighted>{message}</Highlighted>
+            <p>참여인원: {challenge.join_count}명</p>
+          </ChallengeCardStatusContainer>
+        </Link>
+      </ChallengeCardList>
+    </div>
   );
 };
 

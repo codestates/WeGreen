@@ -14,7 +14,11 @@ import kakaoIcon from '../assets/images/login_icon_kakao.svg';
 import googleIcon from '../assets/images/login_icon_google.svg';
 import naverIcon from '../assets/images/login_icon_naver.svg';
 import { requestSignup } from '../apis';
-import { requestKakaoLogin,requestGoogleLogin,requestNaverLogin} from '../apis';
+import {
+  requestKakaoLogin,
+  requestGoogleLogin,
+  requestNaverLogin,
+} from '../apis';
 
 const Container = styled.div`
   @media ${device.laptop} {
@@ -192,8 +196,8 @@ const ModalMessage = ({ status }) => {
 };
 
 const Signup = () => {
-  const dispatch = useDispatch()
-  dispatch(changeTitle('WeGreen | 회원가입'))
+  const dispatch = useDispatch();
+  dispatch(changeTitle('WeGreen | 회원가입'));
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [responseStatus, setResponseStatus] = useState('no status');
@@ -288,7 +292,7 @@ const Signup = () => {
     <Container>
       <SignupContainer>
         <IllustSection>
-          <img src={mainIllust} />
+          <img src={mainIllust} alt='WeGreen 메인 일러스트' />
           <h3>환경을 지키는 습관, WeGreen과 함께 만들어요</h3>
           <p>
             실천하기 쉽도록 챌린지는 일주일 단위로 진행됩니다.
@@ -303,11 +307,19 @@ const Signup = () => {
             <Wave width='100%' height='100' fill={color.white} />
           </TitleContainer>
           <SignupForm>
-            <InputForm value={email} placeholder='이메일' handleValue={onChangeEmail} />
+            <InputForm
+              value={email}
+              placeholder='이메일'
+              handleValue={onChangeEmail}
+            />
             {isValidEmail ? null : (
               <InvalidMessage>*이메일 형식이 유효하지 않습니다.</InvalidMessage>
             )}
-            <InputForm value={username} placeholder='닉네임' handleValue={onChangeUsername} />
+            <InputForm
+              value={username}
+              placeholder='닉네임'
+              handleValue={onChangeUsername}
+            />
             {isValidUsername ? null : (
               <InvalidMessage>
                 *닉네임은 한글 또는 영문 대소문자 2~15자리만 사용 가능합니다.
@@ -342,7 +354,11 @@ const Signup = () => {
           <SocialContainer>
             <SocialBtn image={kakaoIcon} onClick={requestKakaoLogin} />
             <SocialBtn image={naverIcon} onClick={requestNaverLogin} />
-            <SocialBtn image={googleIcon} onClick={requestGoogleLogin} hasBorder={true} />
+            <SocialBtn
+              image={googleIcon}
+              onClick={requestGoogleLogin}
+              hasBorder={true}
+            />
           </SocialContainer>
           <Link to='/login'>
             <ColoredSpan>

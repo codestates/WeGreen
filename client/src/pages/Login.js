@@ -249,7 +249,7 @@ const Login = () => {
     <Container>
       <LoginContainer>
         <IllustSection>
-          <img src={mainIllust} />
+          <img src={mainIllust} alt='WeGreen 메인 일러스트' />
           <h3>환경을 위한 챌린지, 지금 시작하세요</h3>
           <p>
             작은 실천들이 모여 환경을 지키는 큰 힘이 됩니다. <br />
