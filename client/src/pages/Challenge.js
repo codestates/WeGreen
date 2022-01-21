@@ -47,6 +47,7 @@ const CommonContainer = styled.div`
 `;
 
 const EditBtn = styled.button`
+  background-color: transparent;
   float: right;
   cursor: pointer;
 
@@ -59,6 +60,7 @@ const EditBtn = styled.button`
 `;
 
 const DeleteBtn = styled.button`
+  background-color: transparent;
   float: right;
   cursor: pointer;
 

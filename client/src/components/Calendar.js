@@ -155,9 +155,9 @@ const Calendar = ({ pickedDate, setPickedDate }) => {
   const handlePickedDate = (e) => {
     const picked = new Date(viewDate);
     picked.setDate(Number(e.target.textContent));
-    // if (TODAY <= picked) {
-    setPickedDate(picked);
-    // }
+    if (TODAY < picked) {
+      setPickedDate(picked);
+    }
   };
 
   const handleTodayButton = () => {
