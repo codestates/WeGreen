@@ -56,7 +56,9 @@ module.exports = {
 
       const joinCountArray = await UserChallengeModel.findAll({
         attributes: [
+
           [sequelize.fn('COUNT', sequelize.col('id')), 'join_count'],
+
           'challenge_id',
         ],
         group: ['challenge_id'],

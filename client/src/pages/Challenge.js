@@ -478,7 +478,10 @@ const Challenge = () => {
       <ChallengeContainer>
         <CommonContainer>
           {isAdmin ||
-          (isAuthor && !isStarted && challengeInfo.join_count < 2) ? (
+          (isAuthor &&
+            !isStarted &&
+            challengeInfo.join_count < 2 &&
+            !isFinished) ? (
             <>
               <DeleteBtn onClick={handleDeleteChallengeModal}>
                 <DeleteIcon width='20' height='20' fill={color.secondary} />
@@ -510,7 +513,7 @@ const Challenge = () => {
               ) : (
                 '완료된 챌린지입니다'
               )
-            ) :
+            ) : (
               <Button
                 content='챌린지 참여하기'
                 handler={handleJoinChallengeModal}
