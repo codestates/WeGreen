@@ -66,7 +66,7 @@ module.exports = {
         order: [[sequelize.col('join_count'), 'DESC']],
         raw: true,
       });
-      console.log('!!THIS IS JOIN COUNT ARRAY!!, joinCountArray)
+      console.log('!!THIS IS JOIN COUNT ARRAY!!', joinCountArray)
       for (let idx of joinCountArray) {
         const searchModelIdx = searchModel.find(
           (ele) => ele.challenge_id === idx.challenge_id
