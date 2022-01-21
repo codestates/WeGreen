@@ -145,7 +145,7 @@ const Challenges = () => {
       });
     } else {
       setIsLoading(true);
-      requestLatestChallenges(-1).then((result) => {
+      requestPopularChallenges(-1).then((result) => {
         setChallenges(result);
         if (result.length === 0) setHasNoResult(true);
         setIsLoading(false);

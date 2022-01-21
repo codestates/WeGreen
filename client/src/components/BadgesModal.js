@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { boxShadow, color, device, radius } from '../styles';
 import Button from './Button';
 import Modal from '../components/Modal';
-import Badges from '../assets/images/badges/badges';
+import Loading from '../components/Loading'
 import { ReactComponent as CrownIcon } from '../assets/images/icon_crown.svg';
 
 const Backdrop = styled.div`
@@ -172,6 +172,12 @@ const BadgesModal = ({
 
   const ModalMessage = ({ status, btnHandler = () => {} }) => {
     switch (status) {
+      case 'wait response':
+        return (
+          <>
+            <Loading theme='light' text='응답을 기다리는 중입니다.' />
+          </>
+        );
       case 'success change badges':
         return (
           <>
@@ -223,15 +229,15 @@ const BadgesModal = ({
         .filter((el) => el.type === 'selected')
         .map((el) => el.id),
     };
+    setResponseStatus('wait response')
+    setIsModalOpen(true);
     updateMyBadges(payload)
       .then((result) => {
         setResponseStatus('success change badges');
-        setIsModalOpen(true);
         setUserInfo({ ...userInfo, selected_badges: payload.badge_ids });
       })
       .catch((err) => {
         setResponseStatus('no status');
-        setIsModalOpen(true);
       });
   };
 
