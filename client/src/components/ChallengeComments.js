@@ -159,7 +159,6 @@ const ChallengeComments = ({
   isJoined,
   loadingInfo,
 }) => {
-  console.log(loadingInfo);
   const state = useSelector((state) => state.userReducer);
   const isLogin = state.isLogin;
   const userInfo = state.userInfo;
@@ -180,9 +179,6 @@ const ChallengeComments = ({
   };
 
   const handleSubmit = () => {
-    console.log('login', isLogin);
-    console.log('isJoinged', isJoined);
-    console.log('state', state);
     if (!isLogin) {
       setResponseStatus('login required');
       setIsModalOpen(true);

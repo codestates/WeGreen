@@ -94,13 +94,6 @@ const ChallengeList = styled.ul`
   }
 `;
 
-const EmptyMessage = styled.p`
-  color: ${color.primary};
-  font-size: 3rem;
-  text-align: center;
-  word-break: keep-all;
-`;
-
 const Mypage = () => {
   const dispatch = useDispatch();
 

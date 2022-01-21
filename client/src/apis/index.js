@@ -49,15 +49,13 @@ export const requestLogout = () => {
       {},
       { 'Content-Type': 'application/json' }
     )
-    .then((result) => console.log(result));
+    .then((result) => result.data);
 };
 
 // 챌린지 리스트 - 인기순
 export const requestPopularChallenges = (limit, query) => {
-  console.log(limit, query);
-  console.log(process.env.REACT_APP_API_URL);
   let string = `${process.env.REACT_APP_API_URL}/challenges/popular?`;
-  string +=  `${limit > 0 ? 'limit=' + limit + '&' : ''}`;
+  string += `${limit > 0 ? 'limit=' + limit + '&' : ''}`;
   string += `${query ? '&query=' + query : ''}`;
 
   return axios
@@ -74,7 +72,7 @@ export const requestPopularChallenges = (limit, query) => {
 // 챌린지 리스트 - 최신순
 export const requestLatestChallenges = (limit, query) => {
   let string = `${process.env.REACT_APP_API_URL}/challenges/latest?`;
-  string +=  `${limit > 0 ? 'limit=' + limit + '&' : ''}`;
+  string += `${limit > 0 ? 'limit=' + limit + '&' : ''}`;
   string += `${query ? '&query=' + query : ''}`;
   return axios
     .get(
@@ -85,7 +83,6 @@ export const requestLatestChallenges = (limit, query) => {
       }
     )
     .then((result) => {
-      console.log(result);
       return result.data.data;
     });
 };
@@ -185,9 +182,6 @@ export const deleteChallenge = (challengeId) => {
 
 // 챌린지 참가
 export const joinChallenge = (challengeId) => {
-  console.log(
-    `${process.env.REACT_APP_API_URL}/challenges/${challengeId}/join`
-  );
   return axios
     .post(
       `${process.env.REACT_APP_API_URL}/challenges/${challengeId}/join`,

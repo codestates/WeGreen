@@ -36,6 +36,7 @@ const KakaoPage = () => {
         navigate('/');
       }, 1000);
     }
+  // eslint-disable-next-line
   }, [loginState.isLogin]);
   if (!check) {
     check = true;
@@ -57,7 +58,7 @@ const KakaoPage = () => {
 
   return (
     <KakaoLoginInfo>
-      <img src={kakaoIcon}></img> 카카오톡으로 로그인 중...
+      <img src={kakaoIcon} alt='카카오 아이콘'></img> 카카오톡으로 로그인 중...
     </KakaoLoginInfo>
   );
 };

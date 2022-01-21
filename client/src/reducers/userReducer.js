@@ -1,4 +1,3 @@
-// import { purgeStoredState } from 'redux-persist';
 import { LOGIN, LOGOUT, UPDATE_USERINFO } from '../actions/index';
 import { initialState } from './initialState';
 
@@ -9,19 +8,15 @@ const userReducer = (state = initialState, action) => {
         isLogin: true,
         userInfo: { ...state.userInfo, ...action.payload },
       });
-      break;
     case LOGOUT:
-      // purgeStoredState();
       return Object.assign({}, state, {
         isLogin: false,
         userInfo: { ...state.userInfo, ...action.payload },
       });
-      break;
     case UPDATE_USERINFO:
       return Object.assign({}, state, {
         userInfo: { ...state.userInfo, ...action.payload },
       });
-      break;
     default:
       return state;
   }

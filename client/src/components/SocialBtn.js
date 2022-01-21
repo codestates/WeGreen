@@ -13,8 +13,4 @@ const SocialBtn = styled.button`
   cursor: pointer;
 `;
 
-const Illust = ({ image, hasBorder = false }) => {
-  return <SocialBtn image={image} hasBorder={hasBorder}></SocialBtn>;
-};
-
 export default SocialBtn;
