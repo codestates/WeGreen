@@ -110,7 +110,7 @@ const Challenges = () => {
   dispatch(changeTitle('WeGreen | 챌린지 목록'));
 
   const navigate = useNavigate();
-  const [sorting, setSorting] = useState('popular');
+  const [sorting, setSorting] = useState('latest');
   const [challenges, setChallenges] = useState([]);
   const [query, setQuery] = useState('');
   const [isLoading, setIsLoading] = useState(true);
