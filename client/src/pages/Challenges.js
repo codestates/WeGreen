@@ -43,17 +43,11 @@ const ChallengeList = styled.ul`
   }
 `;
 
-const ButtonContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 1rem;
-`;
-
 const AddButton = styled.button`
   position: fixed;
   bottom: 1.5rem;
   right: 1.5rem;
+  z-index: 999;
   width: 60px;
   height: 60px;
   background-color: ${color.secondary};
@@ -156,13 +150,10 @@ const Challenges = () => {
   return (
     <ChallengesContainer>
       <ChallengeListContainer>
-        <ButtonContainer>
-          <SearchBar handleValue={setQuery} handleSubmit={handleSubmit} />
-          <AddButton onClick={() => navigate('/createchallenge')}>
-            <AddIcon width='20' height='20' fill={color.white} />
-            {/* <span>새로운 챌린지 추가</span> */}
-          </AddButton>
-        </ButtonContainer>
+        <SearchBar handleValue={setQuery} handleSubmit={handleSubmit} />
+        <AddButton onClick={() => navigate('/createchallenge')}>
+          <AddIcon width='20' height='20' fill={color.white} />
+        </AddButton>
         <Sorting>
           <TextBtn
             selected={sorting === 'latest'}
