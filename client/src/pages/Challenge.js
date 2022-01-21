@@ -213,6 +213,11 @@ const Challenge = () => {
     setResponseStatus('wait response');
     joinChallenge(challengeInfo.challenge_id)
       .then((result) => {
+        setChallengeInfo({
+          ...challengeInfo,
+          is_joined: true,
+          join_count: challengeInfo.join_count + 1,
+        })
         setResponseStatus('success join challenge');
       })
       .catch((err) => {
@@ -467,9 +472,6 @@ const Challenge = () => {
       ></ChallengeComments>
     ),
   };
-  console.log(isAuthor)
-  console.log(!isStarted)
-  console.log(challengeInfo.join_count < 2)
 
   return (
     <OuterContainer>
@@ -508,12 +510,11 @@ const Challenge = () => {
               ) : (
                 '완료된 챌린지입니다'
               )
-            ) : (
+            ) :
               <Button
                 content='챌린지 참여하기'
                 handler={handleJoinChallengeModal}
               />
-            )
           ) : null}
           {windowWidth < 1024 ? (
             <Tab
