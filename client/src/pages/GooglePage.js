@@ -36,6 +36,7 @@ const GooglePage = () => {
         navigate('/');
       }, 1000);
     }
+    // eslint-disable-next-line
   }, [loginState.isLogin]);
   if (!check) {
     check = true;
@@ -45,7 +46,6 @@ const GooglePage = () => {
         {
           authorizationCode,
         }
-        // { 'Content-Type': 'application/json', withCredentials: true }
       )
       .then((result) => {
         dispatch(login(result.data.data));
@@ -57,7 +57,7 @@ const GooglePage = () => {
 
   return (
     <GoogleLoginInfo>
-      <img src={googleIcon}></img> 구글로 로그인 중...
+      <img src={googleIcon} alt='구글 아이콘'></img> 구글로 로그인 중...
     </GoogleLoginInfo>
   );
 };

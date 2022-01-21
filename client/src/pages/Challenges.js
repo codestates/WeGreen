@@ -111,7 +111,6 @@ const Challenges = () => {
   const [hasNoResult, setHasNoResult] = useState(false);
 
   const handleSubmit = () => {
-    console.log('submit handling');
     if (sorting === 'latest') {
       setIsLoading(true);
       requestLatestChallenges(-1, query).then((result) => {

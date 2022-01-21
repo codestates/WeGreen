@@ -5,7 +5,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { login } from '../actions';
 import styled from 'styled-components';
 import naverIcon from '../assets/images/login_icon_naver.svg';
-import { color } from '../styles';
 
 const NaverLoginInfo = styled.div`
   display: flex;
@@ -18,12 +17,10 @@ const NaverLoginInfo = styled.div`
     height: 60px;
     margin: 0.5rem;
     border-radius: 50%;
-    /* background-color: ${color.primaryLight}; */
   }
 `;
 var check = false;
 const NaverPage = () => {
-  //인가코드;
   const authorizationCode = new URL(window.location.href).searchParams.get(
     'code'
   );
@@ -36,6 +33,7 @@ const NaverPage = () => {
         navigate('/');
       }, 1000);
     }
+    // eslint-disable-next-line
   }, [loginState.isLogin]);
   if (!check) {
     check = true;
@@ -57,7 +55,7 @@ const NaverPage = () => {
 
   return (
     <NaverLoginInfo>
-      <img src={naverIcon}></img> 네이버로 로그인 중...
+      <img src={naverIcon} alt='네이버 아이콘'></img> 네이버로 로그인 중...
     </NaverLoginInfo>
   );
 };

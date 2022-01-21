@@ -24,8 +24,6 @@ app.get('/', (req, res) => {
   res.send('Hello WeGreen!');
 });
 
-app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`);
-});
+app.listen(port, () => {});
 
 module.exports = app;

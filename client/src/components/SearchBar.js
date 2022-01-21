@@ -67,6 +67,7 @@ const SearchBtn = styled.button`
 `;
 
 const SearchBar = ({ handleValue, handleSubmit }) => {
+  // eslint-disable-next-line
   const [input, setInput] = useState('');
   const handleInputChange = (event) => {
     handleValue(event.target.value);

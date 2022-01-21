@@ -173,6 +173,7 @@ const Comment = ({ comment, handleCommentEdit, handleCommentDelete }) => {
     } else if (myinfo.is_admin) {
       setAuth('admin');
     }
+  // eslint-disable-next-line
   }, []);
 
   const handleTextarea = (event) => {

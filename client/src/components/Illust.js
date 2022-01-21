@@ -1,5 +1,5 @@
 import styled, { keyframes } from 'styled-components';
-import { boxShadow, color, device } from '../styles';
+import { color, device } from '../styles';
 import { ReactComponent as Background } from '../assets/images/illust/background.svg';
 import { ReactComponent as Palm } from '../assets/images/illust/palm.svg';
 import { ReactComponent as Puma } from '../assets/images/illust/puma.svg';
@@ -93,18 +93,6 @@ const body = keyframes`
   50% {
     transform: translateX(0) translateY(0);
   }
-`;
-
-const skew = keyframes`
-0% {
-  transform: scaleY(0.9);
-}
-50% {
-  transform: scaleY(1);
-}
-100% {
-  transform: scaleY(0.9);
-}
 `;
 
 const fly = keyframes`
@@ -350,7 +338,6 @@ const StyledButterfly = styled(Butterfly)`
 const Container = styled.div`
   width: 100vw;
   height: 133vw;
-  /* min-height: 133%; */
   margin: 0 auto;
   background-color: ${color.primaryDark};
   overflow-x: hidden;
@@ -369,12 +356,8 @@ const Container = styled.div`
 
 const IllustContainer = styled.div`
   position: relative;
-  /* width: 100%; */
-  /* top: 60px; */
   height: 100%;
   aspect-ratio: 3/4;
-  /* box-shadow: ${boxShadow}; */
-  /* border: 1px solid red; */
 
   @media ${device.laptop} {
     max-height: 872px;
@@ -383,16 +366,6 @@ const IllustContainer = styled.div`
   svg {
     position: absolute;
   }
-
-  /* &:after {
-    content: '';
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background-color: pink;
-  } */
 `;
 
 const Illust = ({ badgeInfo }) => {

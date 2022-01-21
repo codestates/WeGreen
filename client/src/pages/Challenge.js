@@ -219,7 +219,7 @@ const Challenge = () => {
           ...challengeInfo,
           is_joined: true,
           join_count: challengeInfo.join_count + 1,
-        })
+        });
         setResponseStatus('success join challenge');
       })
       .catch((err) => {
@@ -308,7 +308,6 @@ const Challenge = () => {
   const handleCommentDelete = (commentId) => {
     const newComments = comments.filter((el) => el.comment_id !== commentId);
     setComments(newComments);
-    console.log('deleted comment', newComments);
   };
 
   useEffect(() => {
@@ -520,6 +519,7 @@ const Challenge = () => {
                 content='챌린지 참여하기'
                 handler={handleJoinChallengeModal}
               />
+            )
           ) : null}
           {windowWidth < 1024 ? (
             <Tab

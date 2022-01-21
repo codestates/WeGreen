@@ -65,7 +65,7 @@ const ChallengeCard = ({ challenge }) => {
     }
   }
 
-  return 
+  return (
     <div data-aos='fade-up'>
       <ChallengeCardList>
         <Link to={href}>
@@ -87,7 +87,6 @@ const ChallengeCard = ({ challenge }) => {
         </Link>
       </ChallengeCardList>
     </div>
-
   );
 };
 
