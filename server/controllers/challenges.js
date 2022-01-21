@@ -36,7 +36,6 @@ module.exports = {
           'created_at',
         ],
         raw: true,
-        limit: limitNum,
         where: {
           [Op.or]: [
             {
