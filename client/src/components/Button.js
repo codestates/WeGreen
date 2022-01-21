@@ -8,7 +8,7 @@ const ButtonTemplate = styled.button`
   padding: 0 1rem;
   border-radius: ${radius};
   background-color: ${(props) => color[props.color]};
-  font-size: 1rem;
+  font-size: ${props => props.fontSize};
   cursor: pointer;
   overflow: hidden;
 
@@ -50,6 +50,7 @@ const Button = ({
   height = '40px',
   color = 'secondary',
   content = 'BUTTON',
+  fontSize = '1rem',
   disabled = false,
   handler = () => {},
 }) => {
@@ -59,6 +60,7 @@ const Button = ({
       height={height}
       color={color}
       disabled={disabled}
+      fontSize={fontSize}
       onClick={handler}
     >
       {content}

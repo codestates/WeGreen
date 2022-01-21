@@ -147,15 +147,16 @@ const UserProfile = ({
       <UserProfileLowContainer>
         {isMine ? (
           <Button
-            width='140px'
+            width='125px'
             height='30px'
+            fontSize='0.875rem'
             content={totalBadgesText}
             handler={() => setIsBadgesModalOpen(true)}
           />
         ) : (
           totalBadgesText
         )}
-        <div>성공한 챌린지 : {successCounts}개</div>
+        <div>성공한 챌린지: {successCounts}개</div>
       </UserProfileLowContainer>
       {isBadgesModalOpen ? (
         <BadgesModal

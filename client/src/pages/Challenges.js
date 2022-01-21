@@ -110,7 +110,7 @@ const Challenges = () => {
   dispatch(changeTitle('WeGreen | 챌린지 목록'));
 
   const navigate = useNavigate();
-  const [sorting, setSorting] = useState('popular');
+  const [sorting, setSorting] = useState('latest');
   const [challenges, setChallenges] = useState([]);
   const [query, setQuery] = useState('');
   const [isLoading, setIsLoading] = useState(true);
@@ -145,7 +145,7 @@ const Challenges = () => {
       });
     } else {
       setIsLoading(true);
-      requestLatestChallenges(-1).then((result) => {
+      requestPopularChallenges(-1).then((result) => {
         setChallenges(result);
         if (result.length === 0) setHasNoResult(true);
         setIsLoading(false);
@@ -188,7 +188,7 @@ const Challenges = () => {
           {isLoading
             ? null
             : challenges.map((el) => (
-                <ChallengeCard challenge={el} key={el.id} />
+                <ChallengeCard challenge={el} key={el.challenge_id} />
               ))}
         </ChallengeList>
       </ChallengeListContainer>
