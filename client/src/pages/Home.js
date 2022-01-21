@@ -15,8 +15,10 @@ import mainIllust from '../assets/images/main_illust.png';
 import { ReactComponent as Wave } from '../assets/images/wave.svg';
 import { requestPopularChallenges } from '../apis';
 import image1 from '../assets/images/home/desc1.gif';
+import image2 from '../assets/images/home/desc2.gif';
 import image3badges from '../assets/images/home/desc3_badges.gif';
 import image3animals from '../assets/images/home/desc3_animals.gif';
+import image4 from '../assets/images/home/desc4.png';
 
 const HomeContainer = styled.div`
   background-color: ${color.primaryLight};
@@ -34,7 +36,7 @@ const HeroSection = styled.section`
 
   img {
     width: 80%;
-    max-width: 500px;
+    max-width: 560px;
     margin-top: -1rem;
     padding-bottom: 1rem;
   }
@@ -207,7 +209,7 @@ const Home = () => {
       <HeroSection>
         <img
           src={mainIllust}
-          alt='main-illust'
+          alt='WeGreen 메인 일러스트'
           data-aos='fade-up'
           data-aos-delay='100'
         ></img>
@@ -272,7 +274,11 @@ const Home = () => {
               마음에 드는 챌린지가 없다면 직접 새로운 챌린지를 만들어 보세요!
             </p>
           </DescContainer>
-          <img src={image1} data-aos='fade-up'></img>
+          <img
+            src={image1}
+            data-aos='fade-up'
+            alt='챌린지 참여하는 방법 시연'
+          ></img>
         </ServiceSectionContainer>
       </ServiceSection>
       <ServiceSection theme='dark'>
@@ -292,7 +298,11 @@ const Home = () => {
               해당 사용자가의 챌린지 참여 정보를 볼 수 있습니다.
             </p>
           </DescContainer>
-          <img src={image1} data-aos='fade-up'></img>
+          <img
+            src={image2}
+            data-aos='fade-up'
+            alt='댓글 달기, 다른 사용자 정보 확인 방법 시연'
+          ></img>
         </ServiceSectionContainer>
       </ServiceSection>
       <ServiceSection theme='light'>
@@ -314,11 +324,13 @@ const Home = () => {
               className='topright'
               src={image3badges}
               data-aos='fade-up'
+              alt='벳지 선택 시연'
             ></img>
             <img
               className='bottomleft'
               src={image3animals}
               data-aos='fade-up'
+              alt='선택된 뱃지에 따른 일러스트 변화 시연'
             ></img>
           </GIFContainer>
         </ServiceSectionContainer>
@@ -337,7 +349,11 @@ const Home = () => {
               등록된 이메일로 받아볼 수 있습니다.
             </p>
           </DescContainer>
-          <img src={image1} data-aos='fade-up'></img>
+          <img
+            src={image4}
+            data-aos='fade-up'
+            alt='월간 리포트 이메일 예시'
+          ></img>
         </ServiceSectionContainer>
       </ServiceSection>
       <InitiationSection>

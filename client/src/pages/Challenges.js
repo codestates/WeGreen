@@ -188,7 +188,7 @@ const Challenges = () => {
           {isLoading
             ? null
             : challenges.map((el) => (
-                <ChallengeCard challenge={el} key={el.id} />
+                <ChallengeCard challenge={el} key={el.challenge_id} />
               ))}
         </ChallengeList>
       </ChallengeListContainer>
