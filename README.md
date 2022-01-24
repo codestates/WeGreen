@@ -1,6 +1,5 @@
 ## 🍏 LOGO
-
-
+<img width="600" alt="wegree_logo" src="https://user-images.githubusercontent.com/78324481/150670921-72f812eb-00e5-442d-b7d9-c42eb95866e7.png">
 
 ## 일주일 챌린지로 환경을 지켜요, WeGreen
 - 다른 사람들과 함께 챌린지를 진행하며 서로를 응원해요.
@@ -25,7 +24,7 @@
 
 | 이름         | 역할       | GitHub ID    |
 | ------------ | ---------- | :--- |
-| 강현규 | 백엔드 | hyungu1997 |
-| 신한결 | 프론트엔드 | alskfl222 |
-| 윤보라 | 백엔드 | boraborayoon |
-| 이지영 | 프론트엔드 | alexjleee |
+| 강현규 | 백엔드 | [hyungu1997](https://github.com/hyungu1997) |
+| 신한결 | 프론트엔드 | [alskfl222](https://github.com/alskfl222) |
+| 윤보라 | 백엔드 | [boraborayoon](https://github.com/alskfl222) |
+| 이지영 | 프론트엔드 | [alexjleee](https://github.com/alexjleee) |
