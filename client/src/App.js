@@ -32,9 +32,11 @@ function App() {
           <Route path='/confirmchallenge' element={<ConfirmChallenge />} />
           <Route path='/mypage/:id' element={<Mypage />} />
           <Route path='/editmyinfo' element={<EditMyinfo />} />
-          <Route path='/oauth/callback/kakao' element={<KakaoPage />} />
-          <Route path='/oauth/callback/naver' element={<NaverPage />} />
-          <Route path='/oauth/callback/google' element={<GooglePage />} />
+          <Route path='/oauth/callback'>
+            <Route path='kakao' element={<KakaoPage />} />
+            <Route path='naver' element={<NaverPage />} />
+            <Route path='google' element={<GooglePage />} />
+          </Route>
           <Route path='*' element={<NotFound />} />
         </Routes>
       </main>

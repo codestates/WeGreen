@@ -155,14 +155,14 @@ const ConfirmChallenge = () => {
         return (
           <>
             <p>챌린지가 생성되었습니다.</p>
-            <Button content='확인' handler={() => navigate(`/challenge/${responseData.data.challenge_id}`)} />
+            <Button content='확인' handler={() => navigate(`/challenge/${responseData.data.challenge_id}`, { replace: true })} />
           </>
         );
       case 'success edit challenge':
         return (
           <>
             <p>챌린지가 수정되었습니다.</p>
-            <Button content='확인' handler={() => navigate(`/challenge/${responseData.data.challenge_id}`)} />
+            <Button content='확인' handler={() => navigate(`/challenge/${responseData.data.challenge_id}`, { replace: true })} />
           </>
         );
       case 'wait response':
