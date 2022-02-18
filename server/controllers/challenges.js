@@ -35,7 +35,6 @@ module.exports = {
           'created_at',
         ],
         raw: true,
-        limit: limitNum,
         where: {
           [Op.or]: [
             {
@@ -53,7 +52,7 @@ module.exports = {
       });
 
       const popularResult = [];
-
+      
       const joinCountArray = await UserChallengeModel.findAll({
         attributes: [
 
@@ -66,11 +65,12 @@ module.exports = {
         order: [[sequelize.col('join_count'), 'DESC']],
         raw: true,
       });
-
+      
       for (let idx of joinCountArray) {
         const searchModelIdx = searchModel.find(
           (ele) => ele.challenge_id === idx.challenge_id
         );
+        
         if (searchModelIdx) {
           popularResult.push(
             Object.assign(searchModelIdx, {
@@ -79,6 +79,7 @@ module.exports = {
           );
         }
       }
+
       res.status(200).json({ message: 'OK', data: popularResult });
     } catch (err) {
       res.status(500).send({
