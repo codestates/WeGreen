@@ -35,7 +35,6 @@ module.exports = {
           'created_at',
         ],
         raw: true,
-        limit: limitNum,
         where: {
           [Op.or]: [
             {
@@ -53,10 +52,12 @@ module.exports = {
       });
 
       const popularResult = [];
-
+      
       const joinCountArray = await UserChallengeModel.findAll({
         attributes: [
-          [sequelize.fn('COUNT', sequelize.col('user_id')), 'join_count'],
+
+          [sequelize.fn('COUNT', sequelize.col('id')), 'join_count'],
+
           'challenge_id',
         ],
         group: ['challenge_id'],
@@ -64,11 +65,12 @@ module.exports = {
         order: [[sequelize.col('join_count'), 'DESC']],
         raw: true,
       });
-
+      
       for (let idx of joinCountArray) {
         const searchModelIdx = searchModel.find(
           (ele) => ele.challenge_id === idx.challenge_id
         );
+        
         if (searchModelIdx) {
           popularResult.push(
             Object.assign(searchModelIdx, {
@@ -77,9 +79,9 @@ module.exports = {
           );
         }
       }
+
       res.status(200).json({ message: 'OK', data: popularResult });
     } catch (err) {
-      console.log('ERROR', err);
       res.status(500).send({
         message: 'Internal server error',
       });
@@ -88,7 +90,6 @@ module.exports = {
   //최신 챌린지 목록 불러오기 GET /latest
   latest: async (req, res) => {
     try {
-      console.log('req.query', req.query);
       const search = req.query.query || '';
       //클라이언트에서 보낸 req.query를 찍어보면 req.query : {limit: '10$query=물'}
       const limitNum = Number(req.query.limit) || 20;
@@ -123,7 +124,7 @@ module.exports = {
       for (let challenge of searchModel) {
         var join_count = await UserChallengeModel.findAll({
           attributes: [
-            [sequelize.fn('COUNT', sequelize.col('user_id')), 'join_count'],
+            [sequelize.fn('COUNT', sequelize.col('id')), 'join_count'],
             'challenge_id',
           ],
           where: { challenge_id: challenge.challenge_id },
@@ -142,7 +143,6 @@ module.exports = {
         data: latestResult,
       });
     } catch (err) {
-      console.log('ERROR IN THE LATEST', err);
       res.status(500).send({
         message: 'Internal server error',
       });
@@ -208,11 +208,16 @@ module.exports = {
       if (!newChallenge) {
         res.status(404).json({ message: 'Not found' });
       } else {
-        const joinCountArray = await UserChallengeModel.findAll({
-          attributes: ['user_id'],
+        const joinCountArray = await UserChallengeModel.findOne({
+          attributes: [
+            [sequelize.fn('COUNT', sequelize.col('id')), 'join_count'],
+            'challenge_id',
+          ],
+          group: ['challenge_id'],
           where: { challenge_id: req.params.challenge_id },
+          raw: true,
         });
-        const join_count = joinCountArray.length;
+        const join_count = joinCountArray.join_count;
         var total_checkin_count = 0;
         const today = moment().format().slice(0, 10);
         const checkinTimes = await CheckInModel.findAll({
@@ -285,7 +290,6 @@ module.exports = {
         });
       }
     } catch (err) {
-      console.log('ERROR in GET CHALLENGE', err);
       res.status(500).send({
         message: 'Internal server error',
       });
@@ -342,7 +346,6 @@ module.exports = {
         });
       }
     } catch (err) {
-      console.log('ERROR', err);
       res.status(500).send({
         message: 'Internal server error',
       });
@@ -388,57 +391,7 @@ module.exports = {
   checkins: {
     get: async (req, res) => {
       try {
-        // var join_count = 0;
-        // var today_checkin_count = 0;
-        // var is_success = false;
-        // const today = new Date();
-        // console.log('!!TODAY', today);
-        // //토큰 확인 불필요
-        // const joinCount = await UserChallengeModel.findOne({
-        //   attributes: [
-        //     [sequelize.fn('COUNT', sequelize.col('user_id')), 'join_count'],
-        //     'challenge_id',
-        //   ],
-        //   group: ['challenge_id'],
-        //   order: [[sequelize.col('join_count'), 'DESC']],
-        //   raw: true,
-        //   where: { challenge_id: req.params.challenge_id },
-        // });
-        // join_count = joinCount['join_count'];
-        // const checkinTimes = await CheckInModel.findAll({
-        //   attributes: ['created_at'],
-        //   where: { challenge_id: req.params.challenge_id },
-        //   raw: true,
-        // });
-        // console.log('!!THIS IS CHECK IN TIMES', checkinTimes);
-        // today_checkin_count = checkinTimes.length;
-        // const checkin_log = [];
-        // for (let element of checkinTimes) {
-        //   checkin_log.push(element.created_at);
-        // }
-        // const findRequirement = await ChallengeModel.findOne({
-        //   attributes: ['requirement'],
-        //   where: { id: req.params.challenge_id },
-        //   raw: true,
-        // });
-        // if (Number(findRequirement.requirement) <= checkin_log.length) {
-        //   is_success = true;
-        // }
-        // return res.status(200).json({
-        //   message: 'OK',
-        //   data: {
-        //     join_count: join_count,
-        //     checkin_count: today_checkin_count,
-        //     checkin_log: checkin_log,
-        //     is_accomplished: is_success,
-        //   },
-        // });
-      } catch (err) {
-        console.log('ERROR', err);
-        res.status(500).send({
-          message: 'Internal server error',
-        });
-      }
+      } catch (err) {}
     },
     post: async (req, res) => {
       try {
@@ -540,7 +493,6 @@ module.exports = {
           }
         }
       } catch (err) {
-        console.log('ERROR', err);
         res.status(500).send({
           message: 'Internal server error',
         });
@@ -642,8 +594,7 @@ module.exports = {
             },
             raw: true,
           });
-          console.log('USER ID', userId);
-          console.log('findFirst.user_id', findFirst.user_id);
+
           if (findFirst.user_id === userId || is_admin) {
             await CommentModel.destroy({
               where: { id: req.params.comment_id },
@@ -682,7 +633,6 @@ module.exports = {
             .json({ message: 'OK', data: { content: postComment.content } });
         }
       } catch (err) {
-        console.log('ERROR in POST COMMENT', err);
         res.status(500).json({ message: 'Internal server error' });
       }
     },

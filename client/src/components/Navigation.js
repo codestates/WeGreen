@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { color, device, contentWidth, boxShadow } from '../styles';
 import { requestLogout } from '../apis';
 import { logout } from '../actions';
+import { ReactComponent as Logo } from '../assets/images/logo.svg';
 
 const NavigationContainer = styled.div`
   position: fixed;
@@ -201,7 +202,7 @@ const Navigation = () => {
       <MainNav>
         <MobileNavContainer>
           <Link to='/'>
-            <span>WeGreen</span>
+            <Logo height='20px' />
           </Link>
           <MenuBtn isMenuOpen={isMenuOpen} onClick={handleMenuToggle}>
             <span>Menu</span>

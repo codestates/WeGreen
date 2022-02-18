@@ -11,11 +11,12 @@ app.use(cookieParser());
 
 app.use(
   cors({
-    origin: true,
+    origin: 'https://wegreen.link',
     credentials: true,
-    methods: ['GET', 'POST', 'OPTIONS', 'PATCH', 'DELETE'],
+    methods: ['GET', 'POST', 'OPTIONS', 'PATCH'],
   })
 );
+
 scheduler();
 app.use('/', router);
 

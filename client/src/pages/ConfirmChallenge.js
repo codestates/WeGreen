@@ -7,6 +7,7 @@ import styled from 'styled-components';
 import { color, contentWidth, device, radius } from '../styles';
 import Button from '../components/Button';
 import Modal from '../components/Modal';
+import Loading from '../components/Loading'
 import { ReactComponent as Wave } from '../assets/images/wave.svg';
 
 const Container = styled.div`
@@ -79,8 +80,8 @@ const ButtonContainer = styled.div`
 `;
 
 const ConfirmChallenge = () => {
-  const dispatch = useDispatch()
-  dispatch(changeTitle('WeGreen | 챌린지 생성/수정 확인'))
+  const dispatch = useDispatch();
+  dispatch(changeTitle('WeGreen | 챌린지 생성/수정 확인'));
 
   const loginState = useSelector((state) => state.userReducer);
   const { state } = useLocation();
@@ -110,46 +111,43 @@ const ConfirmChallenge = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [responseStatus, setResponseStatus] = useState('no status');
+  const [responseData, setResponseData] = useState({})
 
   const startedAt = new Date(challengeInfo.started_at);
   const finishedAt = new Date(challengeInfo.started_at);
   finishedAt.setDate(startedAt.getDate() + 6);
 
   const requestCreateChallenge = () => {
+    setResponseStatus('wait response')
+    setIsModalOpen(true)
     if (!info.challenge_id) {
       createChallenge(challengeInfo)
         .then((result) => {
           setResponseStatus('success create challenge');
-          setIsModalOpen(true);
-          setTimeout(() => navigate(`/challenge/${result.data.challenge_id}`), 1000);          
+          setResponseData(result)
         })
         .catch((err) => {
           if (err.response.status === 401) {
             setResponseStatus('unauthorized');
-            setIsModalOpen(true);
           } else {
             setResponseStatus('no status');
-            setIsModalOpen(true);
           }
         });
     } else {
       editChallenge(challengeInfo)
         .then((result) => {
           setResponseStatus('success edit challenge');
-          setIsModalOpen(true);
-          setTimeout(() => navigate(`/challenge/${result.data.challenge_id}`), 1000);     
+          setResponseData(result)
         })
         .catch((err) => {
           if (err.response.status === 401) {
             setResponseStatus('unauthorized');
-            setIsModalOpen(true);
           } else {
             setResponseStatus('no status');
-            setIsModalOpen(true);
           }
         });
     }
-  }
+  };
 
   const ModalMessage = ({ status, btnHandler = () => {} }) => {
     switch (status) {
@@ -157,14 +155,20 @@ const ConfirmChallenge = () => {
         return (
           <>
             <p>챌린지가 생성되었습니다.</p>
-            <Button content='확인' handler={btnHandler} />
+            <Button content='확인' handler={() => navigate(`/challenge/${responseData.data.challenge_id}`)} />
           </>
         );
       case 'success edit challenge':
         return (
           <>
             <p>챌린지가 수정되었습니다.</p>
-            <Button content='확인' handler={btnHandler} />
+            <Button content='확인' handler={() => navigate(`/challenge/${responseData.data.challenge_id}`)} />
+          </>
+        );
+      case 'wait response':
+        return (
+          <>
+            <Loading theme='light' text='응답을 기다리는 중입니다.' />
           </>
         );
       case 'unauthorized':
@@ -219,32 +223,42 @@ const ConfirmChallenge = () => {
         <MessageContainer>
           다른 참가자가 챌린지에 참여한 후에는 <br />
           내용을 수정할 수 없습니다. <br />
-          이대로 챌린지를 {!info.challenge_id ? "생성" : "수정"}할까요?
+          이대로 챌린지를 {!info.challenge_id ? '생성' : '수정'}할까요?
         </MessageContainer>
         <ButtonContainer>
           <Button
             content='아니오'
             color='tertiary'
             handler={() => {
-                if (!info.challenge_id) {
-                  navigate('/createchallenge', { state: challengeInfo })
-                } else {
-                  navigate(`/editchallenge/${challengeInfo.challenge_id}`, { state: challengeInfo })
-                }
+              if (!info.challenge_id) {
+                navigate('/createchallenge', { state: challengeInfo });
+              } else {
+                navigate(`/editchallenge/${challengeInfo.challenge_id}`, {
+                  state: challengeInfo,
+                });
               }
-            }
+            }}
           />
           <Button content='네' handler={requestCreateChallenge} />
         </ButtonContainer>
       </ConfirmChallengeContainer>
       {isModalOpen ? (
-          <Modal closeModal={setIsModalOpen}>
-            <ModalMessage
-              status={responseStatus}
-              btnHandler={() => setIsModalOpen(false)}
-            />
-          </Modal>
-        ) : null}
+        <Modal
+          canClose={
+            responseStatus !== 'success create challenge' &&
+            responseStatus !== 'success edit challenge' &&
+            responseStatus !== 'wait response'
+              ? true
+              : false
+          }
+          closeModal={setIsModalOpen}
+        >
+          <ModalMessage
+            status={responseStatus}
+            btnHandler={() => setIsModalOpen(false)}
+          />
+        </Modal>
+      ) : null}
     </Container>
   );
 };

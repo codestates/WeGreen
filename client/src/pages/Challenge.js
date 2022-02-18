@@ -16,6 +16,7 @@ import Modal from '../components/Modal';
 import ChallengeInfo from '../components/ChallengeInfo';
 import ChallengeCheckin from '../components/ChallengeCheckin';
 import ChallengeComments from '../components/ChallengeComments';
+import Loading from '../components/Loading';
 import { ReactComponent as EditIcon } from '../assets/images/icon_edit.svg';
 import { ReactComponent as DeleteIcon } from '../assets/images/icon_delete.svg';
 import { ReactComponent as PersonIcon } from '../assets/images/icon_person.svg';
@@ -185,6 +186,7 @@ const Challenge = () => {
   };
 
   const handleDeleteChallenge = () => {
+    setResponseStatus('wait response');
     deleteChallenge(`${challengeInfo.challenge_id}`)
       .then((result) => {
         setResponseStatus('success delete challenge');
@@ -208,8 +210,14 @@ const Challenge = () => {
   };
 
   const handleJoinChallenge = () => {
+    setResponseStatus('wait response');
     joinChallenge(challengeInfo.challenge_id)
       .then((result) => {
+        setChallengeInfo({
+          ...challengeInfo,
+          is_joined: true,
+          join_count: challengeInfo.join_count + 1,
+        })
         setResponseStatus('success join challenge');
       })
       .catch((err) => {
@@ -227,6 +235,7 @@ const Challenge = () => {
   };
 
   const handleCheckin = () => {
+    setResponseStatus('wait response');
     checkin(challengeInfo.challenge_id)
       .then((result) => {
         setCheckinInfo({
@@ -311,6 +320,12 @@ const Challenge = () => {
 
   const ModalMessage = ({ status, btnHandler = () => {} }) => {
     switch (status) {
+      case 'wait response':
+        return (
+          <>
+            <Loading theme='light' text='응답을 기다리는 중입니다.' />
+          </>
+        );
       case 'unauthorized':
         return (
           <>
@@ -362,7 +377,7 @@ const Challenge = () => {
         return (
           <>
             <p>챌린지에 참가하셨습니다.</p>
-            <Button content='확인' handler={() => window.location.reload()} />
+            <Button content='확인' handler={btnHandler} />
           </>
         );
       case 'confirm checkin':
@@ -376,7 +391,7 @@ const Challenge = () => {
         return (
           <>
             <p>체크인에 성공하셨습니다.</p>
-            <Button content='확인' handler={() => window.location.reload()} />
+            <Button content='확인' handler={btnHandler} />
           </>
         );
       case 'duplicate checkin':
@@ -503,7 +518,6 @@ const Challenge = () => {
                 content='챌린지 참여하기'
                 handler={handleJoinChallengeModal}
               />
-            )
           ) : null}
           {windowWidth < 1024 ? (
             <Tab
@@ -558,7 +572,10 @@ const Challenge = () => {
         </ContentContainer>
       </ChallengeContainer>
       {isModalOpen ? (
-        <Modal closeModal={setIsModalOpen}>
+        <Modal
+          canClose={responseStatus !== 'wait response' ? true : false}
+          closeModal={setIsModalOpen}
+        >
           <ModalMessage
             obtained_badge={checkinInfo.obtained_badge || null}
             status={responseStatus}
