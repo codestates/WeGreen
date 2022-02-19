@@ -1,4 +1,6 @@
+import { useRef } from 'react';
 import styled, { keyframes } from 'styled-components';
+import { toPng } from 'html-to-image';
 import { color, device } from '../styles';
 import { ReactComponent as Background } from '../assets/images/illust/background.svg';
 import { ReactComponent as Palm } from '../assets/images/illust/palm.svg';
@@ -21,6 +23,7 @@ import { ReactComponent as Snake } from '../assets/images/illust/snake.svg';
 import { ReactComponent as Tamarin } from '../assets/images/illust/tamarin.svg';
 import { ReactComponent as BabyBear } from '../assets/images/illust/baby-bear.svg';
 import { ReactComponent as Butterfly } from '../assets/images/illust/butterfly.svg';
+import { ReactComponent as DownloadIcon } from '../assets/images/icon_download.svg';
 
 const leaf = keyframes`
 0% {
@@ -336,6 +339,7 @@ const StyledButterfly = styled(Butterfly)`
 `;
 
 const Container = styled.div`
+  position: relative;
   width: 100vw;
   height: 133vw;
   margin: 0 auto;
@@ -346,7 +350,7 @@ const Container = styled.div`
   @media ${device.laptop} {
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
     width: 100%;
     height: calc(100vh - 60px);
     min-height: 100%;
@@ -368,10 +372,52 @@ const IllustContainer = styled.div`
   }
 `;
 
-const Illust = ({ badgeInfo }) => {
+const DownloadBtn = styled.button`
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  width: 32px;
+  height: 32px;
+  background-color: ${color.primary};
+  border-radius: 16px;
+  cursor: pointer;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background-color: black;
+    border-radius: 17px;
+    opacity: 0;
+    transition: all 0.2s ease;
+  }
+
+  &:hover {
+    &::after {
+      opacity: 0.1;
+    }
+  }
+`;
+
+const Illust = ({ badgeInfo, isMine }) => {
+  const imageRef = useRef();
+
+  const exportElementAsPNG = (el) => {
+    toPng(el).then((image) => {
+      const link = window.document.createElement('a');
+      link.style = 'display:none;';
+      link.download = 'wegreen-my-forest.png';
+      link.href = image;
+      link.click();
+    });
+  };
+
   return (
     <Container>
-      <IllustContainer>
+      <IllustContainer ref={imageRef}>
         <Background width='100%' height='100%' />
         {badgeInfo[0] ? (
           <>
@@ -438,6 +484,11 @@ const Illust = ({ badgeInfo }) => {
           </>
         ) : null}
       </IllustContainer>
+      {isMine ? (
+        <DownloadBtn onClick={() => exportElementAsPNG(imageRef.current)}>
+          <DownloadIcon width='20' height='20' fill={color.white} />
+        </DownloadBtn>
+      ) : null}
     </Container>
   );
 };

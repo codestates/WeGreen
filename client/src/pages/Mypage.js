@@ -202,7 +202,7 @@ const Mypage = () => {
   return (
     <Container>
       <MypageContainer>
-        <Illust badgeInfo={badgeInfo} />
+        <Illust badgeInfo={badgeInfo} isMine={isMine} />
         <MyChallengesContainer>
           <TitleContainer>
             <h1>{isMine ? '마이' : '사용자'}페이지</h1>
