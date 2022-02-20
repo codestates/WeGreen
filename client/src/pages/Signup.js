@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { changeTitle } from '../actions';
 import styled from 'styled-components';
 import InputForm from '../components/InputForm';
 import Button from '../components/Button';
+import BtnInsideInput from '../components/BtnInsideInput';
 import SocialBtn from '../components/SocialBtn';
 import Modal from '../components/Modal';
 import { ReactComponent as Wave } from '../assets/images/wave.svg';
@@ -13,11 +14,13 @@ import mainIllust from '../assets/images/main_illust.png';
 import kakaoIcon from '../assets/images/login_icon_kakao.svg';
 import googleIcon from '../assets/images/login_icon_google.svg';
 import naverIcon from '../assets/images/login_icon_naver.svg';
-import { requestSignup } from '../apis';
 import {
   requestKakaoLogin,
   requestGoogleLogin,
   requestNaverLogin,
+  requestSignup,
+  requestSendingConfirmEmail,
+  requestCheckingConfirmCode,
 } from '../apis';
 
 const Container = styled.div`
@@ -123,6 +126,16 @@ const InvalidMessage = styled.p`
   font-size: 0.875rem;
 `;
 
+const DescriptionMessage = styled.p`
+  margin: 0;
+  padding-left: 1rem;
+  font-size: 0.875rem;
+  span {
+    font-weight: bold;
+    color: ${color.warning};
+  }
+`;
+
 const Divider = styled.div`
   position: relative;
   width: 100%;
@@ -153,11 +166,26 @@ const ColoredSpan = styled.span`
   color: ${color.primary};
 `;
 
+const InputAndBtnContainer = styled.div`
+  display: flex;
+  gap: 0.5rem;
+`;
+
 const ModalMessage = ({ status }) => {
   const navigate = useNavigate();
   switch (status) {
     case 'empty input':
       return <p>반드시 모든 칸을 입력해야 합니다.</p>;
+    case 'email not confirmed':
+      return <p>이메일 인증을 완료해주세요.</p>;
+    case 'wrong code':
+      return (
+        <p>
+          인증번호가 일치하지 않습니다.
+          <br />
+          다시 입력해주세요.
+        </p>
+      );
     case 'created':
       return (
         <>
@@ -212,6 +240,14 @@ const Signup = () => {
   const [isValidPassword, setIsValidPassword] = useState(true);
   const [isValidPasswordConfirm, setIsValidPasswordConfirm] = useState(true);
 
+  const [code, setCode] = useState('');
+  const [confirmBtnMessage, setConfirmBtnMessage] = useState('인증');
+  const [isCodeInputOpen, setIsCodeInputOpen] = useState(false);
+  const [isValidCode, setIsValidCode] = useState(false);
+  const [countdown, setCountdown] = useState('00:20');
+  const [isValidTime, setIsValidTime] = useState(false);
+  const [isEmailConfirmed, setIsEmailConfirmed] = useState(false);
+
   const onChangeEmail = (val) => {
     setEmail(val);
     const emailRegex =
@@ -220,6 +256,16 @@ const Signup = () => {
       setIsValidEmail(false);
     } else {
       setIsValidEmail(true);
+    }
+  };
+
+  const onChangeCode = (val) => {
+    setCode(val);
+    const codeRegex = /^[0-9]{6}$/;
+    if (!codeRegex.test(val)) {
+      setIsValidCode(false);
+    } else {
+      setIsValidCode(true);
     }
   };
 
@@ -266,12 +312,17 @@ const Signup = () => {
       setIsModalOpen(true);
       return;
     }
+    if (!isEmailConfirmed) {
+      setResponseStatus('email not confirmed');
+      setIsModalOpen(true);
+    }
     if (
       // 입력값이 모두 유효한 경우
       isValidEmail &&
       isValidUsername &&
       isValidPassword &&
-      isValidPasswordConfirm
+      isValidPasswordConfirm &&
+      isEmailConfirmed
     ) {
       requestSignup(email, username, password).then((result) => {
         if (!result.status) {
@@ -287,6 +338,54 @@ const Signup = () => {
       });
     }
   };
+
+  const handleEmailConfirm = (event) => {
+    event.preventDefault();
+    requestSendingConfirmEmail(email).then((result) => {
+      setIsCodeInputOpen(true);
+      setIsValidTime(true);
+      setConfirmBtnMessage('재전송');
+    });
+  };
+  const handleCodeConfirm = (event) => {
+    event.preventDefault();
+    requestCheckingConfirmCode(email, code).then((result) => {
+      if (result.status === 201) {
+        setIsEmailConfirmed(true);
+        setConfirmBtnMessage('인증완료');
+        setIsCodeInputOpen(false);
+      } else if (result.status === 401) {
+        setResponseStatus('wrong code');
+        setIsModalOpen(true);
+      }
+    });
+  };
+
+  useEffect(() => {
+    if (isValidTime) {
+      let intervalId = setInterval(() => {
+        let [min, sec] = countdown.split(':').map((el) => parseInt(el, 10));
+        if (sec > 0) {
+          sec--;
+        }
+        if (sec === 0) {
+          if (min === 0) {
+            setIsValidTime(false);
+            min = 0;
+            sec = 20;
+            clearInterval(intervalId);
+          } else {
+            min--;
+            sec = 59;
+          }
+        }
+        setCountdown(`0${min}:${sec < 10 ? '0' : ''}${sec}`);
+      }, 1000);
+      return () => {
+        clearInterval(intervalId);
+      };
+    }
+  }, [isValidTime, countdown]);
 
   return (
     <Container>
@@ -307,14 +406,47 @@ const Signup = () => {
             <Wave width='100%' height='100' fill={color.white} />
           </TitleContainer>
           <SignupForm>
-            <InputForm
+            <BtnInsideInput
               value={email}
+              type='email'
               placeholder='이메일'
+              isInputActive={!isEmailConfirmed}
               handleValue={onChangeEmail}
+              btnContent={confirmBtnMessage}
+              isBtnActive={email !== '' && isValidEmail && !isEmailConfirmed}
+              handler={handleEmailConfirm}
             />
             {isValidEmail ? null : (
               <InvalidMessage>*이메일 형식이 유효하지 않습니다.</InvalidMessage>
             )}
+            {isCodeInputOpen ? (
+              <>
+                {' '}
+                <BtnInsideInput
+                  value={code}
+                  type='text'
+                  placeholder='인증번호'
+                  handleValue={onChangeCode}
+                  btnContent='확인'
+                  isBtnActive={code !== '' && isValidCode && isValidTime}
+                  handler={handleCodeConfirm}
+                />
+                {isValidTime ? (
+                  <DescriptionMessage>
+                    이메일로 전송된 인증번호 4자리를 입력하세요.
+                    <br />
+                    유효시간 <span>{countdown}</span>
+                  </DescriptionMessage>
+                ) : (
+                  <DescriptionMessage>
+                    유효시간이 만료되었습니다.
+                    <br />
+                    인증번호를 재전송하세요.
+                  </DescriptionMessage>
+                )}
+              </>
+            ) : null}
+
             <InputForm
               value={username}
               placeholder='닉네임'
