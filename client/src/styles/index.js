@@ -21,6 +21,7 @@ export const color = {
   white: '#FFFFFF',
   greyLight: '#D5D8DC',
   grey: '#A0A9B1',
+  blue: '#0066ff',
   backdrop: 'rgba(0, 0, 0, 0.7)',
 };
 

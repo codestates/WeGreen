@@ -41,6 +41,44 @@ export const requestSignup = (email, username, password) => {
     });
 };
 
+// 인증 이메일 전송 요청
+export const requestSendingConfirmEmail = (email) => {
+  return axios
+    .post(
+      `${process.env.REACT_APP_API_URL}/email`,
+      {
+        email,
+      },
+      { 'Content-Type': 'application/json' }
+    )
+    .then((result) => {
+      return result;
+    })
+    .catch((err) => {
+      return err.response ? err.response : 'network error';
+    });
+};
+
+// 인증코드 확인
+export const requestCheckingConfirmCode = (email, code) => {
+  return axios
+    .post(
+      `${process.env.REACT_APP_API_URL}/code`,
+      {
+        email,
+        confirmation_code: code,
+      },
+      { 'Content-Type': 'application/json' }
+    )
+    .then((result) => {
+      console.log(result);
+      return result;
+    })
+    .catch((err) => {
+      return err.response ? err.response : 'network error';
+    });
+};
+
 // 로그아웃
 export const requestLogout = () => {
   return axios

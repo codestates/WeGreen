@@ -36,6 +36,14 @@ button {
   border: none;
 }
 
+input:focus,
+textarea:focus,
+button:focus,
+a:focus {
+  outline: none !important;
+  border: 2px solid #0066ff;
+}
+
 h1,
 h2,
 h3,
