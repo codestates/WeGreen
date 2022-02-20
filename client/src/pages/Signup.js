@@ -244,7 +244,7 @@ const Signup = () => {
   const [confirmBtnMessage, setConfirmBtnMessage] = useState('인증');
   const [isCodeInputOpen, setIsCodeInputOpen] = useState(false);
   const [isValidCode, setIsValidCode] = useState(false);
-  const [countdown, setCountdown] = useState('00:20');
+  const [countdown, setCountdown] = useState('03:00');
   const [isValidTime, setIsValidTime] = useState(false);
   const [isEmailConfirmed, setIsEmailConfirmed] = useState(false);
 
@@ -343,6 +343,7 @@ const Signup = () => {
     event.preventDefault();
     requestSendingConfirmEmail(email).then((result) => {
       setIsCodeInputOpen(true);
+      setCountdown('03:00');
       setIsValidTime(true);
       setConfirmBtnMessage('재전송');
     });
@@ -433,7 +434,7 @@ const Signup = () => {
                 />
                 {isValidTime ? (
                   <DescriptionMessage>
-                    이메일로 전송된 인증번호 4자리를 입력하세요.
+                    이메일로 전송된 인증번호 6자리를 입력하세요.
                     <br />
                     유효시간 <span>{countdown}</span>
                   </DescriptionMessage>
