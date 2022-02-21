@@ -14,42 +14,38 @@ import NoResult from '../components/NoResult';
 import { ReactComponent as Wave } from '../assets/images/wave.svg';
 import Badges from '../assets/images/badges/badges';
 
-const Container = styled.div`
+const Container = styled.div``;
+
+const IllustContainer = styled.div`
   @media ${device.laptop} {
-    width: 100%;
-    height: calc(100vh - 60px);
-    min-height: 872px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: ${color.primaryLight};
+    position: fixed;
+    left: calc((100vw - ${contentWidth}) / 2);
+    width: calc(${contentWidth} / 3 * 2);
   }
 `;
 
 const MypageContainer = styled.div`
-  background-color: ${color.white};
+  width: 100%;
+  background-color: ${color.primaryLight};
+`;
 
+const MypageInnerContainer = styled.div`
+  background-color: ${color.white};
   @media ${device.laptop} {
     display: grid;
     grid-template-columns: 2fr 1fr;
     width: ${contentWidth};
-    height: 100%;
-    /* box-shadow: ${boxShadow}; */
+    min-height: calc(100vh - 60px);
+    height: fit-content;
+    margin: 0 auto;
   }
 `;
 
-const MyChallengesContainer = styled.section`
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
-
-  @media ${device.laptop} {
-    max-width: calc(${contentWidth} * 1 / 3);
-    overflow-y: auto;
-  }
+const ColoredDiv = styled.div`
+  background-color: ${color.primaryDark};
 `;
+
+const MyChallengesContainer = styled.div``;
 
 const TitleContainer = styled.div`
   display: none;
@@ -201,32 +197,39 @@ const Mypage = () => {
 
   return (
     <Container>
-      <MypageContainer>
+      <IllustContainer>
         <Illust badgeInfo={badgeInfo} isMine={isMine} />
-        <MyChallengesContainer>
-          <TitleContainer>
-            <h1>{isMine ? '마이' : '사용자'}페이지</h1>
-            <Wave width='100%' height='100' fill={color.white} />
-          </TitleContainer>
-          <ContentSection>
-            <UserProfile
-              userInfo={userInfo}
-              setUserInfo={setUserInfo}
-              successCounts={successCounts}
-              badgeInfo={badgeInfo}
-              setBadgeInfo={setBadgeInfo}
-            />
-            <Tab
-              tabInfo={[
-                ['ongoing', '참여중인 챌린지'],
-                ['finished', '완료된 챌린지'],
-              ]}
-              view={view}
-              handleView={setView}
-            />
-            <ChallengeListContainer>{tabContent[view]}</ChallengeListContainer>
-          </ContentSection>
-        </MyChallengesContainer>
+      </IllustContainer>
+      <MypageContainer>
+        <MypageInnerContainer>
+          <ColoredDiv />
+          <MyChallengesContainer>
+            <TitleContainer>
+              <h1>{isMine ? '마이' : '사용자'}페이지</h1>
+              <Wave width='100%' height='100' fill={color.white} />
+            </TitleContainer>
+            <ContentSection>
+              <UserProfile
+                userInfo={userInfo}
+                setUserInfo={setUserInfo}
+                successCounts={successCounts}
+                badgeInfo={badgeInfo}
+                setBadgeInfo={setBadgeInfo}
+              />
+              <Tab
+                tabInfo={[
+                  ['ongoing', '참여중인 챌린지'],
+                  ['finished', '완료된 챌린지'],
+                ]}
+                view={view}
+                handleView={setView}
+              />
+              <ChallengeListContainer>
+                {tabContent[view]}
+              </ChallengeListContainer>
+            </ContentSection>
+          </MyChallengesContainer>
+        </MypageInnerContainer>
       </MypageContainer>
     </Container>
   );
