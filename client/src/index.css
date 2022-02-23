@@ -37,9 +37,7 @@ button {
 }
 
 input:focus,
-textarea:focus,
-button:focus,
-a:focus {
+textarea:focus {
   outline: none !important;
   border: 2px solid #0066ff;
 }
