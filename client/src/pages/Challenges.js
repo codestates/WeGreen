@@ -115,23 +115,10 @@ const Challenges = () => {
   const [hasNoResult, setHasNoResult] = useState(false);
   const [hasNoMoreResult, setHasNoMoreResult] = useState(false);
 
-  const fetchNextData = async () => {
+  const fetchNextData = () => {
+    setIsLoading(true);
     if (!hasNoMoreResult) {
-      const scrollY = window.scrollY;
-      setIsLoading(true);
-      if (sorting === 'latest') {
-        const result = await requestLatestChallenges(20, page + 1, query);
-        setChallenges([...challenges, ...result]);
-        setPage(page + 1);
-        if (result.length === 0) setHasNoMoreResult(true);
-      } else {
-        const result = await requestPopularChallenges(20, page + 1, query);
-        setChallenges([...challenges, ...result]);
-        setPage(page + 1);
-        if (result.length === 0) setHasNoMoreResult(true);
-      }
-      setIsLoading(false);
-      window.scrollTo(0, scrollY);
+      setPage(page => page + 1);
     }
   };
 
@@ -140,19 +127,38 @@ const Challenges = () => {
     if (sorting === 'latest') {
       requestLatestChallenges(20, 1, query).then((result) => {
         setChallenges(result);
-        if (result.length === 0) setHasNoResult(true);
+        if (result.length < 20) setHasNoResult(true);
       });
     } else {
       requestPopularChallenges(20, 1, query).then((result) => {
         setChallenges(result);
-        if (result.length === 0) setHasNoResult(true);
+        if (result.length < 20) setHasNoResult(true);
       });
     }
     setPage(1);
     setIsLoading(false);
   };
 
-  console.log('challenges:', challenges);
+  useEffect(() => {
+    async function fetchNextPage () { 
+      const scrollY = window.scrollY;
+      if (page > 1) {
+        if (sorting === 'latest') {
+          const result = await requestLatestChallenges(20, page, query);
+          setChallenges(challenges => [...challenges, ...result]);
+          if (result.length === 0) setHasNoMoreResult(true);
+        } else {
+          const result = await requestPopularChallenges(20, page, query);
+          setChallenges(challenges => [...challenges, ...result]);
+          if (result.length === 0) setHasNoMoreResult(true);
+        }
+        setIsLoading(false);
+        window.scrollTo(0, scrollY);
+      }
+    }
+    fetchNextPage()
+    // eslint-disable-next-line
+  }, [page])
 
   useEffect(() => {
     setIsLoading(true);
@@ -196,21 +202,22 @@ const Challenges = () => {
         {hasNoResult && !isLoading ? (
           <NoResult theme='light' text='해당 챌린지가 없습니다.' />
         ) : null}
+
+        <ChallengeList>
+          <InfiniteScroll
+            data={challenges}
+            type='challenge'
+            isLoading={isLoading}
+            fetchNextData={fetchNextData}
+          />
+        </ChallengeList>
+
         {isLoading ? (
           <Loading
             theme='light'
             text={`챌린지 목록을 ${page > 1 ? '더 ' : ''}불러오는 중입니다.`}
           />
-        ) : (
-          <ChallengeList>
-            <InfiniteScroll
-              data={challenges}
-              type='challenge'
-              isLoading={isLoading}
-              fetchNextData={fetchNextData}
-            />
-          </ChallengeList>
-        )}
+        ) : null}
 
         {hasNoMoreResult && !isLoading ? (
           <NoResult theme='light' text='더 이상 해당하는 챌린지가 없습니다.' />
