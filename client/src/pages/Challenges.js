@@ -120,12 +120,12 @@ const Challenges = () => {
       const scrollY = window.scrollY;
       setIsLoading(true);
       if (sorting === 'latest') {
-        const result = await requestLatestChallenges(10, page + 1, query);
+        const result = await requestLatestChallenges(20, page + 1, query);
         setChallenges([...challenges, ...result]);
         setPage(page + 1);
         if (result.length === 0) setHasNoMoreResult(true);
       } else {
-        const result = await requestPopularChallenges(10, page + 1, query);
+        const result = await requestPopularChallenges(20, page + 1, query);
         setChallenges([...challenges, ...result]);
         setPage(page + 1);
         if (result.length === 0) setHasNoMoreResult(true);
@@ -138,12 +138,12 @@ const Challenges = () => {
   const handleSubmit = () => {
     setIsLoading(true);
     if (sorting === 'latest') {
-      requestLatestChallenges(10, 1, query).then((result) => {
+      requestLatestChallenges(20, 1, query).then((result) => {
         setChallenges(result);
         if (result.length === 0) setHasNoResult(true);
       });
     } else {
-      requestPopularChallenges(10, 1, query).then((result) => {
+      requestPopularChallenges(20, 1, query).then((result) => {
         setChallenges(result);
         if (result.length === 0) setHasNoResult(true);
       });
@@ -157,13 +157,13 @@ const Challenges = () => {
   useEffect(() => {
     setIsLoading(true);
     if (sorting === 'latest') {
-      requestLatestChallenges(10).then((result) => {
+      requestLatestChallenges(20).then((result) => {
         setChallenges(result);
         if (result.length === 0) setHasNoResult(true);
       });
     } else {
       setIsLoading(true);
-      requestPopularChallenges(10).then((result) => {
+      requestPopularChallenges(20).then((result) => {
         setChallenges(result);
         if (result.length === 0) setHasNoResult(true);
       });
