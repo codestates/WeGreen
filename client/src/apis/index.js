@@ -91,9 +91,10 @@ export const requestLogout = () => {
 };
 
 // 챌린지 리스트 - 인기순
-export const requestPopularChallenges = (limit, query) => {
+export const requestPopularChallenges = (limit, page, query) => {
   let string = `${process.env.REACT_APP_API_URL}/challenges/popular?`;
   string += `${limit > 0 ? 'limit=' + limit + '&' : ''}`;
+  string += `${page ? 'page=' + page + '&' : ''}`;
   string += `${query ? '&query=' + query : ''}`;
 
   return axios
@@ -108,9 +109,10 @@ export const requestPopularChallenges = (limit, query) => {
 };
 
 // 챌린지 리스트 - 최신순
-export const requestLatestChallenges = (limit, query) => {
+export const requestLatestChallenges = (limit, page, query) => {
   let string = `${process.env.REACT_APP_API_URL}/challenges/latest?`;
   string += `${limit > 0 ? 'limit=' + limit + '&' : ''}`;
+  string += `${page ? 'page=' + page + '&' : ''}`;
   string += `${query ? '&query=' + query : ''}`;
   return axios
     .get(

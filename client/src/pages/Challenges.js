@@ -5,7 +5,8 @@ import { changeTitle } from '../actions';
 import styled from 'styled-components';
 import { color, device, contentWidth, boxShadow } from '../styles';
 import SearchBar from '../components/SearchBar';
-import ChallengeCard from '../components/ChallengeCard';
+// import ChallengeCard from '../components/ChallengeCard';
+import InfiniteScroll from '../components/InfiniteScroll';
 import Loading from '../components/Loading';
 import NoResult from '../components/NoResult';
 import { ReactComponent as AddIcon } from '../assets/images/icon_add.svg';
@@ -29,17 +30,19 @@ const ChallengeListContainer = styled.div`
 `;
 
 const ChallengeList = styled.ul`
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1rem;
-  margin: 0;
+  & > div {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin: 0;
 
-  @media ${device.mobileLandscape} {
-    grid-template-columns: repeat(2, 1fr);
-  }
+    @media ${device.mobileLandscape} {
+      grid-template-columns: repeat(2, 1fr);
+    }
 
-  @media ${device.laptop} {
-    grid-template-columns: repeat(4, 1fr);
+    @media ${device.laptop} {
+      grid-template-columns: repeat(4, 1fr);
+    }
   }
 `;
 
@@ -106,44 +109,66 @@ const Challenges = () => {
   const navigate = useNavigate();
   const [sorting, setSorting] = useState('latest');
   const [challenges, setChallenges] = useState([]);
+  const [page, setPage] = useState(1);
   const [query, setQuery] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [hasNoResult, setHasNoResult] = useState(false);
+  const [hasNoMoreResult, setHasNoMoreResult] = useState(false);
 
-  const handleSubmit = () => {
-    if (sorting === 'latest') {
+  const fetchNextData = async () => {
+    if (!hasNoMoreResult) {
+      const scrollY = window.scrollY;
       setIsLoading(true);
-      requestLatestChallenges(-1, query).then((result) => {
-        setChallenges(result);
-        if (result.length === 0) setHasNoResult(true);
-        setIsLoading(false);
-      });
-    } else {
-      setIsLoading(true);
-      requestPopularChallenges(-1, query).then((result) => {
-        setChallenges(result);
-        if (result.length === 0) setHasNoResult(true);
-        setIsLoading(false);
-      });
+      if (sorting === 'latest') {
+        const result = await requestLatestChallenges(10, page + 1, query);
+        setChallenges([...challenges, ...result]);
+        setPage(page + 1);
+        if (result.length === 0) setHasNoMoreResult(true);
+      } else {
+        const result = await requestPopularChallenges(10, page + 1, query);
+        setChallenges([...challenges, ...result]);
+        setPage(page + 1);
+        if (result.length === 0) setHasNoMoreResult(true);
+      }
+      setIsLoading(false);
+      window.scrollTo(0, scrollY);
     }
   };
 
-  useEffect(() => {
+  const handleSubmit = () => {
+    setIsLoading(true);
     if (sorting === 'latest') {
-      setIsLoading(true);
-      requestLatestChallenges(-1).then((result) => {
+      requestLatestChallenges(10, 1, query).then((result) => {
         setChallenges(result);
         if (result.length === 0) setHasNoResult(true);
-        setIsLoading(false);
+      });
+    } else {
+      requestPopularChallenges(10, 1, query).then((result) => {
+        setChallenges(result);
+        if (result.length === 0) setHasNoResult(true);
+      });
+    }
+    setPage(1);
+    setIsLoading(false);
+  };
+
+  console.log('challenges:', challenges);
+
+  useEffect(() => {
+    setIsLoading(true);
+    if (sorting === 'latest') {
+      requestLatestChallenges(10).then((result) => {
+        setChallenges(result);
+        if (result.length === 0) setHasNoResult(true);
       });
     } else {
       setIsLoading(true);
-      requestPopularChallenges(-1).then((result) => {
+      requestPopularChallenges(10).then((result) => {
         setChallenges(result);
         if (result.length === 0) setHasNoResult(true);
-        setIsLoading(false);
       });
     }
+    setIsLoading(false);
   }, [sorting]);
 
   return (
@@ -168,19 +193,28 @@ const Challenges = () => {
             인기순
           </TextBtn>
         </Sorting>
-        {isLoading ? (
-          <Loading theme='light' text='챌린지 목록을 불러오는 중입니다.' />
-        ) : null}
         {hasNoResult && !isLoading ? (
           <NoResult theme='light' text='해당 챌린지가 없습니다.' />
         ) : null}
-        <ChallengeList>
-          {isLoading
-            ? null
-            : challenges.map((el) => (
-                <ChallengeCard challenge={el} key={el.challenge_id} />
-              ))}
-        </ChallengeList>
+        {isLoading ? (
+          <Loading
+            theme='light'
+            text={`챌린지 목록을 ${page > 1 ? '더 ' : ''}불러오는 중입니다.`}
+          />
+        ) : (
+          <ChallengeList>
+            <InfiniteScroll
+              data={challenges}
+              type='challenge'
+              isLoading={isLoading}
+              fetchNextData={fetchNextData}
+            />
+          </ChallengeList>
+        )}
+
+        {hasNoMoreResult && !isLoading ? (
+          <NoResult theme='light' text='더 이상 해당하는 챌린지가 없습니다.' />
+        ) : null}
       </ChallengeListContainer>
     </ChallengesContainer>
   );
