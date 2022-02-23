@@ -11,7 +11,7 @@ app.use(cookieParser());
 
 app.use(
   cors({
-    origin: 'https://wegreen.link',
+    origin: true,
     credentials: true,
     methods: ['GET', 'POST', 'OPTIONS', 'PATCH'],
   })
