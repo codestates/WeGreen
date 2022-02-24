@@ -26,5 +26,5 @@
 | ------------ | ---------- | :--- |
 | 강현규 | 백엔드 | [hyungu1997](https://github.com/hyungu1997) |
 | 신한결 | 프론트엔드 | [alskfl222](https://github.com/alskfl222) |
-| 윤보라 | 백엔드 | [boraborayoon](https://github.com/alskfl222) |
+| 윤보라 | 백엔드 | [boraborayoon](https://github.com/boraborayoon) |
 | 이지영 | 프론트엔드 | [alexjleee](https://github.com/alexjleee) |
