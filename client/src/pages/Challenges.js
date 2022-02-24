@@ -117,58 +117,66 @@ const Challenges = () => {
 
   const fetchNextData = async () => {
     if (!hasNoMoreResult) {
-      const scrollY = window.scrollY;
-      setIsLoading(true);
-      if (sorting === 'latest') {
-        const result = await requestLatestChallenges(20, page + 1, query);
-        setChallenges([...challenges, ...result]);
-        setPage(page + 1);
-        if (result.length === 0) setHasNoMoreResult(true);
-      } else {
-        const result = await requestPopularChallenges(20, page + 1, query);
-        setChallenges([...challenges, ...result]);
-        setPage(page + 1);
-        if (result.length === 0) setHasNoMoreResult(true);
-      }
-      setIsLoading(false);
-      window.scrollTo(0, scrollY);
+      await setIsLoading(() => true);
+      await setPage((page) => page + 1);
     }
   };
 
-  const handleSubmit = () => {
-    setIsLoading(true);
+  const handleSubmit = async () => {
+    await setIsLoading(() => true);
     if (sorting === 'latest') {
-      requestLatestChallenges(20, 1, query).then((result) => {
-        setChallenges(result);
-        if (result.length === 0) setHasNoResult(true);
-      });
+      const result = await requestLatestChallenges(20, 1, query);
+      await setChallenges(() => result);
+      if (result.length === 0) await setHasNoResult((state) => true);
+      else if (result.length < 20) await setHasNoMoreResult((state) => true);
     } else {
-      requestPopularChallenges(20, 1, query).then((result) => {
-        setChallenges(result);
-        if (result.length === 0) setHasNoResult(true);
-      });
+      const result = await requestPopularChallenges(20, 1, query);
+      await setChallenges(() => result);
+      if (result.length === 0) await setHasNoResult((state) => true);
+      else if (result.length < 20) await setHasNoMoreResult((state) => true);
     }
-    setPage(1);
-    setIsLoading(false);
+    await setPage((page) => 1);
+    await setIsLoading(() => false);
   };
-
-  console.log('challenges:', challenges);
 
   useEffect(() => {
-    setIsLoading(true);
-    if (sorting === 'latest') {
-      requestLatestChallenges(20).then((result) => {
-        setChallenges(result);
-        if (result.length === 0) setHasNoResult(true);
-      });
-    } else {
-      setIsLoading(true);
-      requestPopularChallenges(20).then((result) => {
-        setChallenges(result);
-        if (result.length === 0) setHasNoResult(true);
-      });
+    async function fetchNextPage() {
+      const scrollY = window.scrollY;
+      if (page > 1) {
+        if (sorting === 'latest') {
+          const result = await requestLatestChallenges(20, page, query);
+          await setChallenges((challenges) => [...challenges, ...result]);
+          if (result.length < 20) await setHasNoMoreResult((state) => true);
+        } else {
+          const result = await requestPopularChallenges(20, page, query);
+          await setChallenges((challenges) => [...challenges, ...result]);
+          if (result.length < 20) await setHasNoMoreResult((state) => true);
+        }
+        await setIsLoading(() => false);
+        window.scrollTo(0, scrollY);
+      }
     }
-    setIsLoading(false);
+    fetchNextPage();
+    // eslint-disable-next-line
+  }, [page]);
+
+  useEffect(() => {
+    const fetchFirstPage = async () => {
+      await setIsLoading(() => true);
+      if (sorting === 'latest') {
+        const result = await requestLatestChallenges(20);
+        await setChallenges(() => result);
+        if (result.length === 0) await setHasNoResult((state) => true);
+        else if (result.length < 20) await setHasNoMoreResult((state) => true);
+      } else {
+        const result = await requestPopularChallenges(20);
+        await setChallenges(() => result);
+        if (result.length === 0) await setHasNoResult((state) => true);
+        else if (result.length < 20) await setHasNoMoreResult((state) => true);
+      }
+      await setIsLoading(() => false);
+    };
+    fetchFirstPage();
   }, [sorting]);
 
   return (
@@ -196,22 +204,20 @@ const Challenges = () => {
         {hasNoResult && !isLoading ? (
           <NoResult theme='light' text='해당 챌린지가 없습니다.' />
         ) : null}
+        <ChallengeList>
+          <InfiniteScroll
+            data={challenges}
+            type='challenge'
+            isLoading={isLoading}
+            fetchNextData={fetchNextData}
+          />
+        </ChallengeList>
         {isLoading ? (
           <Loading
             theme='light'
             text={`챌린지 목록을 ${page > 1 ? '더 ' : ''}불러오는 중입니다.`}
           />
-        ) : (
-          <ChallengeList>
-            <InfiniteScroll
-              data={challenges}
-              type='challenge'
-              isLoading={isLoading}
-              fetchNextData={fetchNextData}
-            />
-          </ChallengeList>
-        )}
-
+        ) : null}
         {hasNoMoreResult && !isLoading ? (
           <NoResult theme='light' text='더 이상 해당하는 챌린지가 없습니다.' />
         ) : null}

@@ -1,6 +1,6 @@
-// import { useEffect } from 'react';
+import { useEffect } from 'react';
 import styled from 'styled-components';
-// import aos from 'aos';
+import aos from 'aos';
 import { boxShadow, color, radius } from '../styles';
 import { Link } from 'react-router-dom';
 import { TODAY } from '../data/initialData';
@@ -33,9 +33,9 @@ const ChallengeCardStatusContainer = styled.div`
 `;
 
 const ChallengeCard = ({ challenge }) => {
-  // useEffect(() => {
-  //   aos.init({ duration: 1000, offset: 50, once: true });
-  // });
+  useEffect(() => {
+    aos.init({ duration: 1000, offset: 50, once: true });
+  });
 
   const href = '/challenge/' + challenge.challenge_id;
 
