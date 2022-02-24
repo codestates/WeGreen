@@ -115,30 +115,28 @@ const Challenges = () => {
   const [hasNoResult, setHasNoResult] = useState(false);
   const [hasNoMoreResult, setHasNoMoreResult] = useState(false);
 
-  const fetchNextData = () => {
+  const fetchNextData = async () => {
     if (!hasNoMoreResult) {
-      setIsLoading(true);
-      setPage((page) => page + 1);
+      await setIsLoading(() => true);
+      await setPage((page) => page + 1);
     }
   };
 
-  const handleSubmit = () => {
-    setIsLoading(true);
+  const handleSubmit = async () => {
+    await setIsLoading(() => true);
     if (sorting === 'latest') {
-      requestLatestChallenges(20, 1, query).then((result) => {
-        setChallenges(result);
-        if (result.length === 0) setHasNoResult(state => true);
-        else if (result.length < 20) setHasNoMoreResult(state => true);
-      });
+      const result = await requestLatestChallenges(20, 1, query);
+      await setChallenges(() => result);
+      if (result.length === 0) await setHasNoResult((state) => true);
+      else if (result.length < 20) await setHasNoMoreResult((state) => true);
     } else {
-      requestPopularChallenges(20, 1, query).then((result) => {
-        setChallenges(result);
-        if (result.length === 0) setHasNoResult(state => true);
-        else if (result.length < 20) setHasNoMoreResult(state => true);
-      });
+      const result = await requestPopularChallenges(20, 1, query);
+      await setChallenges(() => result);
+      if (result.length === 0) await setHasNoResult((state) => true);
+      else if (result.length < 20) await setHasNoMoreResult((state) => true);
     }
-    setPage((page) => 1);
-    setIsLoading(false);
+    await setPage((page) => 1);
+    await setIsLoading(() => false);
   };
 
   useEffect(() => {
@@ -147,14 +145,14 @@ const Challenges = () => {
       if (page > 1) {
         if (sorting === 'latest') {
           const result = await requestLatestChallenges(20, page, query);
-          setChallenges((challenges) => [...challenges, ...result]);
-          if (result.length < 20) setHasNoMoreResult(state => true);
+          await setChallenges((challenges) => [...challenges, ...result]);
+          if (result.length < 20) await setHasNoMoreResult((state) => true);
         } else {
           const result = await requestPopularChallenges(20, page, query);
-          setChallenges((challenges) => [...challenges, ...result]);
-          if (result.length < 20) setHasNoMoreResult(state => true);
+          await setChallenges((challenges) => [...challenges, ...result]);
+          if (result.length < 20) await setHasNoMoreResult((state) => true);
         }
-        setIsLoading(false);
+        await setIsLoading(() => false);
         window.scrollTo(0, scrollY);
       }
     }
@@ -163,20 +161,22 @@ const Challenges = () => {
   }, [page]);
 
   useEffect(() => {
-    setIsLoading(true);
-    if (sorting === 'latest') {
-      requestLatestChallenges(20).then((result) => {
-        setChallenges(result);
-        if (result.length === 0) setHasNoResult(state => true);
-      });
-    } else {
-      setIsLoading(true);
-      requestPopularChallenges(20).then((result) => {
-        setChallenges(result);
-        if (result.length === 0) setHasNoResult(state => true);
-      });
-    }
-    setIsLoading(false);
+    const fetchFirstPage = async () => {
+      await setIsLoading(() => true);
+      if (sorting === 'latest') {
+        const result = await requestLatestChallenges(20);
+        await setChallenges(() => result);
+        if (result.length === 0) await setHasNoResult((state) => true);
+        else if (result.length < 20) await setHasNoMoreResult((state) => true);
+      } else {
+        const result = await requestPopularChallenges(20);
+        await setChallenges(() => result);
+        if (result.length === 0) await setHasNoResult((state) => true);
+        else if (result.length < 20) await setHasNoMoreResult((state) => true);
+      }
+      await setIsLoading(() => false);
+    };
+    fetchFirstPage();
   }, [sorting]);
 
   return (
