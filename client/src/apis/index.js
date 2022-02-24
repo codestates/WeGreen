@@ -95,7 +95,7 @@ export const requestPopularChallenges = (limit, page, query) => {
   let string = `${process.env.REACT_APP_API_URL}/challenges/popular?`;
   string += `${limit > 0 ? 'limit=' + limit + '&' : ''}`;
   string += `${page ? 'page=' + page + '&' : ''}`;
-  string += `${query ? '&query=' + query : ''}`;
+  string += `${query ? 'query=' + query : ''}`;
 
   return axios
     .get(
@@ -113,7 +113,7 @@ export const requestLatestChallenges = (limit, page, query) => {
   let string = `${process.env.REACT_APP_API_URL}/challenges/latest?`;
   string += `${limit > 0 ? 'limit=' + limit + '&' : ''}`;
   string += `${page ? 'page=' + page + '&' : ''}`;
-  string += `${query ? '&query=' + query : ''}`;
+  string += `${query ? 'query=' + query : ''}`;
   return axios
     .get(
       string,
